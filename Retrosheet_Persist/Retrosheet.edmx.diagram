@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+ <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <edmx:Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <!-- Diagram content (shape and connector positions) -->
+    <edmx:Diagrams>
+      <Diagram DiagramId="32f77551e4fd410e918e12d2529c1126" Name="Diagram1" ZoomLevel="82">
+        <EntityTypeShape EntityType="RetrosheetDBModel.Ballpark" Width="1.5" PointX="0.75" PointY="0.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="RetrosheetDBModel.Reference_Data" Width="1.5" PointX="2.75" PointY="0.75" />
+        <EntityTypeShape EntityType="RetrosheetDBModel.Player" Width="1.5" PointX="2.75" PointY="3.75" />
+        <EntityTypeShape EntityType="RetrosheetDBModel.Team" Width="1.5" PointX="4.75" PointY="0.75" />
+        <EntityTypeShape EntityType="RetrosheetDBModel.Batter_Adjustment" Width="1.5" PointX="4.75" PointY="3.75" />
+        <EntityTypeShape EntityType="RetrosheetDBModel.Game_Comment" Width="1.5" PointX="6.75" PointY="0.75" />
+        <EntityTypeShape EntityType="RetrosheetDBModel.Game_Data" Width="1.5" PointX="6.75" PointY="4.75" />
+        <EntityTypeShape EntityType="RetrosheetDBModel.Game_Info" Width="1.5" PointX="0.75" PointY="7.75" />
+        <EntityTypeShape EntityType="RetrosheetDBModel.Pitcher_Adjustment" Width="1.5" PointX="2.75" PointY="7.75" />
+        <EntityTypeShape EntityType="RetrosheetDBModel.Starting_Player" Width="1.5" PointX="4.75" PointY="7.75" />
+        <EntityTypeShape EntityType="RetrosheetDBModel.Substitute_Player" Width="1.5" PointX="6.75" PointY="7.75" />
+        <EntityTypeShape EntityType="RetrosheetDBModel.Play" Width="1.5" PointX="8.75" PointY="0.75" />
+        <EntityTypeShape EntityType="RetrosheetDBModel.Game_Information" Width="1.5" PointX="8.75" PointY="5.75" />
+        <EntityTypeShape EntityType="RetrosheetDBModel.Replay" Width="1.5" PointX="10.75" PointY="0.75" />
+        <EntityTypeShape EntityType="RetrosheetDBModel.Ejection" Width="1.5" PointX="10.75" PointY="5.75" />
+        <EntityTypeShape EntityType="RetrosheetDBModel.Admin_Info" Width="1.5" PointX="10.75" PointY="9.75" />
+        <EntityTypeShape EntityType="RetrosheetDBModel.Substitute_Umpire" Width="1.5" PointX="0.75" PointY="11.75" />
+        <EntityTypeShape EntityType="RetrosheetDBModel.Personal" Width="1.5" PointX="2.75" PointY="11.75" />
+      </Diagram>
+    </edmx:Diagrams>
+  </edmx:Designer>
+</edmx:Edmx>

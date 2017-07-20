@@ -1,0 +1,3 @@
+﻿<?xml version="1.0" encoding="utf-8"?><Database Name="retrosheet" Class="RetrosheetDataContext" xmlns="http://schemas.microsoft.com/linqtosql/dbml/2007">
+  <Connection Mode="AppSettings" ConnectionString="Data Source=MMR-PC\SQLEXPRESS;Initial Catalog=retrosheet;Integrated Security=True;MultipleActiveResultSets=True;Application Name=EntityFramework" SettingsObjectName="Retrosheet_Persist.Properties.Settings" SettingsPropertyName="retrosheetConnectionString" Provider="System.Data.SqlClient" />
+</Database>
