@@ -84,6 +84,14 @@ namespace Retrosheet_Persist
             gameInformation.save_pitcher_id = gameInformationDTO.SavePitcherID;
             gameInformation.winning_rbi_player_id = gameInformationDTO.WinningPitcherID;
             gameInformation.oscorer = gameInformationDTO.OScorer;
+            gameInformation.season_year = gameInformationDTO.SeasonYear;
+            gameInformation.season_game_type = gameInformationDTO.SeasonGameType;
+            gameInformation.edit_time = gameInformationDTO.EditType;
+            gameInformation.how_scored = gameInformationDTO.HowScored;
+            gameInformation.input_prog_vers = gameInformationDTO.InputProgVers;
+            gameInformation.inputter = gameInformationDTO.Inputter;
+            gameInformation.scorer = gameInformationDTO.Scorer;
+            gameInformation.translator = gameInformationDTO.Translator;
 
             return gameInformation;
         }

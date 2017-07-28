@@ -25,7 +25,7 @@ namespace Retrosheet_Persist
                 dbCtx.Database.ExecuteSqlCommand("TRUNCATE TABLE Game_Info");
                 dbCtx.Database.ExecuteSqlCommand("TRUNCATE TABLE Game_Information");
                 dbCtx.Database.ExecuteSqlCommand("TRUNCATE TABLE Game_Suspension");
-                dbCtx.Database.ExecuteSqlCommand("TRUNCATE TABLE Personal");
+                dbCtx.Database.ExecuteSqlCommand("TRUNCATE TABLE Personnel");
                 dbCtx.Database.ExecuteSqlCommand("TRUNCATE TABLE Pitcher_Adjustment");
                 dbCtx.Database.ExecuteSqlCommand("TRUNCATE TABLE Play");
                 dbCtx.Database.ExecuteSqlCommand("TRUNCATE TABLE Player");

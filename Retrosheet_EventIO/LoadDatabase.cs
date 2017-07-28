@@ -39,14 +39,30 @@ namespace Retrosheet_DataFileIO
             ReadWriteReferenceDataFile(inputPathFile);
         }
 
-        public void LoadDatabasePersonalData(string inputPathFile)
+        public void LoadDatabaseTeamData(string inputPathFile)
         {
             Console.WriteLine(inputPathFile);
-            ReadWritePersonalDataFile(inputPathFile);
+            ReadWriteTeamFile(inputPathFile);
+        }
+
+        public void LoadDatabasePersonnelData(string inputPathFile)
+        {
+            Console.WriteLine(inputPathFile);
+            ReadWritePersonnelDataFile(inputPathFile);
         }
 
         public void LoadDatabaseEventData(string inputPath)
         {
+            string[] files = Directory.GetFiles(inputPath);
+
+            foreach(string fullPathFile in files)
+            {
+                if (fullPathFile.IndexOf("team") > -1)
+                {
+                    ReadWriteTeamFile(fullPathFile);
+                }
+            }
+
             string[] subdirectories = Directory.GetDirectories(inputPath);
 
             foreach (string subdirectory in subdirectories)
@@ -627,12 +643,12 @@ namespace Retrosheet_DataFileIO
             }
         }
 
-        private static void ReadWriteTeamFile()
+        private static void ReadWriteTeamFile(string inputPathFile)
         {
             string[] columnValue;
             string textLine = null;
 
-            using (StreamReader reader = new StreamReader(@"C:\users\mmr\documents\retrosheet\2016 Regular Season\Output\TEAM2016_team"))
+            using (StreamReader reader = new StreamReader(inputPathFile))
             {
                 while (!reader.EndOfStream)
                 {
@@ -643,7 +659,7 @@ namespace Retrosheet_DataFileIO
                     catch (Exception e)
                     {
                         // Let the user know what went wrong.
-                        Console.WriteLine("The " + @"C:\users\mmr\documents\retrosheet\2016 Regular Season\Output\2016SLN\TEAM2016_team" + " file could not be read:");
+                        Console.WriteLine("The " + inputPathFile + " file could not be read:");
                         Console.WriteLine(e.Message);
                         Console.ReadLine();
                     }
@@ -783,7 +799,7 @@ namespace Retrosheet_DataFileIO
             }
         }
 
-        private static void ReadWritePersonalDataFile(string inputPathFile)
+        private static void ReadWritePersonnelDataFile(string inputPathFile)
         {
             string[] columnValue;
             string textLine = null;
@@ -809,34 +825,34 @@ namespace Retrosheet_DataFileIO
                     if (textLine.IndexOf("ref_data_type") == -1)
                     {
                         columnValue = textLine.Split('|');
-                        PersonalDTO personalDTO = new PersonalDTO();
+                        PersonnelDTO personnelDTO = new PersonnelDTO();
 
-                        personalDTO.RecordID = Guid.NewGuid();
-                        personalDTO.LastName = columnValue[0];
-                        personalDTO.FirstName = columnValue[1];
-                        personalDTO.PersonID = columnValue[2];
+                        personnelDTO.RecordID = Guid.NewGuid();
+                        personnelDTO.LastName = columnValue[0];
+                        personnelDTO.FirstName = columnValue[1];
+                        personnelDTO.PersonID = columnValue[2];
 
                         if (DateTime.TryParse(columnValue[3], out dateTime))
-                            personalDTO.CareerDate = dateTime;
+                            personnelDTO.CareerDate = dateTime;
                         else
                         {
-                            personalDTO.CareerDate = DateTime.MaxValue; ;
+                            personnelDTO.CareerDate = DateTime.MaxValue; ;
                         }
 
                         if (columnValue[4] == "8" )
                         {
-                            personalDTO.Role = "M";  // manager
+                            personnelDTO.Role = "M";  // manager
                         }
                         else if (columnValue[4] == "9")
                         {
-                            personalDTO.Role = "U"; // umpire
+                            personnelDTO.Role = "U"; // umpire
                         }
                         else
 	                    {
-                            personalDTO.Role = null; // unknown
+                            personnelDTO.Role = null; // unknown
                         }
 
-                        PersonalPersist.CreatePersonal(personalDTO);
+                        PersonnelPersist.CreatePersonnel(personnelDTO);
                     }
                 }
             }

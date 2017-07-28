@@ -12,7 +12,7 @@ namespace Retrosheet_Persist
     using System;
     using System.Collections.Generic;
     
-    public partial class Personal
+    public partial class Personnel
     {
         public System.Guid record_id { get; set; }
         public string person_id { get; set; }

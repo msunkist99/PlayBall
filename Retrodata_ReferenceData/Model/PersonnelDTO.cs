@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Retrosheet_ReferenceData.Model
 {
-    public class PersonalDTO
+    public class PersonnelDTO
     {
         public System.Guid RecordID { get; set; }
         public string PersonID { get; set; }

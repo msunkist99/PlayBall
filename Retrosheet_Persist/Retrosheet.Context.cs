@@ -37,11 +37,11 @@ namespace Retrosheet_Persist
         public virtual DbSet<Starting_Player> Starting_Player { get; set; }
         public virtual DbSet<Substitute_Player> Substitute_Player { get; set; }
         public virtual DbSet<Play> Plays { get; set; }
-        public virtual DbSet<Game_Information> Game_Information { get; set; }
         public virtual DbSet<Replay> Replays { get; set; }
         public virtual DbSet<Ejection> Ejections { get; set; }
         public virtual DbSet<Admin_Info> Admin_Info { get; set; }
         public virtual DbSet<Substitute_Umpire> Substitute_Umpire { get; set; }
-        public virtual DbSet<Personal> Personals { get; set; }
+        public virtual DbSet<Personnel> Personnels { get; set; }
+        public virtual DbSet<Game_Information> Game_Information { get; set; }
     }
 }

@@ -12,25 +12,31 @@ namespace Retrosheet_Settings
     {
         public string ReferenceDataInputPath { get; private set; }
         public string ReferenceDataInputFile { get; private set; }
-        public bool ReferenceDataLoaded { get; private set; }
+        public bool   ReferenceDataLoaded { get; private set; }
 
-        public string PersonalDataInputPath { get; private set; }
-        public string PersonalDataInputFile { get; private set; }
-        public bool PersonalDataLoaded { get; private set; }
+        public string PersonnelDataInputPath { get; private set; }
+        public string PersonnelDataInputFile { get; private set; }
+        public bool   PersonnelDataLoaded { get; private set; }
 
         public string BallparkDataInputPath { get; private set; }
         public string BallparkDataInputFile { get; private set; }
         public string BallparkDataOutputPath { get; private set; }
         public string BallparkDataOutputFile { get; private set; }
-        public bool BallparkDataLoaded { get; private set; }
+        public bool   BallparkDataLoaded { get; private set; }
 
         public string EventDataID { get; private set; }
         public string EventDataInputPath { get; private set; }
         public string EventDataOutputPath { get; private set; }
-        public bool EventDataLoaded { get; private set; }
+        public bool   EventDataLoaded { get; private set; }
+        public string EventDataSeasonYear { get; private set; }
+        public string EventDataSeasonGameType { get; private set; }
 
         // constructor
         public Settings()
+        {
+        }
+
+        public void GetSettings()
         {
             XmlDocument xmlSettings = new XmlDocument();
             //xmlSettings.Load(@"C:\users\mmr\documents\retrosheet\settings.xml");
@@ -66,15 +72,15 @@ namespace Retrosheet_Settings
                             ReferenceDataLoaded = false;
                         }
                     }
-                    else if (subNode.Name == "personal_data")
+                    else if (subNode.Name == "personnel_data")
                     {
                         result.Append(subNode.Name).Append(", ");
                         result.Append(subNode.Attributes["input_path"].Value).Append(", ");
                         result.Append(subNode.Attributes["input_file"].Value).Append(", ");
                         result.Append(subNode.Attributes["data_loaded"].Value).Append(Environment.NewLine);
 
-                        PersonalDataInputPath = subNode.Attributes["input_path"].Value;
-                        PersonalDataInputFile = subNode.Attributes["input_file"].Value;
+                        PersonnelDataInputPath = subNode.Attributes["input_path"].Value;
+                        PersonnelDataInputFile = subNode.Attributes["input_file"].Value;
                         if (subNode.Attributes["data_loaded"].Value == "TRUE")
                         {
                             ReferenceDataLoaded = true;
@@ -101,7 +107,8 @@ namespace Retrosheet_Settings
                         {
                             BallparkDataLoaded = true;
                         }
-                        else {
+                        else
+                        {
                             BallparkDataLoaded = false;
                         }
                     }
@@ -124,7 +131,8 @@ namespace Retrosheet_Settings
                         {
                             EventDataLoaded = false;
                         }
-                        
+                        EventDataSeasonYear = subNode.Attributes["season_year"].Value;
+                        EventDataSeasonGameType = subNode.Attributes["season_game_type"].Value;
                     }
                 }
             }
@@ -204,6 +212,17 @@ namespace Retrosheet_Settings
                 xmlAttribute.Value = settingsElement[6];
                 dataNode.Attributes.Append(xmlAttribute);
                 settingsNode.AppendChild(dataNode);
+
+                xmlAttribute = xmlDocument.CreateAttribute("season_year");
+                xmlAttribute.Value = settingsElement[7];
+                dataNode.Attributes.Append(xmlAttribute);
+                settingsNode.AppendChild(dataNode);
+
+                xmlAttribute = xmlDocument.CreateAttribute("season_game_type");
+                xmlAttribute.Value = settingsElement[8];
+                dataNode.Attributes.Append(xmlAttribute);
+                settingsNode.AppendChild(dataNode);
+
             }
             xmlDocument.Save(Environment.CurrentDirectory + @"\settings.xml");
         }

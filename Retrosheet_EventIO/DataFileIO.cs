@@ -18,8 +18,8 @@ namespace Retrosheet_DataFileIO
         private int inning = 0;
         private int gameTeamCode = 0;
         private int sequence = 0;
-        private int comSequence = 0;
-        private string commentType = null;
+        private int commentSequence = 0;
+        private int sequenceHold = 0;
 
         // constructor
         public DataFileIO()
@@ -35,7 +35,9 @@ namespace Retrosheet_DataFileIO
         }
 
         public void ProcessEventFiles(string inputPath,
-                                      string outputPath)
+                                      string outputPath,
+                                      string seasonYear,
+                                      string seasonGameType)
         {
             string outputFile;
 
@@ -57,7 +59,9 @@ namespace Retrosheet_DataFileIO
                     ReadEventFiles(inputPath + @"\" + fileName,
                                            outputFullPath, 
                                            outputFile,
-                                           "event");
+                                           "event",
+                                           seasonYear,
+                                           seasonGameType);
                 }
                 // player file
                 else if (fileName.IndexOf(".ROS") > -1)
@@ -68,7 +72,9 @@ namespace Retrosheet_DataFileIO
                     ReadEventFiles(inputPath + @"\" + fileName,
                                            outputPath,
                                            outputFile,
-                                           "player");
+                                           "player",
+                                           seasonYear,
+                                           seasonGameType);
                 }
                 // team file
                 else if (fileName.IndexOf("TEAM") > -1)
@@ -78,7 +84,9 @@ namespace Retrosheet_DataFileIO
                     ReadEventFiles(inputPath + @"\" + fileName,
                                            outputPath,
                                            outputFile,
-                                           "team");
+                                           "team",
+                                           seasonYear,
+                                           seasonGameType);
                 }
             }
         }
@@ -87,7 +95,9 @@ namespace Retrosheet_DataFileIO
         private void ReadEventFiles(string inputPathFile,
                                     string outputPath,
                                     string outputFile,
-                                    string fileType )
+                                    string fileType,
+                                    string seasonYear,
+                                    string seasonGameType)
         {
             string[] columnValue;
             string textLine = null ;
@@ -119,7 +129,9 @@ namespace Retrosheet_DataFileIO
                         CreateEventOutput(outputPath,
                                           outputFile,
                                           textLine,
-                                          columnValue);
+                                          columnValue,
+                                          seasonYear,
+                                          seasonGameType);
                     }
                     else if (fileType == "player")
                     {
@@ -224,7 +236,10 @@ namespace Retrosheet_DataFileIO
         private void CreateEventOutput(string outputPath,
                                        string outputFile,
                                        string textLine,
-                                       string[] columnValue)
+                                       string[] columnValue,
+                                       string season_year,
+                                       string season_game_type
+                    )
         {
             string commentText = null;
 
@@ -236,8 +251,19 @@ namespace Retrosheet_DataFileIO
                     inning = 0;
                     gameTeamCode = 0;
                     sequence = 0;
-                    comSequence = 0;
+                    commentSequence = 0;
 
+                    WriteEventFile(outputPath,
+                                   outputFile + "_gameinfo" ,
+                                   gameID + outputDelimiter + "info" + outputDelimiter + "season_game_type"
+                                   + outputDelimiter + season_game_type,
+                                   true);
+
+                    WriteEventFile(outputPath,
+                                   outputFile + "_gameinfo" ,
+                                   gameID + outputDelimiter + "info" + outputDelimiter + "season_year"
+                                   + outputDelimiter + season_year,
+                                   true);
                     break;
 
                 case "version":
@@ -247,7 +273,7 @@ namespace Retrosheet_DataFileIO
 
                     textLine = textLine.Replace(inputDelimiter, outputDelimiter);
 
-                    if ((columnValue[1] == "edittime") ||
+                    /*if ((columnValue[1] == "edittime") ||
                         (columnValue[1] == "howscored") ||
                         (columnValue[1] == "inputprogvers") ||
                         (columnValue[1] == "inputter") ||
@@ -262,11 +288,12 @@ namespace Retrosheet_DataFileIO
                     }
                     else
                     {
+                    */
                         WriteEventFile(outputPath,
                                   outputFile + "_game" + columnValue[0],
                                   gameID + outputDelimiter + textLine,
                                   true);
-                    }
+                    //}
                     break;
 
                 case "start":
@@ -352,7 +379,7 @@ namespace Retrosheet_DataFileIO
                     {
                         inning = Int32.Parse(columnValue[1]);
                         sequence = 0;
-                        comSequence = 0;
+                        commentSequence = 0;
                     }
 
                     //  capture the third part of the record key
@@ -360,7 +387,7 @@ namespace Retrosheet_DataFileIO
                     {
                         gameTeamCode = Int32.Parse(columnValue[2]);
                         sequence = 0;
-                        comSequence = 0;
+                        commentSequence = 0;
                     }
 
                     //  capture the fourth part of the record key
@@ -444,14 +471,11 @@ namespace Retrosheet_DataFileIO
 
                 case "com":
 
-                    if (columnValue[1] != commentType)
+                    if (sequenceHold != sequence)
                     {
-                        comSequence = 0;
-                        commentText = columnValue[1];
+                        commentSequence = 0;
+                        sequenceHold = sequence;
                     }
-
-                    ++comSequence;
-
                     columnValue[1] = columnValue[1].Replace("\"","");
 
                     switch (columnValue[1])
@@ -467,7 +491,7 @@ namespace Retrosheet_DataFileIO
                                       + inning + outputDelimiter
                                       + gameTeamCode + outputDelimiter
                                       + sequence + outputDelimiter
-                                      + comSequence + outputDelimiter
+                                      + commentSequence + outputDelimiter
                                       + textLine,
                                       true);
                             break;
@@ -483,7 +507,7 @@ namespace Retrosheet_DataFileIO
                                       + inning + outputDelimiter
                                       + gameTeamCode + outputDelimiter
                                       + sequence + outputDelimiter 
-                                      + comSequence + outputDelimiter
+                                      + commentSequence + outputDelimiter
                                       + textLine,
                                       true);
                             break;
@@ -499,7 +523,7 @@ namespace Retrosheet_DataFileIO
                                       + inning + outputDelimiter
                                       + gameTeamCode + outputDelimiter
                                       + sequence + outputDelimiter
-                                      + comSequence + outputDelimiter
+                                      + commentSequence + outputDelimiter
                                       + textLine,
                                       true);
                             break;
@@ -515,7 +539,7 @@ namespace Retrosheet_DataFileIO
                                       + inning + outputDelimiter
                                       + gameTeamCode + outputDelimiter
                                       + sequence + outputDelimiter
-                                      + comSequence + outputDelimiter
+                                      + commentSequence + outputDelimiter
                                       + textLine,
                                       true);
                             break;
@@ -531,13 +555,13 @@ namespace Retrosheet_DataFileIO
                                       + inning + outputDelimiter
                                       + gameTeamCode + outputDelimiter
                                       + sequence + outputDelimiter
-                                      + comSequence + outputDelimiter
+                                      + commentSequence + outputDelimiter
                                       + textLine,
                                       true);
                             break;
 
                         default:
-
+                            ++commentSequence;
                             commentText = textLine.Substring( textLine.IndexOf("com,") + 5);
                             commentText = commentText.Replace("\"", "");
 
@@ -547,7 +571,7 @@ namespace Retrosheet_DataFileIO
                                       + inning + outputDelimiter
                                       + gameTeamCode + outputDelimiter
                                       + sequence + outputDelimiter
-                                      + comSequence + outputDelimiter
+                                      + commentSequence + outputDelimiter
                                       + "com" + outputDelimiter
                                       + commentText,
                                       true);
@@ -563,7 +587,7 @@ namespace Retrosheet_DataFileIO
                               + inning + outputDelimiter
                               + gameTeamCode + outputDelimiter
                               + sequence + outputDelimiter
-                              + comSequence + outputDelimiter
+                              + commentSequence + outputDelimiter
                                + textLine,
                               true);
                     break;

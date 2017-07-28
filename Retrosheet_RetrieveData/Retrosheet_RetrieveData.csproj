@@ -4,32 +4,15 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{C24A04AA-34D9-4F21-A662-EAC8329435F4}</ProjectGuid>
-    <OutputType>Exe</OutputType>
+    <ProjectGuid>{40E8C042-75DB-45A6-9267-03040F4D9EE4}</ProjectGuid>
+    <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Retrosheet_Console</RootNamespace>
-    <AssemblyName>Retrosheet_Console</AssemblyName>
+    <RootNamespace>Retrosheet_RetrieveData</RootNamespace>
+    <AssemblyName>Retrosheet_RetrieveData</AssemblyName>
     <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
-    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
-    <PublishUrl>publish\</PublishUrl>
-    <Install>true</Install>
-    <InstallFrom>Disk</InstallFrom>
-    <UpdateEnabled>false</UpdateEnabled>
-    <UpdateMode>Foreground</UpdateMode>
-    <UpdateInterval>7</UpdateInterval>
-    <UpdateIntervalUnits>Days</UpdateIntervalUnits>
-    <UpdatePeriodically>false</UpdatePeriodically>
-    <UpdateRequired>false</UpdateRequired>
-    <MapFileExtensions>true</MapFileExtensions>
-    <ApplicationRevision>0</ApplicationRevision>
-    <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
-    <IsWebBootstrapper>false</IsWebBootstrapper>
-    <UseApplicationTrust>false</UseApplicationTrust>
-    <BootstrapperEnabled>true</BootstrapperEnabled>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
@@ -39,7 +22,6 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>bin\Release\</OutputPath>
@@ -58,7 +40,6 @@
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.DataAnnotations" />
-    <Reference Include="System.configuration" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
@@ -68,25 +49,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="DisplayRetrievedData.cs" />
-    <Compile Include="ParseInput.cs" />
-    <Compile Include="Program.cs" />
+    <Compile Include="DataModel.cs" />
+    <Compile Include="RetrieveData.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Properties\Settings.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTimeSharedInput>True</DesignTimeSharedInput>
-      <DependentUpon>Settings.settings</DependentUpon>
-    </Compile>
-    <Compile Include="Settings.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="App.config" />
-    <None Include="ClassDiagram1.cd" />
-    <None Include="packages.config" />
-    <None Include="Properties\Settings.settings">
-      <Generator>SettingsSingleFileGenerator</Generator>
-      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
-    </None>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Retrodata_EventData\Retrosheet_EventData.csproj">
@@ -97,34 +62,14 @@
       <Project>{9c14a56f-aed4-4c55-9846-4de99be7af2c}</Project>
       <Name>Retrosheet_ReferenceData</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Retrosheet_EventIO\Retrosheet_DataFileIO.csproj">
-      <Project>{a841d16b-5be1-470b-bda3-517e23b51712}</Project>
-      <Name>Retrosheet_DataFileIO</Name>
-    </ProjectReference>
     <ProjectReference Include="..\Retrosheet_Persist\Retrosheet_Persist.csproj">
       <Project>{71fd25cb-ab1f-4528-a20a-815eecfd8fbd}</Project>
       <Name>Retrosheet_Persist</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Retrosheet_RetrieveData\Retrosheet_RetrieveData.csproj">
-      <Project>{40e8c042-75db-45a6-9267-03040f4d9ee4}</Project>
-      <Name>Retrosheet_RetrieveData</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Retrosheet_Settings\Retrosheet_Settings.csproj">
-      <Project>{1d0e1cca-9fde-409e-8408-72ad2fd8fa65}</Project>
-      <Name>Retrosheet_Settings</Name>
-    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <BootstrapperPackage Include=".NETFramework,Version=v4.5.2">
-      <Visible>False</Visible>
-      <ProductName>Microsoft .NET Framework 4.5.2 %28x86 and x64%29</ProductName>
-      <Install>true</Install>
-    </BootstrapperPackage>
-    <BootstrapperPackage Include="Microsoft.Net.Framework.3.5.SP1">
-      <Visible>False</Visible>
-      <ProductName>.NET Framework 3.5 SP1</ProductName>
-      <Install>false</Install>
-    </BootstrapperPackage>
+    <None Include="App.config" />
+    <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

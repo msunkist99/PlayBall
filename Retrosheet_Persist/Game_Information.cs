@@ -42,5 +42,14 @@ namespace Retrosheet_Persist
         public string save_pitcher_id { get; set; }
         public string winning_rbi_player_id { get; set; }
         public string oscorer { get; set; }
+        public string season_year { get; set; }
+        public string season_game_type { get; set; }
+        public string edit_time { get; set; }
+        public string how_scored { get; set; }
+        public string input_prog_vers { get; set; }
+        public string inputter { get; set; }
+        public string input_time { get; set; }
+        public string scorer { get; set; }
+        public string translator { get; set; }
     }
 }

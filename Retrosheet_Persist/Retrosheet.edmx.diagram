@@ -17,12 +17,12 @@
         <EntityTypeShape EntityType="RetrosheetDBModel.Starting_Player" Width="1.5" PointX="4.75" PointY="7.75" />
         <EntityTypeShape EntityType="RetrosheetDBModel.Substitute_Player" Width="1.5" PointX="6.75" PointY="7.75" />
         <EntityTypeShape EntityType="RetrosheetDBModel.Play" Width="1.5" PointX="8.75" PointY="0.75" />
-        <EntityTypeShape EntityType="RetrosheetDBModel.Game_Information" Width="1.5" PointX="8.75" PointY="5.75" />
         <EntityTypeShape EntityType="RetrosheetDBModel.Replay" Width="1.5" PointX="10.75" PointY="0.75" />
         <EntityTypeShape EntityType="RetrosheetDBModel.Ejection" Width="1.5" PointX="10.75" PointY="5.75" />
         <EntityTypeShape EntityType="RetrosheetDBModel.Admin_Info" Width="1.5" PointX="10.75" PointY="9.75" />
         <EntityTypeShape EntityType="RetrosheetDBModel.Substitute_Umpire" Width="1.5" PointX="0.75" PointY="11.75" />
-        <EntityTypeShape EntityType="RetrosheetDBModel.Personal" Width="1.5" PointX="2.75" PointY="11.75" />
+        <EntityTypeShape EntityType="RetrosheetDBModel.Personnel" Width="1.5" PointX="3.375" PointY="11.75" />
+        <EntityTypeShape EntityType="RetrosheetDBModel.Game_Information" Width="1.5" PointX="5.375" PointY="11.75" />
       </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

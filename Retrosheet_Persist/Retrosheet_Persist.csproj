@@ -84,10 +84,10 @@
     <Compile Include="Game_Information.cs">
       <DependentUpon>Retrosheet.tt</DependentUpon>
     </Compile>
-    <Compile Include="Personal.cs">
+    <Compile Include="PersonnelPersist.cs" />
+    <Compile Include="Personnel.cs">
       <DependentUpon>Retrosheet.tt</DependentUpon>
     </Compile>
-    <Compile Include="PersonalPersist.cs" />
     <Compile Include="PitcherAdjustmentPersist.cs" />
     <Compile Include="Pitcher_Adjustment.cs">
       <DependentUpon>Retrosheet.tt</DependentUpon>

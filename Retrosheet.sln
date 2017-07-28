@@ -17,6 +17,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Retrosheet_DataFileIO", "Re
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Retrosheet_Settings", "Retrosheet_Settings\Retrosheet_Settings.csproj", "{1D0E1CCA-9FDE-409E-8408-72AD2FD8FA65}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Retrosheet_RetrieveData", "Retrosheet_RetrieveData\Retrosheet_RetrieveData.csproj", "{40E8C042-75DB-45A6-9267-03040F4D9EE4}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -51,6 +53,10 @@ Global
 		{1D0E1CCA-9FDE-409E-8408-72AD2FD8FA65}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1D0E1CCA-9FDE-409E-8408-72AD2FD8FA65}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{1D0E1CCA-9FDE-409E-8408-72AD2FD8FA65}.Release|Any CPU.Build.0 = Release|Any CPU
+		{40E8C042-75DB-45A6-9267-03040F4D9EE4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{40E8C042-75DB-45A6-9267-03040F4D9EE4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{40E8C042-75DB-45A6-9267-03040F4D9EE4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{40E8C042-75DB-45A6-9267-03040F4D9EE4}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -119,8 +119,17 @@
           <Property Name="save_pitcher_id" Type="varchar" MaxLength="50" />
           <Property Name="winning_rbi_player_id" Type="varchar" MaxLength="50" />
           <Property Name="oscorer" Type="varchar" MaxLength="50" />
+          <Property Name="season_year" Type="varchar" MaxLength="50" Nullable="false" />
+          <Property Name="season_game_type" Type="char" MaxLength="1" Nullable="false" />
+          <Property Name="edit_time" Type="varchar" MaxLength="50" />
+          <Property Name="how_scored" Type="varchar" MaxLength="50" />
+          <Property Name="input_prog_vers" Type="varchar" MaxLength="50" />
+          <Property Name="inputter" Type="varchar" MaxLength="50" />
+          <Property Name="input_time" Type="varchar" MaxLength="50" />
+          <Property Name="scorer" Type="varchar" MaxLength="50" />
+          <Property Name="translator" Type="varchar" MaxLength="50" />
         </EntityType>
-        <EntityType Name="Personal">
+        <EntityType Name="Personnel">
           <Key>
             <PropertyRef Name="record_id" />
           </Key>
@@ -257,7 +266,7 @@
           <EntitySet Name="Game_Data" EntityType="Self.Game_Data" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Game_Info" EntityType="Self.Game_Info" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Game_Information" EntityType="Self.Game_Information" Schema="dbo" store:Type="Tables" />
-          <EntitySet Name="Personal" EntityType="Self.Personal" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Personnel" EntityType="Self.Personnel" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Pitcher_Adjustment" EntityType="Self.Pitcher_Adjustment" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Play" EntityType="Self.Play" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Player" EntityType="Self.Player" Schema="dbo" store:Type="Tables" />
@@ -300,12 +309,12 @@
           <EntitySet Name="Starting_Player" EntityType="RetrosheetDBModel.Starting_Player" />
           <EntitySet Name="Substitute_Player" EntityType="RetrosheetDBModel.Substitute_Player" />
           <EntitySet Name="Plays" EntityType="RetrosheetDBModel.Play" />
-          <EntitySet Name="Game_Information" EntityType="RetrosheetDBModel.Game_Information" />
           <EntitySet Name="Replays" EntityType="RetrosheetDBModel.Replay" />
           <EntitySet Name="Ejections" EntityType="RetrosheetDBModel.Ejection" />
           <EntitySet Name="Admin_Info" EntityType="RetrosheetDBModel.Admin_Info" />
           <EntitySet Name="Substitute_Umpire" EntityType="RetrosheetDBModel.Substitute_Umpire" />
-          <EntitySet Name="Personals" EntityType="RetrosheetDBModel.Personal" />
+          <EntitySet Name="Personnels" EntityType="RetrosheetDBModel.Personnel" />
+          <EntitySet Name="Game_Information" EntityType="RetrosheetDBModel.Game_Information" />
         </EntityContainer>
         <EntityType Name="Reference_Data">
           <Key>
@@ -435,39 +444,6 @@
           <Property Name="event_modifier" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
           <Property Name="event_runner_advance" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
         </EntityType>
-        <EntityType Name="Game_Information">
-          <Key>
-            <PropertyRef Name="record_id" />
-          </Key>
-          <Property Name="record_id" Type="Guid" Nullable="false" />
-          <Property Name="game_id" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
-          <Property Name="visiting_team_id" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
-          <Property Name="home_team_id" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
-          <Property Name="game_date" Type="DateTime" Nullable="false" Precision="3" />
-          <Property Name="game_number" Type="Int32" Nullable="false" />
-          <Property Name="start_time" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
-          <Property Name="day_night" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
-          <Property Name="used_dh" Type="String" MaxLength="1" FixedLength="true" Unicode="false" />
-          <Property Name="pitches" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
-          <Property Name="umpire_home_id" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
-          <Property Name="umpire_first_base_id" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
-          <Property Name="umpire_second_base_id" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
-          <Property Name="umpire_third_base_id" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
-          <Property Name="field_condition" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
-          <Property Name="precipitation" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
-          <Property Name="sky" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
-          <Property Name="temperature" Type="Int32" />
-          <Property Name="wind_direction" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
-          <Property Name="wind_speed" Type="Int32" />
-          <Property Name="game_time_length_minutes" Type="Int32" />
-          <Property Name="attendance" Type="Int32" />
-          <Property Name="ballpark_id" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
-          <Property Name="winning_pitcher_id" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
-          <Property Name="losing_pitcher_id" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
-          <Property Name="save_pitcher_id" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
-          <Property Name="winning_rbi_player_id" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
-          <Property Name="oscorer" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
-        </EntityType>
         <EntityType Name="Replay">
           <Key>
             <PropertyRef Name="record_id" />
@@ -524,7 +500,7 @@
           <Property Name="field_position" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
           <Property Name="umpire_id" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
         </EntityType>
-        <EntityType Name="Personal">
+        <EntityType Name="Personnel">
           <Key>
             <PropertyRef Name="record_id" />
           </Key>
@@ -534,6 +510,48 @@
           <Property Name="first_name" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
           <Property Name="career_date" Type="DateTime" Nullable="false" Precision="3" />
           <Property Name="role" Type="String" Nullable="false" MaxLength="1" FixedLength="true" Unicode="false" />
+        </EntityType>
+        <EntityType Name="Game_Information">
+          <Key>
+            <PropertyRef Name="record_id" />
+          </Key>
+          <Property Name="record_id" Type="Guid" Nullable="false" />
+          <Property Name="game_id" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="visiting_team_id" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="home_team_id" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="game_date" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="game_number" Type="Int32" Nullable="false" />
+          <Property Name="start_time" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="day_night" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="used_dh" Type="String" MaxLength="1" FixedLength="true" Unicode="false" />
+          <Property Name="pitches" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="umpire_home_id" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="umpire_first_base_id" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="umpire_second_base_id" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="umpire_third_base_id" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="field_condition" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="precipitation" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="sky" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="temperature" Type="Int32" />
+          <Property Name="wind_direction" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="wind_speed" Type="Int32" />
+          <Property Name="game_time_length_minutes" Type="Int32" />
+          <Property Name="attendance" Type="Int32" />
+          <Property Name="ballpark_id" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="winning_pitcher_id" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="losing_pitcher_id" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="save_pitcher_id" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="winning_rbi_player_id" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="oscorer" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="season_year" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="season_game_type" Type="String" Nullable="false" MaxLength="1" FixedLength="true" Unicode="false" />
+          <Property Name="edit_time" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="how_scored" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="input_prog_vers" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="inputter" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="input_time" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="scorer" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="translator" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
         </EntityType>
       </Schema>
     </edmx:ConceptualModels>
@@ -696,40 +714,6 @@
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
-          <EntitySetMapping Name="Game_Information">
-            <EntityTypeMapping TypeName="RetrosheetDBModel.Game_Information">
-              <MappingFragment StoreEntitySet="Game_Information">
-                <ScalarProperty Name="oscorer" ColumnName="oscorer" />
-                <ScalarProperty Name="winning_rbi_player_id" ColumnName="winning_rbi_player_id" />
-                <ScalarProperty Name="save_pitcher_id" ColumnName="save_pitcher_id" />
-                <ScalarProperty Name="losing_pitcher_id" ColumnName="losing_pitcher_id" />
-                <ScalarProperty Name="winning_pitcher_id" ColumnName="winning_pitcher_id" />
-                <ScalarProperty Name="ballpark_id" ColumnName="ballpark_id" />
-                <ScalarProperty Name="attendance" ColumnName="attendance" />
-                <ScalarProperty Name="game_time_length_minutes" ColumnName="game_time_length_minutes" />
-                <ScalarProperty Name="wind_speed" ColumnName="wind_speed" />
-                <ScalarProperty Name="wind_direction" ColumnName="wind_direction" />
-                <ScalarProperty Name="temperature" ColumnName="temperature" />
-                <ScalarProperty Name="sky" ColumnName="sky" />
-                <ScalarProperty Name="precipitation" ColumnName="precipitation" />
-                <ScalarProperty Name="field_condition" ColumnName="field_condition" />
-                <ScalarProperty Name="umpire_third_base_id" ColumnName="umpire_third_base_id" />
-                <ScalarProperty Name="umpire_second_base_id" ColumnName="umpire_second_base_id" />
-                <ScalarProperty Name="umpire_first_base_id" ColumnName="umpire_first_base_id" />
-                <ScalarProperty Name="umpire_home_id" ColumnName="umpire_home_id" />
-                <ScalarProperty Name="pitches" ColumnName="pitches" />
-                <ScalarProperty Name="used_dh" ColumnName="used_dh" />
-                <ScalarProperty Name="day_night" ColumnName="day_night" />
-                <ScalarProperty Name="start_time" ColumnName="start_time" />
-                <ScalarProperty Name="game_number" ColumnName="game_number" />
-                <ScalarProperty Name="game_date" ColumnName="game_date" />
-                <ScalarProperty Name="home_team_id" ColumnName="home_team_id" />
-                <ScalarProperty Name="visiting_team_id" ColumnName="visiting_team_id" />
-                <ScalarProperty Name="game_id" ColumnName="game_id" />
-                <ScalarProperty Name="record_id" ColumnName="record_id" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
           <EntitySetMapping Name="Replays">
             <EntityTypeMapping TypeName="RetrosheetDBModel.Replay">
               <MappingFragment StoreEntitySet="Replay">
@@ -790,14 +774,57 @@
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
-          <EntitySetMapping Name="Personals">
-            <EntityTypeMapping TypeName="RetrosheetDBModel.Personal">
-              <MappingFragment StoreEntitySet="Personal">
+          <EntitySetMapping Name="Personnels">
+            <EntityTypeMapping TypeName="RetrosheetDBModel.Personnel">
+              <MappingFragment StoreEntitySet="Personnel">
                 <ScalarProperty Name="role" ColumnName="role" />
                 <ScalarProperty Name="career_date" ColumnName="career_date" />
                 <ScalarProperty Name="first_name" ColumnName="first_name" />
                 <ScalarProperty Name="last_name" ColumnName="last_name" />
                 <ScalarProperty Name="person_id" ColumnName="person_id" />
+                <ScalarProperty Name="record_id" ColumnName="record_id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Game_Information">
+            <EntityTypeMapping TypeName="RetrosheetDBModel.Game_Information">
+              <MappingFragment StoreEntitySet="Game_Information">
+                <ScalarProperty Name="translator" ColumnName="translator" />
+                <ScalarProperty Name="scorer" ColumnName="scorer" />
+                <ScalarProperty Name="input_time" ColumnName="input_time" />
+                <ScalarProperty Name="inputter" ColumnName="inputter" />
+                <ScalarProperty Name="input_prog_vers" ColumnName="input_prog_vers" />
+                <ScalarProperty Name="how_scored" ColumnName="how_scored" />
+                <ScalarProperty Name="edit_time" ColumnName="edit_time" />
+                <ScalarProperty Name="season_game_type" ColumnName="season_game_type" />
+                <ScalarProperty Name="season_year" ColumnName="season_year" />
+                <ScalarProperty Name="oscorer" ColumnName="oscorer" />
+                <ScalarProperty Name="winning_rbi_player_id" ColumnName="winning_rbi_player_id" />
+                <ScalarProperty Name="save_pitcher_id" ColumnName="save_pitcher_id" />
+                <ScalarProperty Name="losing_pitcher_id" ColumnName="losing_pitcher_id" />
+                <ScalarProperty Name="winning_pitcher_id" ColumnName="winning_pitcher_id" />
+                <ScalarProperty Name="ballpark_id" ColumnName="ballpark_id" />
+                <ScalarProperty Name="attendance" ColumnName="attendance" />
+                <ScalarProperty Name="game_time_length_minutes" ColumnName="game_time_length_minutes" />
+                <ScalarProperty Name="wind_speed" ColumnName="wind_speed" />
+                <ScalarProperty Name="wind_direction" ColumnName="wind_direction" />
+                <ScalarProperty Name="temperature" ColumnName="temperature" />
+                <ScalarProperty Name="sky" ColumnName="sky" />
+                <ScalarProperty Name="precipitation" ColumnName="precipitation" />
+                <ScalarProperty Name="field_condition" ColumnName="field_condition" />
+                <ScalarProperty Name="umpire_third_base_id" ColumnName="umpire_third_base_id" />
+                <ScalarProperty Name="umpire_second_base_id" ColumnName="umpire_second_base_id" />
+                <ScalarProperty Name="umpire_first_base_id" ColumnName="umpire_first_base_id" />
+                <ScalarProperty Name="umpire_home_id" ColumnName="umpire_home_id" />
+                <ScalarProperty Name="pitches" ColumnName="pitches" />
+                <ScalarProperty Name="used_dh" ColumnName="used_dh" />
+                <ScalarProperty Name="day_night" ColumnName="day_night" />
+                <ScalarProperty Name="start_time" ColumnName="start_time" />
+                <ScalarProperty Name="game_number" ColumnName="game_number" />
+                <ScalarProperty Name="game_date" ColumnName="game_date" />
+                <ScalarProperty Name="home_team_id" ColumnName="home_team_id" />
+                <ScalarProperty Name="visiting_team_id" ColumnName="visiting_team_id" />
+                <ScalarProperty Name="game_id" ColumnName="game_id" />
                 <ScalarProperty Name="record_id" ColumnName="record_id" />
               </MappingFragment>
             </EntityTypeMapping>

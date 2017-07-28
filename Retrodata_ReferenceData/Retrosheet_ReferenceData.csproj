@@ -54,7 +54,7 @@
     <Compile Include="Model\InstantReplayInitiator.cs" />
     <Compile Include="Model\InstantReplayReason.cs" />
     <Compile Include="Model\InstantReplayType.cs" />
-    <Compile Include="Model\PersonalDTO.cs" />
+    <Compile Include="Model\PersonnelDTO.cs" />
     <Compile Include="Model\PitchCode.cs" />
     <Compile Include="Model\PlayModifier.cs" />
     <Compile Include="Model\Protest.cs" />

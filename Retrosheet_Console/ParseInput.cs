@@ -11,34 +11,31 @@ namespace Retrosheet_Console
 {
     class ParseInput
     {
-        static void Main(string[] args)
+        static void xMain(string[] args)
         {
 
             // settings are captured in Settings constructor
            
             Settings settings = new Settings();
-           
-            DataFileIO  dataFileIO = new DataFileIO();
-
             settings.BackupSettings();
 
             string[] settingsArray = new string[4];
-
-            settingsArray[0] = @"reference_data|TRUE|C:\users\mmr\documents\retrosheet\ReferenceData\|reference_data.txt|||";
-            settingsArray[1] = @"ballpark_data|TRUE|C:\users\mmr\documents\retrosheet\ReferenceData\|Ballpark.txt|C:\users\mmr\documents\retrosheet\ReferenceData\Output\|Ballpark.txt|";
-            settingsArray[2] = @"personal_data|TRUE|C:\users\mmr\documents\retrosheet\ReferenceData\|personal.txt|||";
-            settingsArray[3] = @"event_data|TRUE|C:\users\mmr\documents\retrosheet\2016 Regular Season\||C:\users\mmr\documents\retrosheet\2016 Regular Season\Output\||2016 Regular Season";
+            settingsArray[0] = @"reference_data|TRUE|C:\users\mmr\documents\retrosheet\ReferenceData\|reference_data.txt|||||";
+            settingsArray[1] = @"ballpark_data|TRUE|C:\users\mmr\documents\retrosheet\ReferenceData\|Ballpark.txt|C:\users\mmr\documents\retrosheet\ReferenceData\Output\|Ballpark.txt|||";
+            settingsArray[2] = @"personnel_data|TRUE|C:\users\mmr\documents\retrosheet\ReferenceData\|personnel.txt|||||";
+            settingsArray[3] = @"event_data|TRUE|C:\users\mmr\documents\retrosheet\2016 Regular Season\||C:\users\mmr\documents\retrosheet\2016 Regular Season\Output\||2016 Regular Season|2016|R";
 
             settings.WriteSettings(settingsArray);
+                        settings.GetSettings();
 
-            
+            DataFileIO dataFileIO = new DataFileIO();
             //dataFileIO.ProcessBallparkFile(@"C:\users\mmr\documents\retrosheet\ReferenceData",
             //                            "Ballpark.txt",
             //                            @"C: \users\mmr\documents\retrosheet\ReferenceData\Output",
             //                            "BallPark.txt");
-            
 
-            
+
+
             dataFileIO.ProcessBallparkFile(settings.BallparkDataInputPath, settings.BallparkDataInputFile,
                             settings.BallparkDataOutputPath,
                             settings.BallparkDataOutputFile);
@@ -51,7 +48,9 @@ namespace Retrosheet_Console
             
 
             dataFileIO.ProcessEventFiles(settings.EventDataInputPath,
-                                         settings.EventDataOutputPath);
+                                         settings.EventDataOutputPath,
+                                         settings.EventDataSeasonYear,
+                                         settings.EventDataSeasonGameType);
 
            
 
@@ -60,11 +59,11 @@ namespace Retrosheet_Console
             loadDatabase.TruncateDatabase();
             loadDatabase.LoadDatabaseEventData(settings.EventDataOutputPath);
             loadDatabase.LoadDatabaseReferenceData(settings.ReferenceDataInputPath  + settings.ReferenceDataInputFile);
-            loadDatabase.LoadDatabasePersonalData(settings.PersonalDataInputPath + settings.PersonalDataInputFile);
+            loadDatabase.LoadDatabasePersonnelData(settings.PersonnelDataInputPath + settings.PersonnelDataInputFile);
             loadDatabase.LoadDatabaseBallparkData(settings.BallparkDataInputPath  + settings.BallparkDataInputFile);
             loadDatabase.LoadDatabaseGameInformation();
 
-
+            Console.WriteLine("All done!");
             Console.ReadLine();
             
         }

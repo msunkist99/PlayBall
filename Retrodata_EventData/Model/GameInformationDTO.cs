@@ -57,5 +57,14 @@ namespace Retrosheet_EventData.Model
         public string WinningRBIPlayerID { get;  set; }
 
         public string OScorer { get; set; }
+        public string SeasonYear { get; set; }
+        public string SeasonGameType { get; set; }
+        public string EditType { get; set; }
+        public string HowScored { get; set; }
+        public string InputProgVers { get; set; }
+        public string Inputter { get; set; }
+        public string InputTime { get; set; }
+        public string Scorer { get; set; }
+        public string Translator { get; set; }
     }
 }

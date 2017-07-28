@@ -44,6 +44,15 @@ namespace Retrosheet_Persist
 , x.game_info_value as _save_pitcher_id
 , y.game_info_value as _winning_rbi_player_id
 , z.game_info_value as _oscorer
+, aa.game_info_value as _season_year
+, bb.game_info_value as _season_game_type
+, cc.game_info_value as _edit_time
+, dd.game_info_value as _how_scored
+, ee.game_info_value as _input_prog_vers
+, ff.game_info_value as _inputter
+, gg.game_info_value as _input_time
+, hh.game_info_value as _scorer
+, ii.game_info_value as _translator
 from game_info driver
 left join game_info a on driver.game_id = a.game_id
                            and a.game_info_type = 'visteam'
@@ -97,6 +106,24 @@ left join game_info y on driver.game_id = y.game_id
                            and y.game_info_type = 'gwrbi'
 left join game_info z on driver.game_id = z.game_id
                            and z.game_info_type = 'oscorer'
+left join game_info aa on driver.game_id = aa.game_id
+                           and aa.game_info_type = 'season_year'
+left join game_info bb on driver.game_id = bb.game_id
+                           and bb.game_info_type = 'season_game_type'
+left join game_info cc on driver.game_id = cc.game_id
+                           and cc.game_info_type = 'edit_time'
+left join game_info dd on driver.game_id = dd.game_id
+                           and dd.game_info_type = 'howscored'
+left join game_info ee on driver.game_id = ee.game_id
+                           and ee.game_info_type = 'input_prog_vers'
+left join game_info ff on driver.game_id = ff.game_id
+                           and ff.game_info_type = 'inputter'
+left join game_info gg on driver.game_id = gg.game_id
+                           and gg.game_info_type = 'input_time'
+left join game_info hh on driver.game_id = hh.game_id
+                           and hh.game_info_type = 'scorer'
+left join game_info ii on driver.game_id = ii.game_id
+                           and ii.game_info_type = 'translator'
 where driver.game_info_type = 'date'";
 
             
@@ -200,6 +227,15 @@ where driver.game_info_type = 'date'";
                     game_Information.save_pitcher_id = result._save_pitcher_id;
                     game_Information.winning_rbi_player_id = result._winning_rbi_player_id;
                     game_Information.oscorer = result._oscorer;
+                    game_Information.season_year = result._season_year;
+                    game_Information.season_game_type = result._season_game_type;
+                    game_Information.edit_time = result._edit_time;
+                    game_Information.how_scored = result._how_scored;
+                    game_Information.input_prog_vers = result._input_prog_vers;
+                    game_Information.inputter = result._inputter;
+                    game_Information.input_time = result._input_time;
+                    game_Information.scorer = result._scorer;
+                    game_Information.translator = result._translator;
 
                     db.Game_Information.Add(game_Information);
 
@@ -258,6 +294,15 @@ where driver.game_info_type = 'date'";
             public string _save_pitcher_id { get; set; }
             public string _winning_rbi_player_id { get; set; }
             public string _oscorer { get; set; }
+            public string _season_year { get; set; }
+            public string _season_game_type { get; set; }
+            public string _edit_time { get; set; }
+            public string _how_scored { get; set; }
+            public string _input_prog_vers { get; set; }
+            public string _inputter { get; set; }
+            public string _input_time { get; set; }
+            public string _scorer { get; set; }
+            public string _translator { get; set; }
         }
     }
 }
