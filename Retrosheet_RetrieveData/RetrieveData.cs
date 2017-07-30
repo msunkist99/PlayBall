@@ -8,6 +8,9 @@ namespace Retrosheet_RetrieveData
     public class RetrieveData
     {
         private DateTime dateTime;
+        private DataModels.ReferenceData referenceData = new DataModels.ReferenceData();
+
+
         //constructor
         public RetrieveData()
         {
@@ -158,6 +161,26 @@ namespace Retrosheet_RetrieveData
         */
 
 
+        public void RetrieveReferenceData()
+        {
+            using (var dbCtx = new retrosheetDB())
+            {
+                var reference_items = from reference_data in dbCtx.Reference_Data
+                                     select new
+                                     {
+                                         reference_data
+                                     };
+
+                foreach (var reference_data_item in reference_items)
+                {
+                    referenceData.ReferenceItem.RecordID = reference_data_item.reference_data.record_id;
+                    referenceData.ReferenceItem.ReferenceDataType = reference_data_item.reference_data.ref_data_type;
+                    referenceData.ReferenceItem.ReferenceDataCode = reference_data_item.reference_data.ref_data_code;
+                    referenceData.ReferenceItem.ReferenceDataDescription = reference_data_item.reference_data.ref_data_desc;
+                }
+            }
+        }
+
         public void RetrieveGame(string gameID)
         {
             using (var dbCtx = new retrosheetDB())
@@ -170,10 +193,10 @@ namespace Retrosheet_RetrieveData
 
                             join ref_game_number in dbCtx.Reference_Data
                                   on new { A = "game_number", B = game_information.game_number.ToString() }
-                                      equals new { A = ref_game_number.ref_data_type, B = ref_game_number.ref_data_code }
+                                      equals new { A = ref_game_number.ref_data_type.ToString(), B = ref_game_number.ref_data_code }
 
                             join ref_wind_direction in dbCtx.Reference_Data
-                                 on new { A = "wind_direction", B = game_information.wind_direction }
+                                 on new { A = "wind_direction", B = game_information.wind_direction}
                                       equals new { A = ref_wind_direction.ref_data_type, B = ref_wind_direction.ref_data_code }
 
                             join ballpark in dbCtx.Ballparks on game_information.ballpark_id equals ballpark.ballpark_id
@@ -186,10 +209,42 @@ namespace Retrosheet_RetrieveData
                             join umpireSecond in dbCtx.Personnels on game_information.umpire_second_base_id equals umpireSecond.person_id
                             join umpireThird in dbCtx.Personnels on game_information.umpire_third_base_id equals umpireThird.person_id
 
+                            join umpireHomeRole in dbCtx.Reference_Data
+                                on new { A = "personnel", B = umpireHome.role }
+                                     equals new { A = umpireHomeRole.ref_data_type, B = umpireHomeRole.ref_data_code }
+
+                            join umpireFirstRole in dbCtx.Reference_Data
+                                on new { A = "personnel", B = umpireFirst.role }
+                                     equals new { A = umpireFirstRole.ref_data_type, B = umpireFirstRole.ref_data_code }
+
+                            join umpireSecondRole in dbCtx.Reference_Data
+                                on new { A = "personnel", B = umpireHome.role }
+                                     equals new { A = umpireSecondRole.ref_data_type, B = umpireSecondRole.ref_data_code }
+
+                            join umpireThirdRole in dbCtx.Reference_Data
+                                on new { A = "personnel", B = umpireHome.role }
+                                     equals new { A = umpireThirdRole.ref_data_type, B = umpireThirdRole.ref_data_code }
+
                             join winningPitcher in dbCtx.Players on game_information.winning_pitcher_id equals winningPitcher.player_id
                             join losingPitcher in dbCtx.Players on game_information.losing_pitcher_id equals losingPitcher.player_id
-                            join savePitcher in dbCtx.Players on game_information.save_pitcher_id equals savePitcher.player_id
-                            join winningRBI in dbCtx.Players on game_information.winning_rbi_player_id equals winningRBI.player_id
+
+                            // this is to prove the left join stuff works when there is data on the left side
+                            join xSavePitcher in dbCtx.Players on game_information.save_pitcher_id equals xSavePitcher.player_id
+                                into savePitcherJoin from savePitcher in savePitcherJoin.DefaultIfEmpty()
+
+                            join xWinningRBI in dbCtx.Players on game_information.winning_rbi_player_id equals xWinningRBI.player_id
+                                into winningRBIJoin from winningRBI  in winningRBIJoin.DefaultIfEmpty()
+
+                            join winningPitcherTeam in dbCtx.Teams on winningPitcher.team_id equals winningPitcherTeam.team_id
+                            join losingPitcherTeam in dbCtx.Teams on losingPitcher.team_id equals losingPitcherTeam.team_id
+                            join savePitcherTeam in dbCtx.Teams on savePitcher.team_id equals savePitcherTeam.team_id
+                            join xWinningRBITeam in dbCtx.Teams on winningRBI.team_id equals xWinningRBITeam.team_id
+                                into winningRBITeamJoin from winningRBITeam in winningRBITeamJoin.DefaultIfEmpty(null)
+                            join xWinningRBIFieldPosition in dbCtx.Reference_Data
+                                                            on new { A = "field_position_x", B = winningRBI.field_position }
+                                equals new { A = xWinningRBIFieldPosition.ref_data_type, B = xWinningRBIFieldPosition.ref_data_code }
+                                into winningRBIFieldPositionJoin from winningRBIFieldPosition in winningRBIFieldPositionJoin.DefaultIfEmpty()
+
 
                             where game_information.game_id == gameID
 
@@ -206,16 +261,20 @@ namespace Retrosheet_RetrieveData
                                 umpireFirst,
                                 umpireSecond,
                                 umpireThird,
+                                umpireHomeRole,
+                                umpireFirstRole,
+                                umpireSecondRole,
+                                umpireThirdRole,
                                 winningPitcher,
                                 losingPitcher,
                                 savePitcher,
-                                winningRBI
-
-
-                                
-
+                                winningRBI,
+                                winningPitcherTeam,
+                                losingPitcherTeam,
+                                savePitcherTeam,
+                                winningRBITeam,
+                                winningRBIFieldPosition
                             };
-           
 
                 DataModels.GameInformation gameInformation = new DataModels.GameInformation();
 
@@ -270,113 +329,156 @@ namespace Retrosheet_RetrieveData
                     gameInformation.SeasonGameTypeDesc = game.ref_game_type.ref_data_desc;
                     gameInformation.WindDirection = game.ref_wind_direction.ref_data_desc;
 
-                    gameInformation.BallPark.RecordID = game.ballpark.record_id;
-                    gameInformation.BallPark.ID = game.ballpark.ballpark_id;
-                    gameInformation.BallPark.Name = game.ballpark.name;
-                    gameInformation.BallPark.AKA = game.ballpark.aka;
-                    gameInformation.BallPark.City = game.ballpark.city;
-                    gameInformation.BallPark.State = game.ballpark.state;
+                    gameInformation.Ballpark.Ballpark.RecordID = game.ballpark.record_id;
+                    gameInformation.Ballpark.Ballpark.ID = game.ballpark.ballpark_id;
+                    gameInformation.Ballpark.Ballpark.Name = game.ballpark.name;
+                    gameInformation.Ballpark.Ballpark.AKA = game.ballpark.aka;
+                    gameInformation.Ballpark.Ballpark.City = game.ballpark.city;
+                    gameInformation.Ballpark.Ballpark.State = game.ballpark.state;
 
                     if (DateTime.TryParse(game.ballpark.start_date.ToString(), out dateTime))
                     {
-                        gameInformation.BallPark.StartDate = dateTime;
+                        gameInformation.Ballpark.Ballpark.StartDate = dateTime;
                     }
                     else
                     {
-                        gameInformation.BallPark.StartDate = DateTime.MaxValue; ;
+                        gameInformation.Ballpark.Ballpark.StartDate = DateTime.MaxValue; ;
                     }
 
                     if (DateTime.TryParse(game.ballpark.end_date.ToString(), out dateTime))
                     {
-                        gameInformation.BallPark.EndDate = dateTime;
+                        gameInformation.Ballpark.Ballpark.EndDate = dateTime;
                     }
                     else
                     {
-                        gameInformation.BallPark.EndDate = DateTime.MaxValue;
+                        gameInformation.Ballpark.Ballpark.EndDate = DateTime.MaxValue;
                     }
 
-                    gameInformation.BallPark.League = game.ballpark.league;
-                    gameInformation.BallPark.Notes = game.ballpark.notes;
+                    gameInformation.Ballpark.Ballpark.League = game.ballpark.league;
+                    //gameInformation.Ballpark.BallparkLeagueDesc = ;
+                    gameInformation.Ballpark.Ballpark.Notes = game.ballpark.notes;
 
-                    gameInformation.VisitingTeam.RecordID = game.visitingTeam.record_id;
-                    gameInformation.VisitingTeam.ID = game.visitingTeam.team_id;
-                    gameInformation.VisitingTeam.League = game.visitingTeam.league;
-                    gameInformation.VisitingTeam.City = game.visitingTeam.city;
-                    gameInformation.VisitingTeam.Name = game.visitingTeam.name;
+                    gameInformation.VisitingTeam.Team.RecordID = game.visitingTeam.record_id;
+                    gameInformation.VisitingTeam.Team.ID = game.visitingTeam.team_id;
+                    gameInformation.VisitingTeam.Team.League = game.visitingTeam.league;
+                    //gameInformation.VisitingTeam.TeamLeagueDesc = ;
+                    gameInformation.VisitingTeam.Team.City = game.visitingTeam.city;
+                    gameInformation.VisitingTeam.Team.Name = game.visitingTeam.name;
 
-                    gameInformation.HomeTeam.RecordID = game.homeTeam.record_id;
-                    gameInformation.HomeTeam.ID = game.homeTeam.team_id;
-                    gameInformation.HomeTeam.League = game.homeTeam.league;
-                    gameInformation.HomeTeam.City = game.homeTeam.city;
-                    gameInformation.HomeTeam.Name = game.homeTeam.name;
+                    gameInformation.HomeTeam.Team.RecordID = game.homeTeam.record_id;
+                    gameInformation.HomeTeam.Team.ID = game.homeTeam.team_id;
+                    gameInformation.HomeTeam.Team.League = game.homeTeam.league;
+                    //gameInformation.HomeTeam.TeamLeagueDesc = ;
+                    gameInformation.HomeTeam.Team.City = game.homeTeam.city;
+                    gameInformation.HomeTeam.Team.Name = game.homeTeam.name;
 
-                    gameInformation.UmpireHome.RecordID = game.umpireHome.record_id;
-                    gameInformation.UmpireHome.PersonID = game.umpireHome.person_id;
-                    gameInformation.UmpireHome.LastName = game.umpireHome.last_name;
-                    gameInformation.UmpireHome.FirstName = game.umpireHome.first_name;
-                    gameInformation.UmpireHome.CareerDate = game.umpireHome.career_date;
-                    //gameInformation.UmpireHome.Role = game.umpireHome.role;
+                    gameInformation.UmpireHome.UmpirePersonel.RecordID = game.umpireHome.record_id;
+                    gameInformation.UmpireHome.UmpirePersonel.PersonID = game.umpireHome.person_id;
+                    gameInformation.UmpireHome.UmpirePersonel.LastName = game.umpireHome.last_name;
+                    gameInformation.UmpireHome.UmpirePersonel.FirstName = game.umpireHome.first_name;
+                    gameInformation.UmpireHome.UmpirePersonel.CareerDate = game.umpireHome.career_date;
+                    gameInformation.UmpireHome.UmpireRole = game.umpireHomeRole.ref_data_desc;
 
-                    gameInformation.UmpireFirstBase.RecordID = game.umpireFirst.record_id;
-                    gameInformation.UmpireFirstBase.PersonID = game.umpireFirst.person_id;
-                    gameInformation.UmpireFirstBase.LastName = game.umpireFirst.last_name;
-                    gameInformation.UmpireFirstBase.FirstName = game.umpireFirst.first_name;
-                    gameInformation.UmpireFirstBase.CareerDate = game.umpireFirst.career_date;
-                    //gameInformation.UmpireFirstBase.Role = game.umpireFirst.role;
+                    gameInformation.UmpireFirst.UmpirePersonel.RecordID = game.umpireFirst.record_id;
+                    gameInformation.UmpireFirst.UmpirePersonel.PersonID = game.umpireFirst.person_id;
+                    gameInformation.UmpireFirst.UmpirePersonel.LastName = game.umpireFirst.last_name;
+                    gameInformation.UmpireFirst.UmpirePersonel.FirstName = game.umpireFirst.first_name;
+                    gameInformation.UmpireFirst.UmpirePersonel.CareerDate = game.umpireFirst.career_date;
+                    gameInformation.UmpireFirst.UmpireRole = game.umpireFirstRole.ref_data_desc;
 
-                    gameInformation.UmpireSecondBase.RecordID = game.umpireSecond.record_id;
-                    gameInformation.UmpireSecondBase.PersonID = game.umpireSecond.person_id;
-                    gameInformation.UmpireSecondBase.LastName = game.umpireSecond.last_name;
-                    gameInformation.UmpireSecondBase.FirstName = game.umpireSecond.first_name;
-                    gameInformation.UmpireSecondBase.CareerDate = game.umpireSecond.career_date;
-                    //gameInformation.UmpireSecondBase.Role = game.umpireSecond.role;
+                    gameInformation.UmpireSecond.UmpirePersonel.RecordID = game.umpireSecond.record_id;
+                    gameInformation.UmpireSecond.UmpirePersonel.PersonID = game.umpireSecond.person_id;
+                    gameInformation.UmpireSecond.UmpirePersonel.LastName = game.umpireSecond.last_name;
+                    gameInformation.UmpireSecond.UmpirePersonel.FirstName = game.umpireSecond.first_name;
+                    gameInformation.UmpireSecond.UmpirePersonel.CareerDate = game.umpireSecond.career_date;
+                    gameInformation.UmpireSecond.UmpireRole = game.umpireSecondRole.ref_data_desc;
 
-                    gameInformation.UmpireSecondBase.RecordID = game.umpireSecond.record_id;
-                    gameInformation.UmpireSecondBase.PersonID = game.umpireSecond.person_id;
-                    gameInformation.UmpireSecondBase.LastName = game.umpireSecond.last_name;
-                    gameInformation.UmpireSecondBase.FirstName = game.umpireSecond.first_name;
-                    gameInformation.UmpireSecondBase.CareerDate = game.umpireSecond.career_date;
-                    //gameInformation.UmpireSecondBase.Role = game.umpireSecond.role;
+                    gameInformation.UmpireThird.UmpirePersonel.RecordID = game.umpireThird.record_id;
+                    gameInformation.UmpireThird.UmpirePersonel.PersonID = game.umpireThird.person_id;
+                    gameInformation.UmpireThird.UmpirePersonel.LastName = game.umpireThird.last_name;
+                    gameInformation.UmpireThird.UmpirePersonel.FirstName = game.umpireThird.first_name;
+                    gameInformation.UmpireThird.UmpirePersonel.CareerDate = game.umpireThird.career_date;
+                    gameInformation.UmpireThird.UmpireRole = game.umpireThirdRole.ref_data_desc;
 
-                    gameInformation.WinningPitcher.RecordID = game.winningPitcher.record_id;
-                    gameInformation.WinningPitcher.PlayerID = game.winningPitcher.player_id;
-                    gameInformation.WinningPitcher.LastName = game.winningPitcher.last_name;
-                    gameInformation.WinningPitcher.FirstName = game.winningPitcher.first_name;
-                    gameInformation.WinningPitcher.Throws = game.winningPitcher.throws;
-                    gameInformation.WinningPitcher.Bats = game.winningPitcher.bats;
-                    //gameInformation.WinningPitcher.TeamID = game.winningPitcher.team_id;
-                    //gameInformation.WinningPitcher.Position = game.winningPitcher.field_position;
+                    gameInformation.WinningPitcher.Player.RecordID = game.winningPitcher.record_id;
+                    gameInformation.WinningPitcher.Player.PlayerID = game.winningPitcher.player_id;
+                    gameInformation.WinningPitcher.Player.LastName = game.winningPitcher.last_name;
+                    gameInformation.WinningPitcher.Player.FirstName = game.winningPitcher.first_name;
+                    gameInformation.WinningPitcher.Player.Throws = game.winningPitcher.throws;
+                    gameInformation.WinningPitcher.Player.Bats = game.winningPitcher.bats;
+                    gameInformation.WinningPitcher.PlayerTeam = game.winningPitcherTeam.name;
+                    gameInformation.WinningPitcher.Player.Position = "pitcher";
 
-                    gameInformation.LosingPitcher.RecordID = game.losingPitcher.record_id;
-                    gameInformation.LosingPitcher.PlayerID = game.losingPitcher.player_id;
-                    gameInformation.LosingPitcher.LastName = game.losingPitcher.last_name;
-                    gameInformation.LosingPitcher.FirstName = game.losingPitcher.first_name;
-                    gameInformation.LosingPitcher.Throws = game.losingPitcher.throws;
-                    gameInformation.LosingPitcher.Bats = game.losingPitcher.bats;
-                    //gameInformation.LosingPitcher.TeamID = game.losingPitcher.team_id;
-                    //gameInformation.LosingPitcher.Position = game.losingPitcher.field_position;
+                    gameInformation.LosingPitcher.Player.RecordID = game.losingPitcher.record_id;
+                    gameInformation.LosingPitcher.Player.PlayerID = game.losingPitcher.player_id;
+                    gameInformation.LosingPitcher.Player.LastName = game.losingPitcher.last_name;
+                    gameInformation.LosingPitcher.Player.FirstName = game.losingPitcher.first_name;
+                    gameInformation.LosingPitcher.Player.Throws = game.losingPitcher.throws;
+                    gameInformation.LosingPitcher.Player.Bats = game.losingPitcher.bats;
+                    gameInformation.LosingPitcher.PlayerTeam = game.losingPitcherTeam.name;
+                    gameInformation.LosingPitcher.Player.Position= "pitcher";
 
-                    gameInformation.SavePitcher.RecordID = game.savePitcher.record_id;
-                    gameInformation.SavePitcher.PlayerID = game.savePitcher.player_id;
-                    gameInformation.SavePitcher.LastName = game.savePitcher.last_name;
-                    gameInformation.SavePitcher.FirstName = game.savePitcher.first_name;
-                    gameInformation.SavePitcher.Throws = game.savePitcher.throws;
-                    gameInformation.SavePitcher.Bats = game.savePitcher.bats;
-                    //gameInformation.SavePitcher.TeamID = game.savePitcher.team_id;
-                    //gameInformation.SavePitcher.Position = game.savePitcher.field_position;
+                    gameInformation.SavePitcher.Player.RecordID = game.savePitcher.record_id;
+                    gameInformation.SavePitcher.Player.PlayerID = game.savePitcher.player_id;
+                    gameInformation.SavePitcher.Player.LastName = game.savePitcher.last_name;
+                    gameInformation.SavePitcher.Player.FirstName = game.savePitcher.first_name;
+                    gameInformation.SavePitcher.Player.Throws = game.savePitcher.throws;
+                    gameInformation.SavePitcher.Player.Bats = game.savePitcher.bats;
+                    gameInformation.SavePitcher.PlayerTeam = game.savePitcherTeam.name;
+                    gameInformation.SavePitcher.Player.Position = referenceData.ReferenceItem.ReferenceDataDescription;
 
-                    gameInformation.WinningRBIPlayer.RecordID = game.winningRBI.record_id;
-                    gameInformation.WinningRBIPlayer.PlayerID = game.winningRBI.player_id;
-                    gameInformation.WinningRBIPlayer.LastName = game.winningRBI.last_name;
-                    gameInformation.WinningRBIPlayer.FirstName = game.winningRBI.first_name;
-                    gameInformation.WinningRBIPlayer.Throws = game.winningRBI.throws;
-                    gameInformation.WinningRBIPlayer.Bats = game.winningRBI.bats;
-                    //gameInformation.WinningRBIPlayer.TeamID = game.winningRBI.team_id;
-                    //gameInformation.WinningRBIPlayer.Position = game.winningRBI.field_position;
+                    if (game.winningRBI != null )
+                    {
+                        gameInformation.WinningRBIPlayer.Player.RecordID = game.winningRBI.record_id;
+                        gameInformation.WinningRBIPlayer.Player.PlayerID = game.winningRBI.player_id;
+                        gameInformation.WinningRBIPlayer.Player.LastName = game.winningRBI.last_name;
+                        gameInformation.WinningRBIPlayer.Player.FirstName = game.winningRBI.first_name;
+                        gameInformation.WinningRBIPlayer.Player.Throws = game.winningRBI.throws;
+                        gameInformation.WinningRBIPlayer.Player.Bats = game.winningRBI.bats;
+                        gameInformation.WinningRBIPlayer.PlayerTeam = game.winningRBI.team_id;
+                    }
 
+                    if (game.winningRBIFieldPosition != null)
+                    {
+                        gameInformation.WinningRBIPlayer.Player.Position = game.winningRBIFieldPosition.ref_data_desc;
+                    }
                 }
             }
         }
 
+        public void RetrieveStartingPlayers(string gameID)
+        {
+            using (var dbCtx = new retrosheetDB())
+            {
+                var startingPlayers = from starting_Players in dbCtx.Starting_Player
+                                      where starting_Players.game_id == gameID
+
+                                      join players in dbCtx.Players on starting_Players.player_id equals players.player_id
+
+                                      select new
+                                      {
+                                          starting_Players,
+                                          players
+                                      };
+
+                DataModels.StartingPlayerInformation startingPlayerInformation = new DataModels.StartingPlayerInformation();
+
+                foreach (var startingPlayer in startingPlayers)
+                {
+                    startingPlayerInformation.StartingPlayer.RecordID = startingPlayer.starting_Players.record_id;
+                    startingPlayerInformation.StartingPlayer.GameID = startingPlayer.starting_Players.game_id;
+                    startingPlayerInformation.StartingPlayer.PlayerID = startingPlayer.starting_Players.player_id;
+                    startingPlayerInformation.StartingPlayer.GameTeamCode = startingPlayer.starting_Players.game_team_code;
+                    startingPlayerInformation.StartingPlayer.BattingOrder = startingPlayer.starting_Players.batting_order;
+                    startingPlayerInformation.StartingPlayer.FieldPosition = startingPlayer.starting_Players.field_position;
+
+                    startingPlayerInformation.LastName = startingPlayer.players.last_name;
+                    startingPlayerInformation.FirstName = startingPlayer.players.first_name;
+                    startingPlayerInformation.Throws = startingPlayer.players.throws;
+                    startingPlayerInformation.Bats = startingPlayer.players.bats;
+                }
+            }
+        }
+    }
 }
-}
+
