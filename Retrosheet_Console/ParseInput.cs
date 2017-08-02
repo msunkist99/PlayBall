@@ -11,7 +11,7 @@ namespace Retrosheet_Console
 {
     class ParseInput
     {
-        static void Main(string[] args)
+        static void xMain(string[] args)
         {
 
             // settings are captured in Settings constructor

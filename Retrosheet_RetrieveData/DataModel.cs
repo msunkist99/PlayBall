@@ -43,7 +43,7 @@ namespace Retrosheet_RetrieveData
         public class PlayerInformation
         {
             public PlayerDTO Player = new PlayerDTO();
-            public string GameID { get; set; }
+            //public string GameID { get; set; }
             public string PlayerTeam { get; set; }
             public string PlayerPositionDesc { get; set; }
         }
@@ -70,8 +70,4 @@ namespace Retrosheet_RetrieveData
             public string BallparkLeagueDesc { get; set; }
         }
     }
-
-   
-
-
 }

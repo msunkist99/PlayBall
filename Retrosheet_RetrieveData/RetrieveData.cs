@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using Retrosheet_Persist;
+using System.Collections.Generic;
 using Retrosheet_EventData.Model;
 
 namespace Retrosheet_RetrieveData
@@ -10,6 +11,10 @@ namespace Retrosheet_RetrieveData
         private DateTime dateTime;
         private DataModels.ReferenceData referenceData = new DataModels.ReferenceData();
 
+        private Dictionary<string, DataModels.ReferenceData> referenceDataDictionary = new Dictionary<string, DataModels.ReferenceData>();
+        private Dictionary<string, DataModels.StartingPlayerInformation> startingPlayerDictionary = new Dictionary<string, DataModels.StartingPlayerInformation>();
+        private Dictionary<string, DataModels.PlayerInformation> playerDictionary = new Dictionary<string, DataModels.PlayerInformation>();
+        private Dictionary<string, DataModels.TeamInformation> teamDictionary = new Dictionary<string, DataModels.TeamInformation>();
 
         //constructor
         public RetrieveData()
@@ -177,6 +182,8 @@ namespace Retrosheet_RetrieveData
                     referenceData.ReferenceItem.ReferenceDataType = reference_data_item.reference_data.ref_data_type;
                     referenceData.ReferenceItem.ReferenceDataCode = reference_data_item.reference_data.ref_data_code;
                     referenceData.ReferenceItem.ReferenceDataDescription = reference_data_item.reference_data.ref_data_desc;
+
+                    referenceDataDictionary.Add(referenceData.ReferenceItem.ReferenceDataType + referenceData.ReferenceItem.ReferenceDataCode, referenceData);
                 }
             }
         }
@@ -187,17 +194,17 @@ namespace Retrosheet_RetrieveData
             {
                 var games = from game_information in dbCtx.Game_Information
 
-                            join ref_game_type in dbCtx.Reference_Data
-                                  on new { A = "season_game_type", B = game_information.season_game_type }
-                                      equals new { A = ref_game_type.ref_data_type, B = ref_game_type.ref_data_code }
+                            //join ref_game_type in dbCtx.Reference_Data
+                            //      on new { A = "season_game_type", B = game_information.season_game_type }
+                            //          equals new { A = ref_game_type.ref_data_type, B = ref_game_type.ref_data_code }
 
-                            join ref_game_number in dbCtx.Reference_Data
-                                  on new { A = "game_number", B = game_information.game_number.ToString() }
-                                      equals new { A = ref_game_number.ref_data_type.ToString(), B = ref_game_number.ref_data_code }
+                            //join ref_game_number in dbCtx.Reference_Data
+                            //      on new { A = "game_number", B = game_information.game_number.ToString() }
+                            //          equals new { A = ref_game_number.ref_data_type.ToString(), B = ref_game_number.ref_data_code }
 
-                            join ref_wind_direction in dbCtx.Reference_Data
-                                 on new { A = "wind_direction", B = game_information.wind_direction}
-                                      equals new { A = ref_wind_direction.ref_data_type, B = ref_wind_direction.ref_data_code }
+                            //join ref_wind_direction in dbCtx.Reference_Data
+                            //     on new { A = "wind_direction", B = game_information.wind_direction}
+                            //          equals new { A = ref_wind_direction.ref_data_type, B = ref_wind_direction.ref_data_code }
 
                             join ballpark in dbCtx.Ballparks on game_information.ballpark_id equals ballpark.ballpark_id
 
@@ -251,9 +258,9 @@ namespace Retrosheet_RetrieveData
                             select new
                             {
                                 game_information,
-                                ref_game_type,
-                                ref_game_number,
-                                ref_wind_direction,
+                                //ref_game_type,
+                                //ref_game_number,
+                                //ref_wind_direction,
                                 ballpark,
                                 visitingTeam,
                                 homeTeam,
@@ -277,6 +284,7 @@ namespace Retrosheet_RetrieveData
                             };
 
                 DataModels.GameInformation gameInformation = new DataModels.GameInformation();
+                //DataModels.ReferenceData referenceData = new DataModels.ReferenceData();
 
                 foreach (var game in games)
                 {
@@ -284,6 +292,9 @@ namespace Retrosheet_RetrieveData
                     gameInformation.GameID = game.game_information.game_id;
                     gameInformation.VisitingTeam_ID = game.game_information.visiting_team_id;
                     gameInformation.HomeTeam_ID = game.game_information.home_team_id;
+
+                    RetrievePlayers("x", "x", game.game_information.home_team_id, game.game_information.visiting_team_id);
+
                     gameInformation.GameDate = game.game_information.game_date;
                     gameInformation.GameNumber = game.game_information.game_number;
                     gameInformation.StartTime = game.game_information.start_time;
@@ -325,9 +336,13 @@ namespace Retrosheet_RetrieveData
                     gameInformation.Scorer = game.game_information.scorer;
                     gameInformation.Translator = game.game_information.translator;
 
-                    gameInformation.GameNumberDesc = game.ref_game_number.ref_data_desc;
-                    gameInformation.SeasonGameTypeDesc = game.ref_game_type.ref_data_desc;
-                    gameInformation.WindDirection = game.ref_wind_direction.ref_data_desc;
+                    gameInformation.GameNumberDesc = RetrieveReferenceDataDesc("game_number", game.game_information.game_number.ToString());
+                    gameInformation.SeasonGameTypeDesc = RetrieveReferenceDataDesc("season_game_type", game.game_information.season_game_type);
+                    gameInformation.WindDirectionDesc = RetrieveReferenceDataDesc("wind_direction", game.game_information.wind_direction);
+
+                    //gameInformation.GameNumberDesc = game.ref_game_number.ref_data_desc;
+                    //gameInformation.SeasonGameTypeDesc = game.ref_game_type.ref_data_desc;
+                    //gameInformation.WindDirectionDesc = game.ref_wind_direction.ref_data_desc;
 
                     gameInformation.Ballpark.Ballpark.RecordID = game.ballpark.record_id;
                     gameInformation.Ballpark.Ballpark.ID = game.ballpark.ballpark_id;
@@ -400,14 +415,27 @@ namespace Retrosheet_RetrieveData
                     gameInformation.UmpireThird.UmpirePersonel.CareerDate = game.umpireThird.career_date;
                     gameInformation.UmpireThird.UmpireRole = game.umpireThirdRole.ref_data_desc;
 
-                    gameInformation.WinningPitcher.Player.RecordID = game.winningPitcher.record_id;
-                    gameInformation.WinningPitcher.Player.PlayerID = game.winningPitcher.player_id;
-                    gameInformation.WinningPitcher.Player.LastName = game.winningPitcher.last_name;
-                    gameInformation.WinningPitcher.Player.FirstName = game.winningPitcher.first_name;
-                    gameInformation.WinningPitcher.Player.Throws = game.winningPitcher.throws;
-                    gameInformation.WinningPitcher.Player.Bats = game.winningPitcher.bats;
-                    gameInformation.WinningPitcher.PlayerTeam = game.winningPitcherTeam.name;
-                    gameInformation.WinningPitcher.Player.Position = "pitcher";
+                    DataModels.PlayerInformation playerInformation = playerDictionary[game.winningPitcher.player_id];
+                    DataModels.TeamInformation teamInformation = teamDictionary[playerInformation.Player.TeamID];
+
+                    gameInformation.WinningPitcher.Player.RecordID = playerInformation.Player.RecordID;
+                    gameInformation.WinningPitcher.Player.PlayerID = playerInformation.Player.PlayerID;
+                    gameInformation.WinningPitcher.Player.LastName = playerInformation.Player.LastName;
+                    gameInformation.WinningPitcher.Player.FirstName = playerInformation.Player.FirstName;
+                    gameInformation.WinningPitcher.Player.Throws = RetrieveReferenceDataDesc("throws", playerInformation.Player.Throws);
+                    gameInformation.WinningPitcher.Player.Bats = RetrieveReferenceDataDesc("bats", playerInformation.Player.Bats);
+                    gameInformation.WinningPitcher.PlayerTeam = teamInformation.Team.Name;
+                    gameInformation.WinningPitcher.Player.Position = RetrieveReferenceDataDesc("field_position_x", playerInformation.Player.Position);
+
+
+                    //gameInformation.WinningPitcher.Player.RecordID = game.winningPitcher.record_id;
+                    //gameInformation.WinningPitcher.Player.PlayerID = game.winningPitcher.player_id;
+                    //gameInformation.WinningPitcher.Player.LastName = game.winningPitcher.last_name;
+                    //gameInformation.WinningPitcher.Player.FirstName = game.winningPitcher.first_name;
+                    //gameInformation.WinningPitcher.Player.Throws = game.winningPitcher.throws;
+                    //gameInformation.WinningPitcher.Player.Bats = game.winningPitcher.bats;
+                    //gameInformation.WinningPitcher.PlayerTeam = game.winningPitcherTeam.name;
+                    //gameInformation.WinningPitcher.Player.Position = "pitcher";
 
                     gameInformation.LosingPitcher.Player.RecordID = game.losingPitcher.record_id;
                     gameInformation.LosingPitcher.Player.PlayerID = game.losingPitcher.player_id;
@@ -472,13 +500,104 @@ namespace Retrosheet_RetrieveData
                     startingPlayerInformation.StartingPlayer.BattingOrder = startingPlayer.starting_Players.batting_order;
                     startingPlayerInformation.StartingPlayer.FieldPosition = startingPlayer.starting_Players.field_position;
 
-                    startingPlayerInformation.LastName = startingPlayer.players.last_name;
-                    startingPlayerInformation.FirstName = startingPlayer.players.first_name;
-                    startingPlayerInformation.Throws = startingPlayer.players.throws;
-                    startingPlayerInformation.Bats = startingPlayer.players.bats;
+                    DataModels.PlayerInformation playerInformation = RetrievePlayerInformation(startingPlayerInformation.StartingPlayer.PlayerID);
+
+                    startingPlayerInformation.LastName = playerInformation.Player.LastName;
+                    startingPlayerInformation.FirstName = playerInformation.Player.FirstName;
+                    startingPlayerInformation.Throws = RetrieveReferenceDataDesc("throws", startingPlayer.players.throws);
+                    startingPlayerInformation.Bats = RetrieveReferenceDataDesc("bats", startingPlayer.players.bats);
+                    //startingPlayerInformation.Throws = startingPlayer.players.throws;
+                    //startingPlayerInformation.Bats = startingPlayer.players.bats;
+
+                    startingPlayerDictionary.Add(startingPlayerInformation.StartingPlayer.PlayerID, startingPlayerInformation);
                 }
             }
         }
+
+        public void RetrievePlayers(string seasonYear, string SeasonGameType, string homeTeamId, string visitingTeamId)
+        {
+            var teamIdList = new string[] { homeTeamId, visitingTeamId };
+
+            using (var dbCtx = new retrosheetDB())
+            {
+                var players = from player_x in dbCtx.Players
+                              where teamIdList.Contains(player_x.team_id)
+
+                                        select new
+                                        {
+                                            player_x
+                                        };
+
+                DataModels.PlayerInformation playerInformation = new DataModels.PlayerInformation();
+
+                foreach (var player in players)
+                {
+                    playerInformation.Player.RecordID = player.player_x.record_id;
+                    playerInformation.Player.PlayerID = player.player_x.player_id;
+                    playerInformation.Player.LastName = player.player_x.last_name;
+                    playerInformation.Player.FirstName = player.player_x.first_name;
+                    playerInformation.Player.Throws = player.player_x.throws;
+                    playerInformation.Player.Bats = player.player_x.bats;
+                    playerInformation.Player.TeamID = player.player_x.team_id;
+                    playerInformation.Player.Position = player.player_x.field_position;
+
+                    //referenceData = referenceDataDictionary["field_position" + player.player_x.field_position];
+                    //playerInformation.PlayerPositionDesc = referenceData.ReferenceItem.ReferenceDataDescription;
+
+                    playerInformation.PlayerPositionDesc = RetrieveReferenceDataDesc("field_position", playerInformation.Player.Position);
+
+                    playerDictionary.Add(playerInformation.Player.PlayerID, playerInformation);
+                }
+            }
+        }
+
+        public void RetrieveTeams(string seasonYear, string SeasonGameType, string homeTeamId, string visitingTeamId)
+        {
+            var teamIdList = new string[] { homeTeamId, visitingTeamId };
+
+            using (var dbCtx = new retrosheetDB())
+            {
+                var teams = from team_x in dbCtx.Teams
+                            where teamIdList.Contains(team_x.team_id)
+
+                          select new
+                          {
+                              team_x
+                          };
+
+                DataModels.TeamInformation teamInformation = new DataModels.TeamInformation();
+
+                foreach (var team in teams)
+                {
+                    teamInformation.Team.RecordID = team.team_x.record_id;
+                    teamInformation.Team.ID = team.team_x.team_id;
+                    teamInformation.Team.League = team.team_x.league;
+                    teamInformation.Team.City = team.team_x.city;
+                    teamInformation.Team.Name = team.team_x.name;
+
+                    teamInformation.TeamLeagueDesc = RetrieveReferenceDataDesc("team_league", teamInformation.Team.League);
+
+                    teamDictionary.Add(teamInformation.Team.ID, teamInformation);
+                }
+            }
+        }
+        private string RetrieveReferenceDataDesc(string ref_data_type, string ref_data_code)
+        {
+            DataModels.ReferenceData referenceData = new DataModels.ReferenceData();
+
+            referenceData = referenceDataDictionary[ref_data_type + ref_data_code];
+            return referenceData.ReferenceItem.ReferenceDataDescription;
+        }
+
+        private DataModels.PlayerInformation RetrievePlayerInformation (string playerId)
+        {
+            DataModels.PlayerInformation playerInformation = new DataModels.PlayerInformation();
+
+            playerInformation = playerDictionary[playerId];
+            return playerInformation;
+        }
+
     }
+}
 }
 

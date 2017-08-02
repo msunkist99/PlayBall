@@ -10,7 +10,7 @@ namespace Retrosheet_Console
     class DisplayRetrievedData
     {
 
-        static void xMain(string[] args)
+        static void Main(string[] args)
         {
             RetrieveData retrieveData = new RetrieveData();
 
