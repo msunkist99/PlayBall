@@ -22,5 +22,7 @@ namespace Retrosheet_Persist
         public string bats { get; set; }
         public string team_id { get; set; }
         public string field_position { get; set; }
+        public string season_year { get; set; }
+        public string season_game_type { get; set; }
     }
 }

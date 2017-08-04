@@ -22,5 +22,6 @@ namespace Retrosheet_Persist
         public string player_id { get; set; }
         public int batting_order { get; set; }
         public int field_position { get; set; }
+        public string team_id { get; set; }
     }
 }

@@ -204,7 +204,7 @@ namespace Retrosheet_DataFileIO
                     substitutePlayerDTO.PlayerID = columnValue[5];
                     substitutePlayerDTO.BattingOrder = Convert.ToInt16(columnValue[8]);
                     substitutePlayerDTO.FieldPosition = Convert.ToInt16(columnValue[9]);
-
+                    substitutePlayerDTO.TeamId = columnValue[10];
                     SubstitutePlayerPersist.CreateSubstitutePlayer(substitutePlayerDTO);
                 }
             }
@@ -241,7 +241,7 @@ namespace Retrosheet_DataFileIO
                     startingPlayerDTO.GameTeamCode = Convert.ToInt16(columnValue[4]);
                     startingPlayerDTO.BattingOrder = Convert.ToInt16(columnValue[5]);
                     startingPlayerDTO.FieldPosition = Convert.ToInt16(columnValue[6]);
-
+                    startingPlayerDTO.TeamId = columnValue[7];
                     StartingPlayerPersist.CreateStartingPlayer(startingPlayerDTO);
                 }
             }
@@ -375,6 +375,7 @@ namespace Retrosheet_DataFileIO
                     pitcherAdjustmentDTO.Sequence = Convert.ToInt16(columnValue[3]);
                     pitcherAdjustmentDTO.PlayerID = columnValue[5];
                     pitcherAdjustmentDTO.PitcherHand = columnValue[6];
+                    pitcherAdjustmentDTO.TeamID = columnValue[7];
 
                     PitcherAdjustmentPersist.CreatePitcherAdjustment(pitcherAdjustmentDTO);
                 }
@@ -563,7 +564,7 @@ namespace Retrosheet_DataFileIO
                     batterAdjustmentDTO.Sequence = Convert.ToInt16(columnValue[3]);
                     batterAdjustmentDTO.PlayerID = columnValue[5];
                     batterAdjustmentDTO.Bats = columnValue[6];
-
+                    batterAdjustmentDTO.TeamID = columnValue[7];
                     BatterAdjustmentPersist.CreateBatterAdjustment(batterAdjustmentDTO);
                 }
             }
@@ -630,13 +631,15 @@ namespace Retrosheet_DataFileIO
                     PlayerDTO playerDTO = new PlayerDTO();
 
                     playerDTO.RecordID = Guid.NewGuid();
-                    playerDTO.PlayerID = columnValue[0];
-                    playerDTO.LastName = columnValue[1];
-                    playerDTO.FirstName = columnValue[2];
-                    playerDTO.Throws = columnValue[3];
-                    playerDTO.Bats = columnValue[4];
-                    playerDTO.TeamID = columnValue[5];
-                    playerDTO.Position = columnValue[6];
+                    playerDTO.SeasonYear = columnValue[0];
+                    playerDTO.SeasonGameType = columnValue[1];
+                    playerDTO.PlayerID = columnValue[2];
+                    playerDTO.LastName = columnValue[3];
+                    playerDTO.FirstName = columnValue[4];
+                    playerDTO.Throws = columnValue[5];
+                    playerDTO.Bats = columnValue[6];
+                    playerDTO.TeamID = columnValue[7];
+                    playerDTO.Position = columnValue[8];
 
                     PlayerPersist.CreatePlayer(playerDTO);
                 }
@@ -669,10 +672,12 @@ namespace Retrosheet_DataFileIO
                     TeamDTO teamDTO = new TeamDTO();
 
                     teamDTO.RecordID = Guid.NewGuid();
-                    teamDTO.ID = columnValue[0];
-                    teamDTO.League = columnValue[1];
-                    teamDTO.City = columnValue[2];
-                    teamDTO.Name = columnValue[3];
+                    teamDTO.SeasonYear = columnValue[0];
+                    teamDTO.SeasonGameType = columnValue[1];
+                    teamDTO.TeamID = columnValue[2];
+                    teamDTO.League = columnValue[3];
+                    teamDTO.City = columnValue[4];
+                    teamDTO.Name = columnValue[5];
 
                     TeamPersist.CreateTeam(teamDTO);
                     Console.WriteLine(textLine);

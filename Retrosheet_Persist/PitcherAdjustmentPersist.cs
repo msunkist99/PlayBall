@@ -55,6 +55,7 @@ namespace Retrosheet_Persist
             pitcherAdjustment.sequence = pitcherAdjustmentDTO.Sequence;
             pitcherAdjustment.player_id = pitcherAdjustmentDTO.PlayerID;
             pitcherAdjustment.pitcher_hand = pitcherAdjustmentDTO.PitcherHand;
+            pitcherAdjustment.team_id = pitcherAdjustmentDTO.TeamID;
 
             return pitcherAdjustment;
         }

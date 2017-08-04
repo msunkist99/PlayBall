@@ -54,6 +54,7 @@ namespace Retrosheet_Persist
             batterAdjustment.sequence = batterAdjustmentDTO.Sequence;
             batterAdjustment.player_id = batterAdjustmentDTO.PlayerID;
             batterAdjustment.bats = batterAdjustmentDTO.Bats;
+            batterAdjustment.team_id = batterAdjustmentDTO.TeamID;
 
             return batterAdjustment;
         }

@@ -17,6 +17,7 @@ namespace Retrosheet_EventData.Model
         // key to player.ID or umpireManager.ID
         public string PlayerID { get; set; }
         public string Bats { get; set; }
+        public string TeamID { get; set; }
 
     }
 }

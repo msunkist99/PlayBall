@@ -20,6 +20,8 @@ namespace Retrosheet_DataFileIO
         private int sequence = 0;
         private int commentSequence = 0;
         private int sequenceHold = 0;
+        private string homeTeamID = null;
+        private string visitingTeamID = null;
 
         // constructor
         public DataFileIO()
@@ -137,13 +139,17 @@ namespace Retrosheet_DataFileIO
                     {
                         CreatePlayerOutput(outputPath,
                                            outputFile,
-                                           textLine);
+                                           textLine,
+                                           seasonYear,
+                                           seasonGameType);
                     }
                     else if (fileType == "team")
                     {
                         CreateTeamOutput(outputPath,
                                          outputFile,
-                                         textLine);
+                                         textLine,
+                                         seasonYear,
+                                         seasonGameType);
                     }
                 }
             }
@@ -223,13 +229,15 @@ namespace Retrosheet_DataFileIO
 
         private void CreateTeamOutput(string outputPath,
                                       string outputFile,
-                                      string textLine)
+                                      string textLine,
+                                       string seasonYear,
+                                       string seasonGameType)
         {
             textLine = textLine.Replace(inputDelimiter, outputDelimiter);
 
             WriteEventFile(outputPath,
                       outputFile + "_team",
-                      textLine,
+                      seasonYear + outputDelimiter + seasonGameType + outputDelimiter + textLine,
                       true);
         }
 
@@ -238,8 +246,7 @@ namespace Retrosheet_DataFileIO
                                        string textLine,
                                        string[] columnValue,
                                        string season_year,
-                                       string season_game_type
-                    )
+                                       string season_game_type)
         {
             string commentText = null;
 
@@ -252,6 +259,8 @@ namespace Retrosheet_DataFileIO
                     gameTeamCode = 0;
                     sequence = 0;
                     commentSequence = 0;
+                    homeTeamID = null;
+                    visitingTeamID = null;
 
                     WriteEventFile(outputPath,
                                    outputFile + "_gameinfo" ,
@@ -272,6 +281,7 @@ namespace Retrosheet_DataFileIO
                 case "info":
 
                     textLine = textLine.Replace(inputDelimiter, outputDelimiter);
+                    
 
                     /*if ((columnValue[1] == "edittime") ||
                         (columnValue[1] == "howscored") ||
@@ -289,10 +299,21 @@ namespace Retrosheet_DataFileIO
                     else
                     {
                     */
-                        WriteEventFile(outputPath,
-                                  outputFile + "_game" + columnValue[0],
-                                  gameID + outputDelimiter + textLine,
-                                  true);
+
+                    if (columnValue[1] == "hometeam")
+                    {
+                        homeTeamID = columnValue[2];
+                    }
+
+                    if (columnValue[1] == "visteam")
+                    {
+                        visitingTeamID = columnValue[2];
+                    }
+
+                    WriteEventFile(outputPath,
+                                   outputFile + "_game" + columnValue[0],
+                                   gameID + outputDelimiter + textLine,
+                                   true);
                     //}
                     break;
 
@@ -300,10 +321,22 @@ namespace Retrosheet_DataFileIO
 
                     textLine = textLine.Replace(inputDelimiter, outputDelimiter);
 
+                    if (columnValue[3] == "0")
+                    {
+                        WriteEventFile(outputPath,
+                                       outputFile + "_" + columnValue[0],
+                                       gameID + outputDelimiter + textLine + outputDelimiter + visitingTeamID,
+                                       true);
+
+                    }
+                    else
+                    {
                     WriteEventFile(outputPath,
-                              outputFile + "_" + columnValue[0],
-                              gameID + outputDelimiter + textLine,
-                              true);
+                                   outputFile + "_" + columnValue[0],
+                                   gameID + outputDelimiter + textLine + outputDelimiter + homeTeamID,
+                                   true);
+                    }
+
                     break;
 
                 case "play":
@@ -383,6 +416,8 @@ namespace Retrosheet_DataFileIO
                     }
 
                     //  capture the third part of the record key
+                    //  0 - top of the inning - visiting team
+                    //  1 - bottom of the inning - home team
                     if (gameTeamCode != Int32.Parse(columnValue[2]))
                     {
                         gameTeamCode = Int32.Parse(columnValue[2]);
@@ -407,14 +442,28 @@ namespace Retrosheet_DataFileIO
 
                     textLine = textLine.Replace(inputDelimiter, outputDelimiter);
 
-                    WriteEventFile(outputPath,
-                              outputFile + "_" + columnValue[0],
-                              gameID + outputDelimiter
-                              + inning + outputDelimiter
-                              + gameTeamCode + outputDelimiter
-                              + sequence + outputDelimiter
-                              + textLine,
-                              true);
+                    if (columnValue[3] == "0")
+                    {
+                        WriteEventFile(outputPath,
+                                  outputFile + "_" + columnValue[0],
+                                  gameID + outputDelimiter
+                                  + inning + outputDelimiter
+                                  + gameTeamCode + outputDelimiter
+                                  + sequence + outputDelimiter
+                                  + textLine + outputDelimiter + visitingTeamID,
+                                  true);
+                    }
+                    else
+                    {
+                        WriteEventFile(outputPath,
+                                  outputFile + "_" + columnValue[0],
+                                  gameID + outputDelimiter
+                                  + inning + outputDelimiter
+                                  + gameTeamCode + outputDelimiter
+                                  + sequence + outputDelimiter
+                                  + textLine + outputDelimiter + homeTeamID,
+                                  true);
+                    }
                     break;
 
                 case "data":
@@ -431,28 +480,69 @@ namespace Retrosheet_DataFileIO
 
                     textLine = textLine.Replace(inputDelimiter, outputDelimiter);
 
-                    WriteEventFile(outputPath,
-                              outputFile + "_" + columnValue[0],
-                              gameID + outputDelimiter
-                              + inning + outputDelimiter
-                              + gameTeamCode + outputDelimiter
-                              + sequence + outputDelimiter
-                              + textLine,
-                              true);
+                    if (gameTeamCode == 0)
+                    //  top of the inning - visiting team is batting
+                    {
+                        WriteEventFile(outputPath,
+                                  outputFile + "_" + columnValue[0],
+                                  gameID + outputDelimiter
+                                  + inning + outputDelimiter
+                                  + gameTeamCode + outputDelimiter
+                                  + sequence + outputDelimiter
+                                  + textLine + outputDelimiter + visitingTeamID,
+                                  true);
+                    }
+                    else if (gameTeamCode == 1)
+                    //  bottom of the inning - home team is batting
+                    {
+                        WriteEventFile(outputPath,
+                                  outputFile + "_" + columnValue[0],
+                                  gameID + outputDelimiter
+                                  + inning + outputDelimiter
+                                  + gameTeamCode + outputDelimiter
+                                  + sequence + outputDelimiter
+                                  + textLine + outputDelimiter + homeTeamID,
+                                  true);
+                    }
+                    else
+                    {
+                        Console.WriteLine();
+                    }
                     break;
 
                 case "padj":
 
                     textLine = textLine.Replace(inputDelimiter, outputDelimiter);
 
-                    WriteEventFile(outputPath,
-                              outputFile + "_" + columnValue[0],
-                              gameID + outputDelimiter
-                              + inning + outputDelimiter
-                              + gameTeamCode + outputDelimiter
-                              + sequence + outputDelimiter
-                              + textLine,
-                              true);
+                    if (gameTeamCode == 0)
+                    {
+                    // top of the inning - home team is pitching
+                        WriteEventFile(outputPath,
+                                  outputFile + "_" + columnValue[0],
+                                  gameID + outputDelimiter
+                                  + inning + outputDelimiter
+                                  + gameTeamCode + outputDelimiter
+                                  + sequence + outputDelimiter
+                                  + textLine + outputDelimiter + homeTeamID,
+                                  true);
+                    }
+                    else if (gameTeamCode == 1)
+                    {
+                     // bottom of the inning - visiting team is pitching
+                        WriteEventFile(outputPath,
+                                  outputFile + "_" + columnValue[0],
+                                  gameID + outputDelimiter
+                                  + inning + outputDelimiter
+                                  + gameTeamCode + outputDelimiter
+                                  + sequence + outputDelimiter
+                                  + textLine + outputDelimiter + visitingTeamID,
+                                  true);
+                    }
+                    else
+                    {
+                        Console.WriteLine();
+                    }
+
                     break;
 
                 case "ladj":
@@ -596,13 +686,19 @@ namespace Retrosheet_DataFileIO
 
         private void CreatePlayerOutput(string outputPath,
                                         string outputFile,
-                                        string textLine)
+                                        string textLine,
+                                        string seasonYear,
+                                        string seasonGameType)
         {
             textLine = textLine.Replace(inputDelimiter, outputDelimiter);
 
+            // the last column of the player record tends to have a trailing space.
+            // use trim to clean up that trailing space
+            textLine = textLine.Trim();
+
             WriteEventFile(outputPath,
                       outputFile + "_players",
-                      textLine,
+                      seasonYear + outputDelimiter + seasonGameType + outputDelimiter + textLine,
                       true);
 
         }

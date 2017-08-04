@@ -21,5 +21,6 @@ namespace Retrosheet_Persist
         public int sequence { get; set; }
         public string player_id { get; set; }
         public string pitcher_hand { get; set; }
+        public string team_id { get; set; }
     }
 }

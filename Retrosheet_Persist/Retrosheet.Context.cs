@@ -27,8 +27,6 @@ namespace Retrosheet_Persist
     
         public virtual DbSet<Ballpark> Ballparks { get; set; }
         public virtual DbSet<Reference_Data> Reference_Data { get; set; }
-        public virtual DbSet<Player> Players { get; set; }
-        public virtual DbSet<Team> Teams { get; set; }
         public virtual DbSet<Batter_Adjustment> Batter_Adjustment { get; set; }
         public virtual DbSet<Game_Comment> Game_Comment { get; set; }
         public virtual DbSet<Game_Data> Game_Data { get; set; }
@@ -43,5 +41,7 @@ namespace Retrosheet_Persist
         public virtual DbSet<Substitute_Umpire> Substitute_Umpire { get; set; }
         public virtual DbSet<Personnel> Personnels { get; set; }
         public virtual DbSet<Game_Information> Game_Information { get; set; }
+        public virtual DbSet<Player> Players { get; set; }
+        public virtual DbSet<Team> Teams { get; set; }
     }
 }

@@ -21,5 +21,6 @@ namespace Retrosheet_EventData.Model
 
         // may have to cast from int to string to access reference value
         public int FieldPosition { get;  set; }
+        public string TeamId { get; set; }
     }
 }

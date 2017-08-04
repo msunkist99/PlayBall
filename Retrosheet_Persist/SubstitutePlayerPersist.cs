@@ -56,6 +56,7 @@ namespace Retrosheet_Persist
             substitutePlayer.game_team_code = substitutePlayerDTO.GameTeamCode;
             substitutePlayer.batting_order = substitutePlayerDTO.BattingOrder;
             substitutePlayer.field_position = substitutePlayerDTO.FieldPosition;
+            substitutePlayer.team_id = substitutePlayerDTO.TeamId;
 
             return substitutePlayer;
         }

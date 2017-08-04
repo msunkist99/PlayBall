@@ -46,6 +46,7 @@ namespace Retrosheet_RetrieveData
             //public string GameID { get; set; }
             public string PlayerTeam { get; set; }
             public string PlayerPositionDesc { get; set; }
+            public string PlayerTeamName { get; set; }
         }
 
         public class StartingPlayerInformation
@@ -56,6 +57,7 @@ namespace Retrosheet_RetrieveData
             public string Throws { get; set; }
             public string Bats { get; set; }
             public string FieldPostionDesc { get; set; }
+            public string TeamName { get; set; }
         }
 
         public class TeamInformation

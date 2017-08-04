@@ -33,10 +33,12 @@ namespace Retrosheet_Persist
             var team = new Team();
 
             team.record_id = teamDTO.RecordID;
-            team.team_id = teamDTO.ID;
+            team.team_id = teamDTO.TeamID;
             team.league = teamDTO.League;
             team.city = teamDTO.City;
             team.name = teamDTO.Name;
+            team.season_year = teamDTO.SeasonYear;
+            team.season_game_type = teamDTO.SeasonGameType;
 
             return team;
         }

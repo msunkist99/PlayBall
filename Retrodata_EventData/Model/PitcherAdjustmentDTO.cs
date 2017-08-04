@@ -22,5 +22,6 @@ namespace Retrosheet_EventData.Model
         // key player.ID
         public string PlayerID { get;  set; }
         public string PitcherHand { get;  set; }
+        public string TeamID { get; set; }
     }
 }

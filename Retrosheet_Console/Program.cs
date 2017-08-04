@@ -590,7 +590,7 @@ namespace Retrosheet_Console
 
 
                     teamDTO.RecordID = Guid.NewGuid();
-                    teamDTO.ID = columnValue[0];
+                    teamDTO.TeamID = columnValue[0];
                     teamDTO.League = columnValue[1];
                     teamDTO.City = columnValue[2];
                     teamDTO.Name = columnValue[3];

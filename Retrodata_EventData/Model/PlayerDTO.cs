@@ -19,5 +19,7 @@ namespace Retrosheet_EventData.Model
         public string TeamID { get;  set; }
         // field position reference data available
         public string Position { get;  set; }
+        public string SeasonYear { get; set; }
+        public string SeasonGameType { get; set; }
     }
 }

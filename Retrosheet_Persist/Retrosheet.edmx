@@ -40,6 +40,7 @@
           <Property Name="sequence" Type="int" Nullable="false" />
           <Property Name="player_id" Type="varchar" MaxLength="50" Nullable="false" />
           <Property Name="bats" Type="varchar" MaxLength="50" Nullable="false" />
+          <Property Name="team_id" Type="varchar" MaxLength="50" />
         </EntityType>
         <EntityType Name="Ejection">
           <Key>
@@ -151,6 +152,7 @@
           <Property Name="sequence" Type="int" Nullable="false" />
           <Property Name="player_id" Type="varchar" MaxLength="50" Nullable="false" />
           <Property Name="pitcher_hand" Type="char" MaxLength="1" Nullable="false" />
+          <Property Name="team_id" Type="varchar" MaxLength="50" />
         </EntityType>
         <EntityType Name="Play">
           <Key>
@@ -181,6 +183,8 @@
           <Property Name="bats" Type="varchar" MaxLength="50" Nullable="false" />
           <Property Name="team_id" Type="varchar" MaxLength="50" Nullable="false" />
           <Property Name="field_position" Type="varchar" MaxLength="50" Nullable="false" />
+          <Property Name="season_year" Type="varchar" MaxLength="50" />
+          <Property Name="season_game_type" Type="char" MaxLength="1" />
         </EntityType>
         <EntityType Name="Reference_Data">
           <Key>
@@ -221,6 +225,7 @@
           <Property Name="game_team_code" Type="int" Nullable="false" />
           <Property Name="batting_order" Type="int" Nullable="false" />
           <Property Name="field_position" Type="int" Nullable="false" />
+          <Property Name="team_id" Type="varchar" MaxLength="50" />
         </EntityType>
         <EntityType Name="Substitute_Player">
           <Key>
@@ -234,6 +239,7 @@
           <Property Name="player_id" Type="varchar" MaxLength="50" Nullable="false" />
           <Property Name="batting_order" Type="int" Nullable="false" />
           <Property Name="field_position" Type="int" Nullable="false" />
+          <Property Name="team_id" Type="varchar" MaxLength="50" />
         </EntityType>
         <EntityType Name="Substitute_Umpire">
           <Key>
@@ -256,6 +262,8 @@
           <Property Name="league" Type="varchar" MaxLength="50" Nullable="false" />
           <Property Name="city" Type="varchar" MaxLength="50" Nullable="false" />
           <Property Name="name" Type="varchar" MaxLength="50" Nullable="false" />
+          <Property Name="season_year" Type="varchar" MaxLength="50" />
+          <Property Name="season_game_type" Type="char" MaxLength="1" />
         </EntityType>
         <EntityContainer Name="RetrosheetDBModelStoreContainer">
           <EntitySet Name="Admin_Info" EntityType="Self.Admin_Info" Schema="dbo" store:Type="Tables" />
@@ -299,8 +307,6 @@
         <EntityContainer Name="retrosheetDB" annotation:LazyLoadingEnabled="true">
           <EntitySet Name="Ballparks" EntityType="Self.Ballpark" />
           <EntitySet Name="Reference_Data" EntityType="RetrosheetDBModel.Reference_Data" />
-          <EntitySet Name="Players" EntityType="RetrosheetDBModel.Player" />
-          <EntitySet Name="Teams" EntityType="RetrosheetDBModel.Team" />
           <EntitySet Name="Batter_Adjustment" EntityType="RetrosheetDBModel.Batter_Adjustment" />
           <EntitySet Name="Game_Comment" EntityType="RetrosheetDBModel.Game_Comment" />
           <EntitySet Name="Game_Data" EntityType="RetrosheetDBModel.Game_Data" />
@@ -315,6 +321,8 @@
           <EntitySet Name="Substitute_Umpire" EntityType="RetrosheetDBModel.Substitute_Umpire" />
           <EntitySet Name="Personnels" EntityType="RetrosheetDBModel.Personnel" />
           <EntitySet Name="Game_Information" EntityType="RetrosheetDBModel.Game_Information" />
+          <EntitySet Name="Players" EntityType="RetrosheetDBModel.Player" />
+          <EntitySet Name="Teams" EntityType="RetrosheetDBModel.Team" />
         </EntityContainer>
         <EntityType Name="Reference_Data">
           <Key>
@@ -324,29 +332,6 @@
           <Property Name="ref_data_type" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
           <Property Name="ref_data_code" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
           <Property Name="ref_data_desc" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
-        </EntityType>
-        <EntityType Name="Player">
-          <Key>
-            <PropertyRef Name="record_id" />
-          </Key>
-          <Property Name="record_id" Type="Guid" Nullable="false" />
-          <Property Name="player_id" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
-          <Property Name="last_name" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
-          <Property Name="first_name" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
-          <Property Name="throws" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
-          <Property Name="bats" Type="String" Nullable="false" MaxLength="50" Unicode="false" FixedLength="false" />
-          <Property Name="team_id" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
-          <Property Name="field_position" Type="String" Nullable="false" MaxLength="50" Unicode="false" FixedLength="false" />
-        </EntityType>
-        <EntityType Name="Team">
-          <Key>
-            <PropertyRef Name="record_id" />
-          </Key>
-          <Property Name="record_id" Type="Guid" Nullable="false" />
-          <Property Name="team_id" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
-          <Property Name="league" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
-          <Property Name="city" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
-          <Property Name="name" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
         </EntityType>
         <EntityType Name="Batter_Adjustment">
           <Key>
@@ -359,6 +344,7 @@
           <Property Name="sequence" Type="Int32" Nullable="false" />
           <Property Name="player_id" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
           <Property Name="bats" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="team_id" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
         </EntityType>
         <EntityType Name="Game_Comment">
           <Key>
@@ -402,6 +388,7 @@
           <Property Name="sequence" Type="Int32" Nullable="false" />
           <Property Name="player_id" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
           <Property Name="pitcher_hand" Type="String" Nullable="false" MaxLength="1" FixedLength="true" Unicode="false" />
+          <Property Name="team_id" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
         </EntityType>
         <EntityType Name="Starting_Player">
           <Key>
@@ -413,6 +400,7 @@
           <Property Name="game_team_code" Type="Int32" Nullable="false" />
           <Property Name="batting_order" Type="Int32" Nullable="false" />
           <Property Name="field_position" Type="Int32" Nullable="false" />
+          <Property Name="team_id" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
         </EntityType>
         <EntityType Name="Substitute_Player">
           <Key>
@@ -426,6 +414,7 @@
           <Property Name="player_id" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
           <Property Name="batting_order" Type="Int32" Nullable="false" />
           <Property Name="field_position" Type="Int32" Nullable="false" />
+          <Property Name="team_id" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
         </EntityType>
         <EntityType Name="Play">
           <Key>
@@ -553,6 +542,33 @@
           <Property Name="scorer" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
           <Property Name="translator" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
         </EntityType>
+        <EntityType Name="Player">
+          <Key>
+            <PropertyRef Name="record_id" />
+          </Key>
+          <Property Name="record_id" Type="Guid" Nullable="false" />
+          <Property Name="player_id" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="last_name" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="first_name" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="throws" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="bats" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="team_id" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="field_position" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="season_year" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="season_game_type" Type="String" MaxLength="1" FixedLength="true" Unicode="false" />
+        </EntityType>
+        <EntityType Name="Team">
+          <Key>
+            <PropertyRef Name="record_id" />
+          </Key>
+          <Property Name="record_id" Type="Guid" Nullable="false" />
+          <Property Name="team_id" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="league" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="city" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="name" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="season_year" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="season_game_type" Type="String" MaxLength="1" FixedLength="true" Unicode="false" />
+        </EntityType>
       </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -585,34 +601,10 @@
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
-          <EntitySetMapping Name="Players">
-            <EntityTypeMapping TypeName="RetrosheetDBModel.Player">
-              <MappingFragment StoreEntitySet="Player">
-                <ScalarProperty Name="field_position" ColumnName="field_position" />
-                <ScalarProperty Name="team_id" ColumnName="team_id" />
-                <ScalarProperty Name="bats" ColumnName="bats" />
-                <ScalarProperty Name="throws" ColumnName="throws" />
-                <ScalarProperty Name="first_name" ColumnName="first_name" />
-                <ScalarProperty Name="last_name" ColumnName="last_name" />
-                <ScalarProperty Name="player_id" ColumnName="player_id" />
-                <ScalarProperty Name="record_id" ColumnName="record_id" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
-          <EntitySetMapping Name="Teams">
-            <EntityTypeMapping TypeName="RetrosheetDBModel.Team">
-              <MappingFragment StoreEntitySet="Team">
-                <ScalarProperty Name="name" ColumnName="name" />
-                <ScalarProperty Name="city" ColumnName="city" />
-                <ScalarProperty Name="league" ColumnName="league" />
-                <ScalarProperty Name="team_id" ColumnName="team_id" />
-                <ScalarProperty Name="record_id" ColumnName="record_id" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
           <EntitySetMapping Name="Batter_Adjustment">
             <EntityTypeMapping TypeName="RetrosheetDBModel.Batter_Adjustment">
               <MappingFragment StoreEntitySet="Batter_Adjustment">
+                <ScalarProperty Name="team_id" ColumnName="team_id" />
                 <ScalarProperty Name="bats" ColumnName="bats" />
                 <ScalarProperty Name="player_id" ColumnName="player_id" />
                 <ScalarProperty Name="sequence" ColumnName="sequence" />
@@ -660,6 +652,7 @@
           <EntitySetMapping Name="Pitcher_Adjustment">
             <EntityTypeMapping TypeName="RetrosheetDBModel.Pitcher_Adjustment">
               <MappingFragment StoreEntitySet="Pitcher_Adjustment">
+                <ScalarProperty Name="team_id" ColumnName="team_id" />
                 <ScalarProperty Name="pitcher_hand" ColumnName="pitcher_hand" />
                 <ScalarProperty Name="player_id" ColumnName="player_id" />
                 <ScalarProperty Name="sequence" ColumnName="sequence" />
@@ -673,6 +666,7 @@
           <EntitySetMapping Name="Starting_Player">
             <EntityTypeMapping TypeName="RetrosheetDBModel.Starting_Player">
               <MappingFragment StoreEntitySet="Starting_Player">
+                <ScalarProperty Name="team_id" ColumnName="team_id" />
                 <ScalarProperty Name="field_position" ColumnName="field_position" />
                 <ScalarProperty Name="batting_order" ColumnName="batting_order" />
                 <ScalarProperty Name="game_team_code" ColumnName="game_team_code" />
@@ -685,6 +679,7 @@
           <EntitySetMapping Name="Substitute_Player">
             <EntityTypeMapping TypeName="RetrosheetDBModel.Substitute_Player">
               <MappingFragment StoreEntitySet="Substitute_Player">
+                <ScalarProperty Name="team_id" ColumnName="team_id" />
                 <ScalarProperty Name="field_position" ColumnName="field_position" />
                 <ScalarProperty Name="batting_order" ColumnName="batting_order" />
                 <ScalarProperty Name="player_id" ColumnName="player_id" />
@@ -825,6 +820,35 @@
                 <ScalarProperty Name="home_team_id" ColumnName="home_team_id" />
                 <ScalarProperty Name="visiting_team_id" ColumnName="visiting_team_id" />
                 <ScalarProperty Name="game_id" ColumnName="game_id" />
+                <ScalarProperty Name="record_id" ColumnName="record_id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Players">
+            <EntityTypeMapping TypeName="RetrosheetDBModel.Player">
+              <MappingFragment StoreEntitySet="Player">
+                <ScalarProperty Name="season_game_type" ColumnName="season_game_type" />
+                <ScalarProperty Name="season_year" ColumnName="season_year" />
+                <ScalarProperty Name="field_position" ColumnName="field_position" />
+                <ScalarProperty Name="team_id" ColumnName="team_id" />
+                <ScalarProperty Name="bats" ColumnName="bats" />
+                <ScalarProperty Name="throws" ColumnName="throws" />
+                <ScalarProperty Name="first_name" ColumnName="first_name" />
+                <ScalarProperty Name="last_name" ColumnName="last_name" />
+                <ScalarProperty Name="player_id" ColumnName="player_id" />
+                <ScalarProperty Name="record_id" ColumnName="record_id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Teams">
+            <EntityTypeMapping TypeName="RetrosheetDBModel.Team">
+              <MappingFragment StoreEntitySet="Team">
+                <ScalarProperty Name="season_game_type" ColumnName="season_game_type" />
+                <ScalarProperty Name="season_year" ColumnName="season_year" />
+                <ScalarProperty Name="name" ColumnName="name" />
+                <ScalarProperty Name="city" ColumnName="city" />
+                <ScalarProperty Name="league" ColumnName="league" />
+                <ScalarProperty Name="team_id" ColumnName="team_id" />
                 <ScalarProperty Name="record_id" ColumnName="record_id" />
               </MappingFragment>
             </EntityTypeMapping>

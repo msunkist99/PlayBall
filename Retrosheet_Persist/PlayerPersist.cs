@@ -42,6 +42,8 @@ namespace Retrosheet_Persist
             player.bats = playerDTO.Bats;
             player.team_id = playerDTO.TeamID;
             player.field_position = playerDTO.Position;
+            player.season_year = playerDTO.SeasonYear;
+            player.season_game_type = playerDTO.SeasonGameType;
 
             return player;
         }

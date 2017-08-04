@@ -53,6 +53,7 @@ namespace Retrosheet_Persist
             startingPlayer.game_team_code = startingPlayerDTO.GameTeamCode;
             startingPlayer.batting_order = startingPlayerDTO.BattingOrder;
             startingPlayer.field_position = startingPlayerDTO.FieldPosition;
+            startingPlayer.team_id = startingPlayerDTO.TeamId;
 
             return startingPlayer;
         }
