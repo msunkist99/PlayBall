@@ -26,7 +26,6 @@ namespace Retrosheet_Persist
         }
     
         public virtual DbSet<Ballpark> Ballparks { get; set; }
-        public virtual DbSet<Reference_Data> Reference_Data { get; set; }
         public virtual DbSet<Batter_Adjustment> Batter_Adjustment { get; set; }
         public virtual DbSet<Game_Comment> Game_Comment { get; set; }
         public virtual DbSet<Game_Data> Game_Data { get; set; }
@@ -34,7 +33,6 @@ namespace Retrosheet_Persist
         public virtual DbSet<Pitcher_Adjustment> Pitcher_Adjustment { get; set; }
         public virtual DbSet<Starting_Player> Starting_Player { get; set; }
         public virtual DbSet<Substitute_Player> Substitute_Player { get; set; }
-        public virtual DbSet<Play> Plays { get; set; }
         public virtual DbSet<Replay> Replays { get; set; }
         public virtual DbSet<Ejection> Ejections { get; set; }
         public virtual DbSet<Admin_Info> Admin_Info { get; set; }
@@ -43,5 +41,7 @@ namespace Retrosheet_Persist
         public virtual DbSet<Game_Information> Game_Information { get; set; }
         public virtual DbSet<Player> Players { get; set; }
         public virtual DbSet<Team> Teams { get; set; }
+        public virtual DbSet<Reference_Data> Reference_Data { get; set; }
+        public virtual DbSet<Play> Plays { get; set; }
     }
 }

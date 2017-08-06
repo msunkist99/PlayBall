@@ -16,6 +16,8 @@ namespace Retrosheet_RetrieveData
         private Dictionary<string, DataModels.PlayerInformation> playerDictionary = new Dictionary<string, DataModels.PlayerInformation>();
         private Dictionary<string, DataModels.TeamInformation> teamDictionary = new Dictionary<string, DataModels.TeamInformation>();
 
+        private string outputDelimiter = "|";
+
         //constructor
         public RetrieveData()
         {
@@ -525,6 +527,60 @@ namespace Retrosheet_RetrieveData
             }
         }
 
+        public void RetrievePlayByPlay(string gameID)
+        {
+            using (var dbCtx = new retrosheetDB())
+            {
+                var plays = from play_x in dbCtx.Plays
+                            where play_x.game_id == gameID
+                            select new
+                            {
+                                play_x
+                            };
+
+                foreach (var play in plays)
+                {
+
+                    DataModels.PlayInformation playInformation = new DataModels.PlayInformation();
+
+                    playInformation.Play.RecordID = play.play_x.record_id;
+                    playInformation.Play.GameID = play.play_x.game_id;
+                    playInformation.Play.Inning = play.play_x.inning;
+                    playInformation.Play.GameTeamCode = play.play_x.game_team_code;
+                    playInformation.Play.Sequence = play.play_x.sequence;
+                    playInformation.Play.PlayerID = play.play_x.player_id;
+                    playInformation.Play.CountBalls = (int)play.play_x.count_balls;
+                    playInformation.Play.CountStrikes = (int)play.play_x.count_strikes;
+                    playInformation.Play.Pitches = play.play_x.pitches;
+                    playInformation.Play.EventSequence = play.play_x.event_sequence;
+                    playInformation.Play.EventModifier = play.play_x.event_modifier;
+                    playInformation.Play.EventRunnerAdvance = play.play_x.event_runner_advance;
+
+                    char[] pitchCodes = playInformation.Play.Pitches.ToCharArray();
+
+                    int pitchCodeCount = pitchCodes.Count();
+                    int x = 0;
+
+                    foreach (char pitchCode in pitchCodes)
+                    {
+                        x++;
+                        if (x < pitchCodeCount)
+                        {
+                            playInformation.PitchDesc = playInformation.PitchDesc + RetrieveReferenceDataDesc("pitch_code", pitchCode.ToString()) + outputDelimiter;
+                        }
+                        else
+                        {
+                            playInformation.PitchDesc = playInformation.PitchDesc + RetrieveReferenceDataDesc("pitch_code", pitchCode.ToString());
+                        }
+                    }
+
+                    string[] eventSequences
+
+
+                }
+            }
+        }
+
         private void RetrievePlayers(string seasonYear, string SeasonGameType, string homeTeamId, string visitingTeamId)
         {
             // get the home team players
@@ -662,7 +718,7 @@ namespace Retrosheet_RetrieveData
         {
             DataModels.ReferenceData referenceData = new DataModels.ReferenceData();
 
-            ref_data_code = ref_data_code.Trim();
+            //ref_data_code = ref_data_code.Trim();
 
             referenceData = referenceDataDictionary[ref_data_type + ref_data_code];
             return referenceData.ReferenceItem.ReferenceDataDescription;

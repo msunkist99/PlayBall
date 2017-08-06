@@ -13,6 +13,9 @@ namespace Retrosheet_DataFileIO
         private const char inputDelimiter = ',';
         private const char outputDelimiter = '|';
 
+        string hitLocationsString = "78XD|7LDF|7LSF|89XD|9LDF|9LSF|23F|25F|34D|34S|3DF|4MD|4MS|56D|56S|5DF|6MD|6MS|78D|78S|7LD|7LF|7LS|89D|89S|8XD|9LD|9LF|9LS|13|15|1S|23|25|2F|34|3D|3F|3S|4D|4M|4S|56|5D|5F|5S|6D|6M|6S|78|7D|7L|7S|89|8D|8S|9D|9L|9S|1|2|3|4|5|6|7|8|9";
+        string[] hitLocations;
+
         // the following four variables make up the full key
         private string gameID = null;
         private int inning = 0;
@@ -42,6 +45,9 @@ namespace Retrosheet_DataFileIO
                                       string seasonGameType)
         {
             string outputFile;
+
+
+            hitLocations = hitLocationsString.Split(outputDelimiter);
 
             DeleteDirectory(outputPath);
 
@@ -359,6 +365,7 @@ namespace Retrosheet_DataFileIO
                     string eventSequence = null;
                     string eventModifier = null;
                     string eventRunnerAdvance = null;
+                    string eventHitLocation = null;
 
                     if ((forwardSlashIndex < 0) && (periodIndex < 0))
                         // no modifiers, no runner advances
@@ -392,10 +399,26 @@ namespace Retrosheet_DataFileIO
                         eventRunnerAdvance = columnSix.Substring(periodIndex + 1);
                     }
 
-
+                    //  eventModifier may contain the hit location so lets grab that
+                    if (eventModifier != null)
+                    {
+                        foreach (string hitLocation in hitLocations)
+                        {
+                            if (eventModifier.Contains(hitLocation))
+                            {
+                                eventHitLocation = hitLocation;
+                                eventModifier = eventModifier.Replace(hitLocation, string.Empty);
+                                if (eventModifier.StartsWith("/"))
+                                {
+                                    eventModifier = eventModifier.Substring(1);
+                                }
+                                break;
+                            }
+                        }
+                    }
 
                     // put the textLine back together from the stringArray
-                    stringArray[6] = eventSequence + outputDelimiter + eventModifier + outputDelimiter + eventRunnerAdvance;
+                    stringArray[6] = eventSequence + outputDelimiter + eventModifier + outputDelimiter + eventRunnerAdvance + outputDelimiter + eventHitLocation; ;
                     textLine = null;
 
                     for (int i = 0; i < stringArray.Length ; i++)

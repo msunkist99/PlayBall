@@ -71,5 +71,17 @@ namespace Retrosheet_RetrieveData
             public BallparkDTO Ballpark = new BallparkDTO();
             public string BallparkLeagueDesc { get; set; }
         }
+
+        public class PlayInformation
+        {
+            public PlayDTO Play = new PlayDTO();
+
+            public string PitchDesc;
+            public string HitLocationDesc;
+            public string EventSequenceDesc;
+            public string EventSequenceModifierDesc;
+            public string EventRunnerAdvanceDesc;
+
+        }
     }
 }

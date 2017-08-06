@@ -23,5 +23,6 @@ namespace Retrosheet_EventData.Model
         public string EventSequence { get; set; }
         public string EventModifier { get;  set; }
         public string EventRunnerAdvance { get;  set; }
+        public string EventHitLocation { get; set; }
     }
 }

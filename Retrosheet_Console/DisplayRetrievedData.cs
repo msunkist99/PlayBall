@@ -19,6 +19,8 @@ namespace Retrosheet_Console
             retrieveData.RetrieveReferenceData();
             retrieveData.RetrieveGame("MIN201609222");
             retrieveData.RetrieveStartingPlayers("MIN201609222");
+            retrieveData.RetrievePlayByPlay("MIN201609222");
+            Console.WriteLine("All done!");
             Console.ReadLine();
         }
     }

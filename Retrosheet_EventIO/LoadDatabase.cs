@@ -337,6 +337,7 @@ namespace Retrosheet_DataFileIO
                     playDTO.EventSequence = columnValue[11];
                     playDTO.EventModifier = columnValue[12];
                     playDTO.EventRunnerAdvance = columnValue[13];
+                    playDTO.EventHitLocation = columnValue[14];
 
                     PlayPersist.CreatePlay(playDTO);
                 }

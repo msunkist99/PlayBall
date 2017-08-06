@@ -52,8 +52,6 @@ namespace Retrosheet_Console
                                          settings.EventDataSeasonYear,
                                          settings.EventDataSeasonGameType);
 
-           
-
             LoadDatabase loadDatabase = new LoadDatabase();
 
             loadDatabase.TruncateDatabase();

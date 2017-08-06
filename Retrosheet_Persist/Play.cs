@@ -26,5 +26,6 @@ namespace Retrosheet_Persist
         public string event_sequence { get; set; }
         public string event_modifier { get; set; }
         public string event_runner_advance { get; set; }
+        public string event_hit_location { get; set; }
     }
 }

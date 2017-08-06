@@ -60,6 +60,7 @@ namespace Retrosheet_Persist
             play.event_sequence = playDTO.EventSequence;
             play.event_modifier = playDTO.EventModifier;
             play.event_runner_advance = playDTO.EventRunnerAdvance;
+            play.event_hit_location = playDTO.EventHitLocation;
 
             return play;
         }
