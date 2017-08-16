@@ -77,7 +77,7 @@ namespace Retrosheet_RetrieveData
             public PlayDTO Play = new PlayDTO();
 
             public string PitchDesc;
-            public string HitLocationDesc;
+            public string EventHitLocationDesc;
             public string EventSequenceDesc;
             public string EventSequenceModifierDesc;
             public string EventRunnerAdvanceDesc;

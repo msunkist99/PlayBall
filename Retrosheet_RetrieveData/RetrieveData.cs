@@ -555,6 +555,8 @@ namespace Retrosheet_RetrieveData
                     playInformation.Play.EventSequence = play.play_x.event_sequence;
                     playInformation.Play.EventModifier = play.play_x.event_modifier;
                     playInformation.Play.EventRunnerAdvance = play.play_x.event_runner_advance;
+                    playInformation.Play.EventHitLocation = play.play_x.event_hit_location;
+
 
                     char[] pitchCodes = playInformation.Play.Pitches.ToCharArray();
 
@@ -574,9 +576,36 @@ namespace Retrosheet_RetrieveData
                         }
                     }
 
-                    string[] eventSequences
+                    int event_sequence_n;
+                    bool isNumeric = int.TryParse(play.play_x.event_sequence, out event_sequence_n);
 
+                    if (isNumeric == true)
+                    {
+                        char[] event_sequence_codes = play.play_x.event_sequence.ToCharArray();
 
+                        int event_sequence_count = event_sequence_codes.Count();
+                        x = 0;
+
+                        foreach (char event_sequence_code in event_sequence_codes)
+                        {
+                            x++;
+                            if (x < event_sequence_count)
+                            {
+                                playInformation.EventSequenceDesc = playInformation.EventHitLocationDesc + RetrieveReferenceDataDesc("field_position", event_sequence_code.ToString()) + outputDelimiter;
+                            }
+                            else
+                            {
+                                playInformation.EventSequenceDesc = playInformation.EventHitLocationDesc + RetrieveReferenceDataDesc("field_position", event_sequence_code.ToString());
+                            }
+                        }
+                    }
+                    else
+                    {
+                        playInformation.EventSequenceDesc = RetrieveReferenceDataDesc("event_sequence", play.play_x.event_sequence);
+                    }
+
+                    playInformation.EventSequenceModifierDesc = RetrieveReferenceDataDesc("play_modifier", play.play_x.event_modifier);
+                    playInformation.EventHitLocationDesc = RetrieveReferenceDataDesc("hit_location", play.play_x.event_hit_location);
                 }
             }
         }
@@ -720,8 +749,16 @@ namespace Retrosheet_RetrieveData
 
             //ref_data_code = ref_data_code.Trim();
 
-            referenceData = referenceDataDictionary[ref_data_type + ref_data_code];
-            return referenceData.ReferenceItem.ReferenceDataDescription;
+            try
+            {
+                referenceData = referenceDataDictionary[ref_data_type + ref_data_code];
+                return referenceData.ReferenceItem.ReferenceDataDescription;
+
+            }
+            catch
+            {
+                return null;
+            }
         }
 
         private DataModels.PlayerInformation RetrievePlayerInformation (string playerId)
