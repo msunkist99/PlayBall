@@ -68,6 +68,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="BuildTreeView.cs" />
     <Compile Include="DisplayRetrievedData.cs" />
     <Compile Include="ParseInput.cs" />
     <Compile Include="Program.cs" />

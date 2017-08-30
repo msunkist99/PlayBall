@@ -16,13 +16,16 @@ namespace Retrosheet_Persist
 
             try
             {
+                /*
                 dbCtx.Database.ExecuteSqlCommand("TRUNCATE TABLE Admin_Info");
                 dbCtx.Database.ExecuteSqlCommand("TRUNCATE TABLE Ballpark");
                 dbCtx.Database.ExecuteSqlCommand("TRUNCATE TABLE Batter_Adjustment");
                 dbCtx.Database.ExecuteSqlCommand("TRUNCATE TABLE Ejection");
                 dbCtx.Database.ExecuteSqlCommand("TRUNCATE TABLE Game_Comment");
                 dbCtx.Database.ExecuteSqlCommand("TRUNCATE TABLE Game_Data");
+                */
                 dbCtx.Database.ExecuteSqlCommand("TRUNCATE TABLE Game_Info");
+                /*
                 dbCtx.Database.ExecuteSqlCommand("TRUNCATE TABLE Game_Information");
                 dbCtx.Database.ExecuteSqlCommand("TRUNCATE TABLE Game_Suspension");
                 dbCtx.Database.ExecuteSqlCommand("TRUNCATE TABLE Personnel");
@@ -37,6 +40,7 @@ namespace Retrosheet_Persist
                 dbCtx.Database.ExecuteSqlCommand("TRUNCATE TABLE Substitute_Umpire");
                 dbCtx.Database.ExecuteSqlCommand("TRUNCATE TABLE Team");
                 dbCtx.Database.ExecuteSqlCommand("TRUNCATE TABLE Team_Batting_Order_Adjustment");
+                */
             }
             catch (DbEntityValidationException dbEx)
             {

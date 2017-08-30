@@ -1,0 +1,44 @@
+﻿<Window x:Class="Retrosheet_WPF_Seasons_TreeView.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:Retrosheet_WPF_Seasons_TreeView"
+        mc:Ignorable="d"
+        Title="Major League Baseball Game Selection" Height="500" Width="525">
+    <Grid>
+        
+        <TreeView Name="trvSeasons" ItemsSource="{Binding Season}">
+
+            <TreeView.ItemContainerStyle>
+                <Style TargetType="{x:Type TreeViewItem}">
+                    <Setter Property="IsExpanded" Value="True" />
+                </Style>
+            </TreeView.ItemContainerStyle>
+            
+            <TreeView.ItemTemplate>
+                <HierarchicalDataTemplate ItemsSource="{Binding SeasonGameTypes}">
+                    <StackPanel Orientation="Horizontal" >
+                        <Image  Source="{Binding SeasonIcon}" />
+                        <TextBlock Text="{Binding SeasonYear}" VerticalAlignment="Center" FontWeight="Bold"/>
+                    </StackPanel>      
+                    
+                    <HierarchicalDataTemplate.ItemTemplate>
+                        <DataTemplate>
+                            <TextBox Text="{Binding GameTypeDesc}" BorderThickness="0" />
+                        </DataTemplate>
+
+                    </HierarchicalDataTemplate.ItemTemplate>
+
+                </HierarchicalDataTemplate>
+            </TreeView.ItemTemplate>
+        </TreeView>
+
+        <StackPanel Margin="0,0,0,20"  VerticalAlignment="Bottom" HorizontalAlignment="Center">
+            <Button Name="btnSelect" Click="btnSelect_Click" Width="120">
+                Select Game Type
+            </Button>
+        </StackPanel>
+        
+    </Grid>
+</Window>

@@ -75,6 +75,7 @@ namespace Retrosheet_DataFileIO
                 else if (fileName.IndexOf(".ROS") > -1)
                 {
                     outputFile = fileName.Substring(3, 4) + fileName.Substring(0, 3);
+
                     outputPath = inputPath + @"\Output\" + outputFile + @"\";
                     //  the @ tells the compiler to ignore special characters (\) in the string
                     ReadEventFiles(inputPath + @"\" + fileName,
