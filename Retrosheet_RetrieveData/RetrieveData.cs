@@ -864,8 +864,489 @@ order by game.season_year,
 			public int _sortKey { get; set; }
 		}
 
+        public Collection<TreeViewModels.Season> RetrieveTreeViewData_GameSelectionList()
+        {
+            string holdSeasonYear = "";
+            string holdSeasonGameType = "";
+            string holdDisplayUnderLeagueID = "";
+            string holdDisplayUnderTeamID = "";
 
-	}
+
+            string sqlQuery = @"select * from
+(---- Post Season - all star and world series games
+select distinct(games.season_year) _seasonYear, 
+    games.season_game_type _seasonGameType, 
+    refGameType.ref_data_desc _seasonGameTypeDesc,
+	games.game_date _gameDate,
+    games.game_number _gameNumber,
+	homeTeam.league _gameHomeLeagueID, 
+    refHomeTeamLeague.ref_data_desc _gameHomeLeagueName, 
+    games.home_team_id _gameHomeTeamID, 
+    homeTeam.name _gameHomeTeamName, 
+    homeTeam.city _gameHomeTeamCity, 
+	visitTeam.league _gameVisitLeagueID, 
+    refVisitTeamLeague.ref_data_desc _gameVisitLeagueName, 
+    games.visiting_team_id _gameVisitTeamID, 
+    visitTeam.name _gameVisitTeamName, 
+    visitTeam.city _gameVisitTeamCity,
+	games.game_id _gameID, 
+
+	'' _displayUnderLeagueID,
+	'' _displayUnderLeagueName,
+	'' _displayUnderTeamID,
+	'' _displayUnderTeamName,
+	 
+	refIconPath.ref_data_desc _iconPath,
+    refMLBIcon.ref_data_desc _MLBIcon,
+	'' _leagueIcon,
+	'' _teamIcon,
+
+	case games.season_game_type
+		when 'R' then 0
+		when 'A' then 1
+		when 'C' then 2
+		when '1' then 3
+		when '2' then 4
+		when 'L' then 5
+		when 'W' then 6
+	end as _sortKey
+from retrosheet.dbo.Game_Information games
+join retrosheet.dbo.Reference_Data refGameType on games.season_game_type = refGameType.ref_data_code
+                                              and refGameType.ref_data_type = 'season_game_type'
+join retrosheet.dbo.team homeTeam on games.home_team_id = homeTeam.team_id
+join retrosheet.dbo.Reference_Data refHomeTeamLeague on homeTeam.league = refHomeTeamLeague.ref_data_code
+                                              and refHomeTeamLeague.ref_data_type = 'team_league'
+join retrosheet.dbo.team visitTeam on games.visiting_team_id = visitTeam.team_id
+join retrosheet.dbo.Reference_Data refVisitTeamLeague on visitTeam.league = refVisitTeamLeague.ref_data_code
+                                              and refVisitTeamLeague.ref_data_type = 'team_league'
+join retrosheet.dbo.Reference_Data refIconPath on refIconPath.ref_data_code = 'icon_path'
+                                              and refIconPath.ref_data_type = 'icon'
+--- use left join here because we may not want to used the licensed MLB icons
+left join retrosheet.dbo.Reference_Data refLeagueIcon on homeTeam.League = refLeagueIcon.ref_data_code
+                                                and refLeagueIcon.ref_data_type = 'icon'
+--- use left join here because we may not want to used the licensed MLB icons
+left join retrosheet.dbo.Reference_Data refTeamIcon on games.home_team_id = refTeamIcon.ref_data_code
+                                              and refTeamIcon.ref_data_type = 'icon'
+--- use left join here because we may not want to used the licensed MLB icons
+join retrosheet.dbo.Reference_data refMLBIcon on 'MLB' = refMLBIcon.ref_data_code
+                                             and refMLBIcon.ref_data_type = 'icon'
+
+  where games.season_game_type in ('A', 'W')
+union all
+---- Post Season - wild card, division and league championship games
+select distinct(games.season_year) _seasonYear, 
+    games.season_game_type _seasonGameType, 
+    refGameType.ref_data_desc _seasonGameTypeDesc,
+	games.game_date _gameDate,
+    games.game_number _gameNumber,
+	homeTeam.league _gameHomeLeagueID, 
+    refHomeTeamLeague.ref_data_desc _gameHomeLeagueName, 
+    games.home_team_id _gameHomeTeamID, 
+    homeTeam.name _gameHomeTeamName, 
+    homeTeam.city _gameHomeTeamCity, 
+	visitTeam.league _gameVisitLeagueID, 
+    refVisitTeamLeague.ref_data_desc _gameVisitLeagueName, 
+    games.visiting_team_id _gameVisitTeamID, 
+    visitTeam.name _gameVisitTeamName, 
+    visitTeam.city _gameVisitTeamCity,
+	games.game_id _gameID, 
+
+	homeTeam.league  _displayUnderLeagueID,
+	refHomeTeamLeague.ref_data_desc _displayUnderLeagueName,
+	'' _displayUnderTeamID,
+	'' _displayUnderTeamName,
+	 
+	refIconPath.ref_data_desc _iconPath,
+    refMLBIcon.ref_data_desc _MLBIcon,
+	refLeagueIcon.ref_data_desc _leagueIcon,
+	'' _teamIcon,
+	case games.season_game_type
+		when 'R' then 0
+		when 'A' then 1
+		when 'C' then 2
+		when '1' then 3
+		when '2' then 4
+		when 'L' then 5
+		when 'W' then 6
+	end as _sortKey
+from retrosheet.dbo.Game_Information games
+join retrosheet.dbo.Reference_Data refGameType on games.season_game_type = refGameType.ref_data_code
+                                              and refGameType.ref_data_type = 'season_game_type'
+join retrosheet.dbo.team homeTeam on games.home_team_id = homeTeam.team_id
+join retrosheet.dbo.Reference_Data refHomeTeamLeague on homeTeam.league = refHomeTeamLeague.ref_data_code
+                                              and refHomeTeamLeague.ref_data_type = 'team_league'
+join retrosheet.dbo.team visitTeam on games.visiting_team_id = visitTeam.team_id
+join retrosheet.dbo.Reference_Data refVisitTeamLeague on visitTeam.league = refVisitTeamLeague.ref_data_code
+                                              and refVisitTeamLeague.ref_data_type = 'team_league'
+join retrosheet.dbo.Reference_Data refIconPath on refIconPath.ref_data_code = 'icon_path'
+                                              and refIconPath.ref_data_type = 'icon'
+--- use left join here because we may not want to used the licensed MLB icons
+left join retrosheet.dbo.Reference_Data refLeagueIcon on homeTeam.League = refLeagueIcon.ref_data_code
+                                                and refLeagueIcon.ref_data_type = 'icon'
+--- use left join here because we may not want to used the licensed MLB icons
+left join retrosheet.dbo.Reference_Data refTeamIcon on games.home_team_id = refTeamIcon.ref_data_code
+                                              and refTeamIcon.ref_data_type = 'icon'
+--- use left join here because we may not want to used the licensed MLB icons
+left join retrosheet.dbo.Reference_data refMLBIcon on 'MLB' = refMLBIcon.ref_data_code
+                                             and refMLBIcon.ref_data_type = 'icon'
+
+  where games.season_game_type in ('C', '1', '2', 'L')
+union all
+
+---- regular season home games
+select distinct(games.season_year) _seasonYear, 
+    games.season_game_type _seasonGameType, 
+    refGameType.ref_data_desc _seasonGameTypeDesc,
+	games.game_date _gameDate,
+    games.game_number _gameNumber,
+	homeTeam.league _gameHomeLeagueID, 
+    refHomeTeamLeague.ref_data_desc _gameHomeLeagueName, 
+    games.home_team_id _gameHomeTeamID, 
+    homeTeam.name _gameHomeTeamName, 
+    homeTeam.city _gameHomeTeamCity, 
+	visitTeam.league _gameVisitTeamID, 
+    refVisitTeamLeague.ref_data_desc _gameVisitLeagueName, 
+    games.visiting_team_id _gameVisitTeamID, 
+    visitTeam.name _gameVisitTeamName,
+    visitTeam.city _gameVisitTeamCity,
+	games.game_id _gameID, 
+
+	homeTeam.league _displayUnderLeagueID,   --- list under this league id 
+	refHomeTeamLeague.ref_data_desc _displayUnderLeagueName,
+	games.home_team_id _displayUnderTeamID,  --- list under this team id
+	homeTeam.name _displayUnderTeamName,
+	 
+	refIconPath.ref_data_desc _iconPath,
+    refMLBIcon.ref_data_desc _MLBIcon,
+	refLeagueIcon.ref_data_desc _leagueIcon,
+	refTeamIcon.ref_data_desc _teamIcon,
+
+	case games.season_game_type
+		when 'R' then 0
+		when 'A' then 1
+		when 'C' then 2
+		when '1' then 3
+		when '2' then 4
+		when 'L' then 5
+		when 'W' then 6
+	end as _sortKey
+from retrosheet.dbo.Game_Information games
+join retrosheet.dbo.Reference_Data refGameType on games.season_game_type = refGameType.ref_data_code
+                                              and refGameType.ref_data_type = 'season_game_type'
+join retrosheet.dbo.team homeTeam on games.home_team_id = homeTeam.team_id
+join retrosheet.dbo.Reference_Data refHomeTeamLeague on homeTeam.league = refHomeTeamLeague.ref_data_code
+                                              and refHomeTeamLeague.ref_data_type = 'team_league'
+join retrosheet.dbo.team visitTeam on games.visiting_team_id = visitTeam.team_id
+join retrosheet.dbo.Reference_Data refVisitTeamLeague on visitTeam.league = refVisitTeamLeague.ref_data_code
+                                              and refVisitTeamLeague.ref_data_type = 'team_league'
+join retrosheet.dbo.Reference_Data refIconPath on refIconPath.ref_data_code = 'icon_path'
+                                              and refIconPath.ref_data_type = 'icon'
+--- use left join here because we may not want to used the licensed MLB icons
+left join retrosheet.dbo.Reference_Data refLeagueIcon on homeTeam.League = refLeagueIcon.ref_data_code
+                                                and refLeagueIcon.ref_data_type = 'icon'
+--- use left join here because we may not want to used the licensed MLB icons
+left join retrosheet.dbo.Reference_Data refTeamIcon on games.home_team_id = refTeamIcon.ref_data_code
+                                              and refTeamIcon.ref_data_type = 'icon'
+--- use left join here because we may not want to used the licensed MLB icons
+left join retrosheet.dbo.Reference_data refMLBIcon on 'MLB' = refMLBIcon.ref_data_code
+                                             and refMLBIcon.ref_data_type = 'icon'
+ 
+  where games.season_game_type = 'R'
+union all
+---- regular season away games
+select distinct(games.season_year) _seasonYear, 
+    games.season_game_type _seasonGameType, 
+    refGameType.ref_data_desc _seasonGameTypeDesc,
+	games.game_date _gameDate,
+    games.game_number _gameNumber,
+	homeTeam.league _gameHomeLeagueID, 
+    refHomeTeamLeague.ref_data_desc _gameHomeLeagueName, 
+    games.home_team_id _gameHomeTeamID, 
+    homeTeam.name _gameHomeTeamName, 
+    homeTeam.city _gameHomeTeamCity, 
+	visitTeam.league _gameVisitTeamID, 
+    refVisitTeamLeague.ref_data_desc _gameVisitLeagueName, 
+    games.visiting_team_id _gameVisitTeamID, 
+    visitTeam.name _gameVisitTeamName,
+    visitTeam.city _gameVisitTeamCity,
+	games.game_id _gameID, 
+
+	visitTeam.league _displayUnderLeagueID,      --- list under this league id   
+	refVisitTeamLeague.ref_data_desc _displayUnderLeagueName,
+	games.visiting_team_id _displayUnderTeamID,  --- list under this team id
+	visitTeam.name _displayUnderTeamName,
+
+	refIconPath.ref_data_desc _iconPath,
+    refMLBIcon.ref_data_desc _MLBIcon,
+	refLeagueIcon.ref_data_desc _leagueIcon,
+	refTeamIcon.ref_data_desc _teamIcon,
+
+	case games.season_game_type
+		when 'R' then 0
+		when 'A' then 1
+		when 'C' then 2
+		when '1' then 3
+		when '2' then 4
+		when 'L' then 5
+		when 'W' then 6
+	end as _sortKey
+from retrosheet.dbo.Game_Information games
+join retrosheet.dbo.Reference_Data refGameType on games.season_game_type = refGameType.ref_data_code
+                                              and refGameType.ref_data_type = 'season_game_type'
+join retrosheet.dbo.team homeTeam on games.home_team_id = homeTeam.team_id
+join retrosheet.dbo.Reference_Data refHomeTeamLeague on homeTeam.league = refHomeTeamLeague.ref_data_code
+                                              and refHomeTeamLeague.ref_data_type = 'team_league'
+join retrosheet.dbo.team visitTeam on games.visiting_team_id = visitTeam.team_id
+join retrosheet.dbo.Reference_Data refVisitTeamLeague on visitTeam.league = refVisitTeamLeague.ref_data_code
+                                              and refVisitTeamLeague.ref_data_type = 'team_league'
+join retrosheet.dbo.Reference_Data refIconPath on refIconPath.ref_data_code = 'icon_path'
+                                              and refIconPath.ref_data_type = 'icon'
+--- use left join here because we may not want to used the licensed MLB icons
+left join retrosheet.dbo.Reference_Data refLeagueIcon on visitTeam.League = refLeagueIcon.ref_data_code
+                                                and refLeagueIcon.ref_data_type = 'icon'
+--- use left join here because we may not want to used the licensed MLB icons
+left join retrosheet.dbo.Reference_Data refTeamIcon on games.visiting_team_id = refTeamIcon.ref_data_code
+                                              and refTeamIcon.ref_data_type = 'icon'
+--- use left join here because we may not want to used the licensed MLB icons
+left join retrosheet.dbo.Reference_data refMLBIcon on 'MLB' = refMLBIcon.ref_data_code
+                                             and refMLBIcon.ref_data_type = 'icon'
+  
+  where games.season_game_type = 'R') 
+										unionTable
+order by _seasonYear, _sortKey, _displayUnderLeagueID, _displayUnderTeamID, _gameDate, _gameID";
+
+
+
+            // add System.Data.Linq assembly to the References
+            using (RetrosheetDataContext dbCtx = new RetrosheetDataContext())
+            {
+                dbCtx.CommandTimeout = 120;  //2 minutes
+                IEnumerable<_GameSelectionListItem> results = dbCtx.ExecuteQuery<_GameSelectionListItem>(sqlQuery).ToList();
+                Console.WriteLine("_GameSelectionListItem record count " + results.Count());
+
+                Collection<TreeViewModels.Season> Seasons = new Collection<TreeViewModels.Season>();
+
+                TreeViewModels.Season season = new TreeViewModels.Season();
+                TreeViewModels.SeasonGameType seasonGameType = new TreeViewModels.SeasonGameType();
+                TreeViewModels.League league = new TreeViewModels.League();
+                TreeViewModels.Team team = new TreeViewModels.Team();
+                TreeViewModels.Game game = new TreeViewModels.Game();
+
+                foreach (_GameSelectionListItem result in results)
+                {
+                    if (holdSeasonYear == "")
+                    {
+                        season = LoadTreeViewData_Season(season, result);
+                        season.SeasonGameTypes = new List<TreeViewModels.SeasonGameType>();
+                        holdSeasonYear = result._seasonYear;
+
+                        seasonGameType = LoadTreeViewData_SeasonGameType(seasonGameType, result);
+                        season.SeasonGameTypes.Add(seasonGameType);
+                        holdSeasonGameType = result._seasonGameType;
+
+                        league = LoadTreeViewData_League(league, result);
+                        seasonGameType.Leagues = new List<TreeViewModels.League>();
+                        seasonGameType.Leagues.Add(league);
+                        holdDisplayUnderLeagueID = result._displayUnderLeagueID;
+
+                        team = LoadTreeViewData_Team(team, result);
+                        league.Teams = new List<TreeViewModels.Team>();
+                        league.Teams.Add(team);
+                        holdDisplayUnderTeamID = result._displayUnderTeamID;
+
+                        game = LoadTreeViewData_Game(game, result);
+                        team.Games = new List<TreeViewModels.Game>();
+                        team.Games.Add(game);
+                    }
+                    else if (holdSeasonYear != result._seasonYear)
+                    {
+                        Seasons.Add(season);
+
+                        season = new TreeViewModels.Season();
+                        season = LoadTreeViewData_Season(season, result);
+                        season.SeasonGameTypes = new List<TreeViewModels.SeasonGameType>();
+                        holdSeasonYear = result._seasonYear;
+
+                        seasonGameType = new TreeViewModels.SeasonGameType();
+                        seasonGameType = LoadTreeViewData_SeasonGameType(seasonGameType, result);
+                        season.SeasonGameTypes = new List<TreeViewModels.SeasonGameType>();
+                        season.SeasonGameTypes.Add(seasonGameType);
+                        holdSeasonGameType = result._seasonGameType;
+
+                        league = new TreeViewModels.League();
+                        league = LoadTreeViewData_League(league, result);
+                        seasonGameType.Leagues = new List<TreeViewModels.League>();
+                        seasonGameType.Leagues.Add(league);
+                        holdDisplayUnderLeagueID = result._displayUnderLeagueID;
+
+                        team = new TreeViewModels.Team();
+                        team = LoadTreeViewData_Team(team, result);
+                        league.Teams = new List<TreeViewModels.Team>();
+                        league.Teams.Add(team);
+                        holdDisplayUnderTeamID = result._displayUnderTeamID;
+
+                        game = new TreeViewModels.Game();
+                        game = LoadTreeViewData_Game(game, result);
+                        team.Games = new List<TreeViewModels.Game>();
+                        team.Games.Add(game);
+                    }
+                    else if (holdSeasonGameType != result._seasonGameType)
+                    {
+                        seasonGameType = new TreeViewModels.SeasonGameType();
+                        seasonGameType = LoadTreeViewData_SeasonGameType(seasonGameType, result);
+                        season.SeasonGameTypes.Add(seasonGameType);
+                        holdSeasonGameType = result._seasonGameType;
+
+                        league = new TreeViewModels.League();
+                        league = LoadTreeViewData_League(league, result);
+                        seasonGameType.Leagues = new List<TreeViewModels.League>();
+                        seasonGameType.Leagues.Add(league);
+                        holdDisplayUnderLeagueID = result._displayUnderLeagueID;
+
+                        team = new TreeViewModels.Team();
+                        team = LoadTreeViewData_Team(team, result);
+                        league.Teams = new List<TreeViewModels.Team>();
+                        league.Teams.Add(team);
+                        holdDisplayUnderTeamID = result._displayUnderTeamID;
+
+                        game = new TreeViewModels.Game();
+                        game = LoadTreeViewData_Game(game, result);
+                        team.Games = new List<TreeViewModels.Game>();
+                        team.Games.Add(game);
+                    }
+                    else if (holdDisplayUnderLeagueID != result._displayUnderLeagueID)
+                    {
+                        league = new TreeViewModels.League();
+                        league = LoadTreeViewData_League(league, result);
+                        seasonGameType.Leagues.Add(league);
+                        holdDisplayUnderLeagueID = result._displayUnderLeagueID;
+
+                        team = new TreeViewModels.Team();
+                        team = LoadTreeViewData_Team(team, result);
+                        league.Teams = new List<TreeViewModels.Team>();
+                        league.Teams.Add(team);
+                        holdDisplayUnderTeamID = result._displayUnderTeamID;
+
+                        game = new TreeViewModels.Game();
+                        game = LoadTreeViewData_Game(game, result);
+                        team.Games = new List<TreeViewModels.Game>();
+                        team.Games.Add(game);
+                    }
+                    else if (holdDisplayUnderTeamID != result._displayUnderTeamID)
+                    {
+                        team = new TreeViewModels.Team();
+                        team = LoadTreeViewData_Team(team, result);
+                        league.Teams.Add(team);
+                        holdDisplayUnderTeamID = result._displayUnderTeamID;
+
+                        game = new TreeViewModels.Game();
+                        game = LoadTreeViewData_Game(game, result);
+                        team.Games = new List<TreeViewModels.Game>();
+                        team.Games.Add(game);
+                    }
+                    else
+                    {
+                        game = new TreeViewModels.Game();
+                        game = LoadTreeViewData_Game(game, result);
+                        team.Games.Add(game);
+                    }
+                }
+                Seasons.Add(season);
+
+                return Seasons;
+            }
+        }
+
+        private TreeViewModels.Game LoadTreeViewData_Game(TreeViewModels.Game game, _GameSelectionListItem result)
+        {
+            game.GameID = result._gameID;
+            game.GameDate = result._gameDate;
+            game.GameHomeTeamName = result._gameHomeLeagueName;
+            game.GameVisitTeamName = result._gameVisitTeamName;
+            if (result._gameNumber > 0)
+            {
+                game.GameDesc = result._gameHomeTeamName + " vs " + result._gameVisitTeamName + " @ " + result._gameHomeTeamCity + " on "
+                    + result._gameDate.Date.ToShortDateString()
+                    + " game " + result._gameNumber.ToString() + " of 2";
+            }
+            else
+            {
+                game.GameDesc = result._gameHomeTeamName + " vs " + result._gameVisitTeamName + " @ " + result._gameHomeTeamCity + " on " + result._gameDate.Date.ToShortDateString();
+            }
+
+            return game;
+        }
+
+        private TreeViewModels.Team LoadTreeViewData_Team(TreeViewModels.Team team, _GameSelectionListItem result)
+        {
+            team.TeamID = result._displayUnderTeamID;
+            team.TeamName = result._displayUnderTeamName;
+            team.TeamIcon = result._iconPath + result._teamIcon;
+
+            return team;
+        }
+
+        private TreeViewModels.League LoadTreeViewData_League(TreeViewModels.League league, _GameSelectionListItem result)
+        {
+            league.LeagueID = result._displayUnderLeagueID;
+            league.LeagueIcon = result._iconPath + result._leagueIcon;
+            league.LeagueName = result._displayUnderLeagueName;
+
+            return league;
+        }
+
+        private TreeViewModels.SeasonGameType LoadTreeViewData_SeasonGameType (TreeViewModels.SeasonGameType seasonGameType, _GameSelectionListItem result)
+        {
+            seasonGameType.GameType = result._seasonGameType;
+            seasonGameType.GameTypeDesc = result._seasonGameTypeDesc;
+            seasonGameType.GameTypeSortKey = result._sortKey.ToString();
+
+            return seasonGameType;
+        }
+
+        private TreeViewModels.Season LoadTreeViewData_Season(TreeViewModels.Season season, _GameSelectionListItem result)
+        {
+            season.SeasonYear = result._seasonYear;
+            season.SeasonIcon = result._iconPath + result._MLBIcon;
+            return season;
+        }
+
+        private class _GameSelectionListItem
+        {
+            public string _seasonYear { get; set; }
+            public string _seasonGameType { get; set; }
+            public string _seasonGameTypeDesc { get; set; }
+
+            public string _gameID { get; set; }
+            public DateTime _gameDate { get; set; }
+            public int _gameNumber { get; set; }
+
+            public string _gameHomeLeagueID { get; set; }
+            public string _gameHomeLeagueName { get; set; }
+            public string _gameHomeTeamID { get; set; }
+            public string _gameHomeTeamName { get; set; }
+            public string _gameHomeTeamCity { get; set; }
+
+            public string _gameVisitLeagueID { get; set; }
+            public string _gameVisitLeagueName { get; set; }
+            public string _gameVisitTeamID { get; set; }
+            public string _gameVisitTeamName { get; set; }
+            public string _gameVisitTeamCity { get; set; }
+
+            public string _displayUnderLeagueID { get; set; }
+            public string _displayUnderLeagueName { get; set; }
+            public string _displayUnderTeamID { get; set; }
+            public string _displayUnderTeamName { get; set; }
+
+            public string _iconPath { get; set; }
+            public string _MLBIcon { get; set; }
+            public string _leagueIcon { get; set; }
+            public string _teamIcon { get; set; }
+
+            public int _sortKey { get; set; }
+        }
+
+    }
 }
 
 

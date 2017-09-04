@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace Retrosheet_WPF_Seasons_TreeView.Properties
+namespace Retrosheet_PlayBall.Properties
 {
 
 

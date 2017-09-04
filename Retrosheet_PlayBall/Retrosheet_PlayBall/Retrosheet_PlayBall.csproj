@@ -4,11 +4,11 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{2152DB63-F0AD-44EB-9B23-6C7B034F23A4}</ProjectGuid>
+    <ProjectGuid>{AED5AEEF-BEB0-4E71-9E62-2CD32BCB1DE4}</ProjectGuid>
     <OutputType>WinExe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Retrosheet_WPF_Seasons_TreeView</RootNamespace>
-    <AssemblyName>Retrosheet_WPF_Seasons_TreeView</AssemblyName>
+    <RootNamespace>Retrosheet_PlayBall</RootNamespace>
+    <AssemblyName>Retrosheet_PlayBall</AssemblyName>
     <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <ProjectTypeGuids>{60dc8134-eba5-43b8-bcc9-bb4bc16c2548};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
@@ -55,6 +55,15 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Retrosheet_PlayBall_Home.xaml.cs">
+      <DependentUpon>Retrosheet_PlayBall_Home.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Retrosheet_PlayBall_PlayByPlay.xaml.cs">
+      <DependentUpon>Retrosheet_PlayBall_PlayByPlay.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Retrosheet_PlayBall_Seasons.xaml.cs">
+      <DependentUpon>Retrosheet_PlayBall_Seasons.xaml</DependentUpon>
+    </Compile>
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -67,6 +76,18 @@
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Page Include="Retrosheet_PlayBall_Home.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Retrosheet_PlayBall_PlayByPlay.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Retrosheet_PlayBall_Seasons.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs">
@@ -96,7 +117,7 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Retrosheet_RetrieveData\Retrosheet_RetrieveData.csproj">
+    <ProjectReference Include="..\..\Retrosheet_RetrieveData\Retrosheet_RetrieveData.csproj">
       <Project>{40e8c042-75db-45a6-9267-03040f4d9ee4}</Project>
       <Name>Retrosheet_RetrieveData</Name>
     </ProjectReference>

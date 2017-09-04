@@ -16,7 +16,9 @@ namespace Retrosheet_Console
             RetrieveData retrieveData = new RetrieveData();
 
 
-           Collection<TreeViewModels.Season> Seasons = retrieveData.RetrieveTreeViewData_Seasons();
+            //Collection<TreeViewModels.Season> Seasons = retrieveData.RetrieveTreeViewData_Seasons();
+
+            Collection<TreeViewModels.Season> Seasons = retrieveData.RetrieveTreeViewData_GameSelectionList();
 
         }
 

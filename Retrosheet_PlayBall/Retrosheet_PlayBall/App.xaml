@@ -1,7 +1,7 @@
-﻿<Application x:Class="Retrosheet_WPF_Seasons_TreeView.App"
+﻿<Application x:Class="Retrosheet_PlayBall.App"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:local="clr-namespace:Retrosheet_WPF_Seasons_TreeView"
+             xmlns:local="clr-namespace:Retrosheet_PlayBall"
              StartupUri="MainWindow.xaml">
     <Application.Resources>
          

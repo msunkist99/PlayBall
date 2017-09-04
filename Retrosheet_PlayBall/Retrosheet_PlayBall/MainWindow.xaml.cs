@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -13,24 +12,17 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
-using Retrosheet_RetrieveData;
 
-namespace Retrosheet_WPF_Seasons_TreeView
+namespace Retrosheet_PlayBall
 {
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>
-    public partial class MainWindow : Window
+    public partial class MainWindow : NavigationWindow
     {
         public MainWindow()
         {
             InitializeComponent();
-
-            RetrieveData retrieveData = new RetrieveData();
-
-            Collection<TreeViewModels.Season> Seasons = retrieveData.RetrieveTreeViewData_Seasons();
-
-            trvSeasons.ItemsSource = Seasons;
         }
     }
 }

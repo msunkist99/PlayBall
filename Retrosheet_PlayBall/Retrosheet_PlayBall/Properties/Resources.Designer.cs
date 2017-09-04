@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace Retrosheet_WPF_Seasons_TreeView.Properties
+namespace Retrosheet_PlayBall.Properties
 {
 
 
@@ -44,7 +44,7 @@ namespace Retrosheet_WPF_Seasons_TreeView.Properties
             {
                 if ((resourceMan == null))
                 {
-                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("Retrosheet_WPF_Seasons_TreeView.Properties.Resources", typeof(Resources).Assembly);
+                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("Retrosheet_PlayBall.Properties.Resources", typeof(Resources).Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;

@@ -6,7 +6,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
 
-namespace Retrosheet_WPF_Seasons_TreeView
+namespace Retrosheet_PlayBall
 {
     /// <summary>
     /// Interaction logic for App.xaml

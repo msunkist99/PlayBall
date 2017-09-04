@@ -23,9 +23,9 @@ namespace Retrosheet_Persist
                 dbCtx.Database.ExecuteSqlCommand("TRUNCATE TABLE Ejection");
                 dbCtx.Database.ExecuteSqlCommand("TRUNCATE TABLE Game_Comment");
                 dbCtx.Database.ExecuteSqlCommand("TRUNCATE TABLE Game_Data");
-                */
+                
                 dbCtx.Database.ExecuteSqlCommand("TRUNCATE TABLE Game_Info");
-                /*
+                
                 dbCtx.Database.ExecuteSqlCommand("TRUNCATE TABLE Game_Information");
                 dbCtx.Database.ExecuteSqlCommand("TRUNCATE TABLE Game_Suspension");
                 dbCtx.Database.ExecuteSqlCommand("TRUNCATE TABLE Personnel");
@@ -33,7 +33,9 @@ namespace Retrosheet_Persist
                 dbCtx.Database.ExecuteSqlCommand("TRUNCATE TABLE Play");
                 dbCtx.Database.ExecuteSqlCommand("TRUNCATE TABLE Player");
                 dbCtx.Database.ExecuteSqlCommand("TRUNCATE TABLE Protest");
+                */
                 dbCtx.Database.ExecuteSqlCommand("TRUNCATE TABLE Reference_Data");
+                /*
                 dbCtx.Database.ExecuteSqlCommand("TRUNCATE TABLE Replay");
                 dbCtx.Database.ExecuteSqlCommand("TRUNCATE TABLE Starting_Player");
                 dbCtx.Database.ExecuteSqlCommand("TRUNCATE TABLE Substitute_Player");
