@@ -29,13 +29,15 @@ namespace Retrosheet_PlayBall
 
         private void btnButton_Click(object sender, RoutedEventArgs e)
         {
-            // view the Play Ball - Play-By-Play UI
             btnButton.IsEnabled = false;
-            btnButton.Content = "Please wait...";
-            MessageBox.Show("MLB Game Data will now load.  Click OK to continue....", Title);
-
+            // view the Play Ball - game selection UI
             Retrosheet_PlayBall_Seasons selectGamePage = new Retrosheet_PlayBall_Seasons();
             this.NavigationService.Navigate(selectGamePage);
+        }
+
+        private void btnButton_PreviewMouseDown(object sender, MouseButtonEventArgs e)
+        {
+            btnButton.Content = "Please wait...";
         }
     }
 }

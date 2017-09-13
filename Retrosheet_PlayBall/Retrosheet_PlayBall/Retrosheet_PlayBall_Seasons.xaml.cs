@@ -37,7 +37,7 @@ namespace Retrosheet_PlayBall
                     Retrosheet_RetrieveData.TreeViewModels.Game item = (Retrosheet_RetrieveData.TreeViewModels.Game)trvSeasons.SelectedItem;
                     MessageBox.Show("Item selected:  " + item.GameDesc + " " + item.GameID, Title);
 
-                    Retrosheet_PlayBall_PlayByPlay PlayPage = new Retrosheet_PlayBall_PlayByPlay();
+                    Retrosheet_PlayBall_PlayByPlay PlayPage = new Retrosheet_PlayBall_PlayByPlay(item.GameID);
                     this.NavigationService.Navigate(PlayPage);
                 }
                 else

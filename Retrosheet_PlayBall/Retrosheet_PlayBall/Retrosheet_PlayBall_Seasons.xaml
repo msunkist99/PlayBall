@@ -7,19 +7,20 @@
       mc:Ignorable="d" 
       d:DesignHeight="300" d:DesignWidth="300"
       Title="Retrosheet Play Ball MBL Game Selection">
-    <Grid>
+    <Grid  >
         <Grid.ColumnDefinitions>
             <ColumnDefinition />
             <ColumnDefinition Width="Auto" />
         </Grid.ColumnDefinitions>
 
-        <TreeView Name="trvSeasons" ItemsSource="{Binding Season}" SelectedItemChanged="trvSeasons_SelectedItemChanged" Grid.Column="0" BorderThickness="0">
+        <TreeView Name="trvSeasons" ItemsSource="{Binding Season}" SelectedItemChanged="trvSeasons_SelectedItemChanged" Grid.Column="0" 
+                  BorderThickness="0"  >
 
             <TreeView.ItemTemplate>
 
                 <HierarchicalDataTemplate ItemsSource="{Binding SeasonGameTypes}">
                     <StackPanel Orientation="Horizontal" >
-                        <Image  Source="{Binding SeasonIcon}" />
+                            <Image Source="{Binding SeasonIcon}" />
                         <TextBlock Text="{Binding SeasonYear}" VerticalAlignment="Center" FontWeight="Bold"/>
                     </StackPanel>
 
@@ -71,12 +72,12 @@
 
         </TreeView>
 
-        <StackPanel Margin="10,0"  VerticalAlignment="Center" HorizontalAlignment="Center" Grid.Column="1">
-            <Button Name="btnSelect" Click="btnSelect_Click"  Width="100" IsEnabled="False">Select Game Type
+        <StackPanel Margin="10,0"  VerticalAlignment="Center" HorizontalAlignment="Center" Grid.Column="1" >
+            <Button Name="btnSelect" Click="btnSelect_Click"  Width="100" IsEnabled="False" >Select Game
                 <Button.Style>
                     <Style TargetType="{x:Type Button}">
                         <Style.Triggers>
-                            <DataTrigger Binding="{Binding ElementName=trvSeasons, Path=SelectedItem}" Value="{x:Null}">
+                            <DataTrigger Binding="{Binding ElementName=trvSeasons, Path=SelectedItem}" Value="{x:Null}" >
                                 <Setter Property="IsEnabled" Value="False" />
                             </DataTrigger>
                         </Style.Triggers>

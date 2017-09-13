@@ -283,7 +283,7 @@ namespace Retrosheet_DataFileIO
                     replayDTO.UmpireID = columnValue[10];
                     replayDTO.BallparkID = columnValue[11];
                     replayDTO.Reason = columnValue[12];
-                    if (columnValue[12] == "Y")
+                    if (columnValue[13] == "Y")
                     {
                         replayDTO.Reversed = true;
                     }
@@ -291,9 +291,9 @@ namespace Retrosheet_DataFileIO
                     {
                         replayDTO.Reversed = false;
                     }
-                    replayDTO.Initiated = columnValue[13];
-                    replayDTO.ReplayChallengeTeamID = columnValue[14];
-                    replayDTO.Type = columnValue[15];
+                    replayDTO.Initiated = columnValue[14];
+                    replayDTO.ReplayChallengeTeamID = columnValue[15];
+                    replayDTO.Type = columnValue[16];
 
                     ReplayPersist.CreateReplay(replayDTO);
                 }
