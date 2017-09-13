@@ -312,8 +312,8 @@ namespace Retrosheet_RetrieveData
             public string Reason { get; set; }
             public string ReasonDesc { get; set; }
             public string Reversed { get; set; }
-            public string Initiated { get; set; }
-            public string InitiatedDesc { get; set; }
+            public string Initiator { get; set; }
+            public string InitiatorDesc { get; set; }
             public string InitiatorTeamID { get; set; }
             public string InitiatorTeamName { get; set; }
             public string Type { get; set; }
@@ -347,6 +347,21 @@ namespace Retrosheet_RetrieveData
             public string PlayerHandDesc { get; set; }
             public string TeamID { get; set; }
             public string TeamName { get; set; }
+        }
+
+        public class SubstituteUmpireInformation
+        {
+            public Guid RecordID { get; set; }
+            public string GameID { get; set; }
+            public int Inning { get; set; }
+            public int Sequence { get; set; }
+            public int CommentSequence { get; set; }
+            public string FieldPosition { get; set; }
+            public string FieldPositionDesc { get; set; }
+            public string UmpireID { get; set; }
+            public string UmpireLastName { get; set; }
+            public string UmpireFirstName { get; set; }
+
         }
     }
 

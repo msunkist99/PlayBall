@@ -11,7 +11,7 @@ namespace Retrosheet_Console
 {
     class ParseInput
     {
-        static void Main(string[] args)
+        static void xMain(string[] args)
         {
 
             // settings are captured in Settings constructor
@@ -41,26 +41,27 @@ namespace Retrosheet_Console
             settings.WriteSettings(settingsArray);
                         settings.GetSettings();
 
-            //DataFileIO dataFileIO = new DataFileIO();
-            //
-            //dataFileIO.ProcessBallparkFile(settings.BallparkDataInputPath, settings.BallparkDataInputFile,
-            //                settings.BallparkDataOutputPath,
-            //                settings.BallparkDataOutputFile);
+            DataFileIO dataFileIO = new DataFileIO();
+            
+            /*
+            dataFileIO.ProcessBallparkFile(settings.BallparkDataInputPath, settings.BallparkDataInputFile,
+                            settings.BallparkDataOutputPath,
+                            settings.BallparkDataOutputFile);
+            */
 
-
-            //dataFileIO.ProcessEventFiles(settings.EventDataInputPath,
-            //                             settings.EventDataOutputPath,
-            //                             settings.EventDataSeasonYear,
-            //                             settings.EventDataSeasonGameType);
+            dataFileIO.ProcessEventFiles(settings.EventDataInputPath,
+                                         settings.EventDataOutputPath,
+                                         settings.EventDataSeasonYear,
+                                         settings.EventDataSeasonGameType);
 
             LoadDatabase loadDatabase = new LoadDatabase();
 
             loadDatabase.TruncateDatabase();
-            //loadDatabase.LoadDatabaseEventData(settings.EventDataOutputPath);
-            loadDatabase.LoadDatabaseReferenceData(settings.ReferenceDataInputPath  + settings.ReferenceDataInputFile);
+            loadDatabase.LoadDatabaseEventData(settings.EventDataOutputPath);
+            //loadDatabase.LoadDatabaseReferenceData(settings.ReferenceDataInputPath  + settings.ReferenceDataInputFile);
             //loadDatabase.LoadDatabasePersonnelData(settings.PersonnelDataInputPath + settings.PersonnelDataInputFile);
             //loadDatabase.LoadDatabaseBallparkData(settings.BallparkDataInputPath  + settings.BallparkDataInputFile);
-            //loadDatabase.LoadDatabaseGameInformation();
+            loadDatabase.LoadDatabaseGameInformation();
 
 
             Console.WriteLine("All done!");

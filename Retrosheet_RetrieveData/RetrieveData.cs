@@ -8,9 +8,6 @@ namespace Retrosheet_RetrieveData
 {
 	public class RetrieveData
 	{
-		private DateTime dateTime;
-		//private DataModels.ReferenceData referenceData = new DataModels.ReferenceData();
-
 		private Dictionary<string, DataModels.ReferenceData> referenceDataDictionary = new Dictionary<string, DataModels.ReferenceData>();
 		private Dictionary<string, DataModels.StartingPlayerInformation> startingPlayerDictionary = new Dictionary<string, DataModels.StartingPlayerInformation>();
 		private Dictionary<string, DataModels.PlayerInformation> playerDictionary = new Dictionary<string, DataModels.PlayerInformation>();
@@ -594,7 +591,7 @@ from reference_data;";
 
 		public Collection<DataModels.StartingPlayerInformation> RetrieveStartingPlayers(string seasonYear, string seasonGameType, string gameID)
 		{
-            string sqlQuery = @"select
+			string sqlQuery = @"select
   starting_player.record_id RecordID
 , starting_player.game_id GameID
 , starting_player.player_id PlayerID
@@ -609,64 +606,64 @@ from reference_data;";
 , team.name TeamName 
 from starting_player
 join team on starting_player.team_id = team.team_id
-           and team.season_year = 'x_season_year'
-           and team.season_game_type = 'x_season_game_type'
+		   and team.season_year = 'x_season_year'
+		   and team.season_game_type = 'x_season_game_type'
 join player on starting_player.player_id = player.player_id
 		   and player.team_id = Starting_Player.team_id
-           and player.season_year = 'x_season_year'
-           and player.season_game_type = 'x_season_game_type'
+		   and player.season_year = 'x_season_year'
+		   and player.season_game_type = 'x_season_game_type'
 where game_id = 'x_game_id'";
 
-            sqlQuery = sqlQuery.Replace("x_season_year", seasonYear);
-            sqlQuery = sqlQuery.Replace("x_season_game_type", seasonGameType);
-            sqlQuery = sqlQuery.Replace("x_game_id", gameID);
+			sqlQuery = sqlQuery.Replace("x_season_year", seasonYear);
+			sqlQuery = sqlQuery.Replace("x_season_game_type", seasonGameType);
+			sqlQuery = sqlQuery.Replace("x_game_id", gameID);
 
-            Collection<DataModels.StartingPlayerInformation> StartingPlayerInformation = new Collection<DataModels.StartingPlayerInformation>();
+			Collection<DataModels.StartingPlayerInformation> StartingPlayerInformation = new Collection<DataModels.StartingPlayerInformation>();
 
-            // add System.Data.Linq assembly to the References
-            using (RetrosheetDataContext dbCtx = new RetrosheetDataContext())
-            {
-                //dbCtx.CommandTimeout = 120;  //2 minutes
-                IEnumerable<DataModels.StartingPlayerInformation> results = dbCtx.ExecuteQuery<DataModels.StartingPlayerInformation>(sqlQuery).ToList();
-                Console.WriteLine("DataModels.StartingPlayerInformation record count " + results.Count());
+			// add System.Data.Linq assembly to the References
+			using (RetrosheetDataContext dbCtx = new RetrosheetDataContext())
+			{
+				//dbCtx.CommandTimeout = 120;  //2 minutes
+				IEnumerable<DataModels.StartingPlayerInformation> results = dbCtx.ExecuteQuery<DataModels.StartingPlayerInformation>(sqlQuery).ToList();
+				Console.WriteLine("DataModels.StartingPlayerInformation record count " + results.Count());
 
-                foreach (DataModels.StartingPlayerInformation result in results)
-                {
-                    result.GameTeamCodeDesc = RetrieveReferenceDataDesc("game_team", result.GameTeamCode.ToString());
-                    result.FieldPositionDesc = RetrieveReferenceDataDesc("field_position", result.FieldPosition.ToString());
+				foreach (DataModels.StartingPlayerInformation result in results)
+				{
+					result.GameTeamCodeDesc = RetrieveReferenceDataDesc("game_team", result.GameTeamCode.ToString());
+					result.FieldPositionDesc = RetrieveReferenceDataDesc("field_position", result.FieldPosition.ToString());
 
-                    result.ThrowsDesc = RetrieveReferenceDataDesc("throws", result.Throws);
-                    result.BatsDesc = RetrieveReferenceDataDesc("bats", result.Bats);
-                    StartingPlayerInformation.Add(result);
+					result.ThrowsDesc = RetrieveReferenceDataDesc("throws", result.Throws);
+					result.BatsDesc = RetrieveReferenceDataDesc("bats", result.Bats);
+					StartingPlayerInformation.Add(result);
 
-                    DataModels.PlayerInformation playerInformation = new DataModels.PlayerInformation();
-                    playerInformation.RecordID = result.RecordID;
-                    playerInformation.PlayerID = result.PlayerID;
-                    playerInformation.PlayerLastName = result.PlayerLastName;
-                    playerInformation.PlayerFirstName = result.PlayerFirstName;
-                    playerInformation.PlayerThrows = result.Throws;
-                    playerInformation.PlayerThrowsDesc = result.ThrowsDesc;
-                    playerInformation.PlayerBats = result.Bats;
-                    playerInformation.PlayerBatsDesc = result.BatsDesc;
-                    playerInformation.PlayerTeamID = result.TeamID;
-                    playerInformation.PlayerTeamName = result.TeamName;
-                    playerInformation.PlayerFieldPosition = result.FieldPosition.ToString();
-                    playerInformation.PlayerFieldPositionDesc = result.FieldPositionDesc;
-                    playerInformation.SeasonYear = seasonYear;
-                    playerInformation.SeasonGameType = seasonGameType;
-                    playerDictionary.Add(playerInformation.PlayerID, playerInformation);
-                }
-            }
-            return StartingPlayerInformation;
-        }
+					DataModels.PlayerInformation playerInformation = new DataModels.PlayerInformation();
+					playerInformation.RecordID = result.RecordID;
+					playerInformation.PlayerID = result.PlayerID;
+					playerInformation.PlayerLastName = result.PlayerLastName;
+					playerInformation.PlayerFirstName = result.PlayerFirstName;
+					playerInformation.PlayerThrows = result.Throws;
+					playerInformation.PlayerThrowsDesc = result.ThrowsDesc;
+					playerInformation.PlayerBats = result.Bats;
+					playerInformation.PlayerBatsDesc = result.BatsDesc;
+					playerInformation.PlayerTeamID = result.TeamID;
+					playerInformation.PlayerTeamName = result.TeamName;
+					playerInformation.PlayerFieldPosition = result.FieldPosition.ToString();
+					playerInformation.PlayerFieldPositionDesc = result.FieldPositionDesc;
+					playerInformation.SeasonYear = seasonYear;
+					playerInformation.SeasonGameType = seasonGameType;
+					playerDictionary.Add(playerInformation.PlayerID, playerInformation);
+				}
+			}
+			return StartingPlayerInformation;
+		}
 
-        public Collection<DataModels.PlayInformation> RetrievePlay(string seasonYear,
-                                                                   string seasonGameType,
-                                                                   string homeTeamID,
-                                                                   string visitingTeamID,
-                                                                   string gameID)
+		public Collection<DataModels.PlayInformation> RetrievePlay(string seasonYear,
+																   string seasonGameType,
+																   string homeTeamID,
+																   string visitingTeamID,
+																   string gameID)
 		{
-            string sqlQuery = @"select   
+			string sqlQuery = @"select   
 play.record_id RecordID 
 , play.game_id GameID 
 , play.inning Inning 
@@ -686,92 +683,92 @@ play.record_id RecordID
 , team.name TeamName
 from play  
 join team on team.season_year = 'x_season_year'  
-        and team.season_game_type = 'x_season_game_type'              
-        and team.team_id = (          
-        case play.game_team_code        
-            when 0 then 'x_visiting_team_id'        
-            else 'x_home_team_id'         
-        end)     
+		and team.season_game_type = 'x_season_game_type'              
+		and team.team_id = (          
+		case play.game_team_code        
+			when 0 then 'x_visiting_team_id'        
+			else 'x_home_team_id'         
+		end)     
 join player on player.player_id = play.player_id             
-        and player.season_year = 'x_season_year'             
-        and player.season_game_type = 'x_season_game_type'             
-        and player.team_id = (            
-        case play.game_team_code         
-            when 0 then 'x_visiting_team_id'        
-            else 'x_home_team_id'       
-        end)             
+		and player.season_year = 'x_season_year'             
+		and player.season_game_type = 'x_season_game_type'             
+		and player.team_id = (            
+		case play.game_team_code         
+			when 0 then 'x_visiting_team_id'        
+			else 'x_home_team_id'       
+		end)             
 where play.game_id = 'x_game_id' ";
 
-            sqlQuery = sqlQuery.Replace("x_season_year", seasonYear);
-            sqlQuery = sqlQuery.Replace("x_season_game_type", seasonGameType);
-            sqlQuery = sqlQuery.Replace("x_visiting_team_id", visitingTeamID);
-            sqlQuery = sqlQuery.Replace("x_home_team_id", homeTeamID);
-            sqlQuery = sqlQuery.Replace("x_game_id", gameID);
+			sqlQuery = sqlQuery.Replace("x_season_year", seasonYear);
+			sqlQuery = sqlQuery.Replace("x_season_game_type", seasonGameType);
+			sqlQuery = sqlQuery.Replace("x_visiting_team_id", visitingTeamID);
+			sqlQuery = sqlQuery.Replace("x_home_team_id", homeTeamID);
+			sqlQuery = sqlQuery.Replace("x_game_id", gameID);
 
-            Collection<DataModels.PlayInformation> PlayInformation = new Collection<DataModels.PlayInformation>();
+			Collection<DataModels.PlayInformation> PlayInformation = new Collection<DataModels.PlayInformation>();
 
-            // add System.Data.Linq assembly to the References
-            using (RetrosheetDataContext dbCtx = new RetrosheetDataContext())
-            {
-                //dbCtx.CommandTimeout = 120;  //2 minutes
-                IEnumerable<DataModels.PlayInformation> results = dbCtx.ExecuteQuery<DataModels.PlayInformation>(sqlQuery).ToList();
-                Console.WriteLine("DataModels.PlayInformation record count " + results.Count());
+			// add System.Data.Linq assembly to the References
+			using (RetrosheetDataContext dbCtx = new RetrosheetDataContext())
+			{
+				//dbCtx.CommandTimeout = 120;  //2 minutes
+				IEnumerable<DataModels.PlayInformation> results = dbCtx.ExecuteQuery<DataModels.PlayInformation>(sqlQuery).ToList();
+				Console.WriteLine("DataModels.PlayInformation record count " + results.Count());
 
-                foreach (DataModels.PlayInformation result in results)
-                {
-                    var pitchCodes = result.Pitches.ToCharArray();
+				foreach (DataModels.PlayInformation result in results)
+				{
+					var pitchCodes = result.Pitches.ToCharArray();
 
-                    int pitchCodeCount = pitchCodes.Count();
-                    int x = 0;
+					int pitchCodeCount = pitchCodes.Count();
+					int x = 0;
 
-                    foreach (char pitchCode in pitchCodes)
-                    {
-                        x++;
-                        if (x < pitchCodeCount)
-                        {
-                            result.PitchDesc = result.PitchDesc + RetrieveReferenceDataDesc("pitch_code", pitchCode.ToString()) + ", ";
-                        }
-                        else
-                        {
-                            result.PitchDesc = result.PitchDesc + RetrieveReferenceDataDesc("pitch_code", pitchCode.ToString());
-                        }
-                    }
+					foreach (char pitchCode in pitchCodes)
+					{
+						x++;
+						if (x < pitchCodeCount)
+						{
+							result.PitchDesc = result.PitchDesc + RetrieveReferenceDataDesc("pitch_code", pitchCode.ToString()) + ", ";
+						}
+						else
+						{
+							result.PitchDesc = result.PitchDesc + RetrieveReferenceDataDesc("pitch_code", pitchCode.ToString());
+						}
+					}
 
-                    int event_sequence_n;
-                    bool isNumeric = int.TryParse(result.EventSequence, out event_sequence_n);
+					int event_sequence_n;
+					bool isNumeric = int.TryParse(result.EventSequence, out event_sequence_n);
 
-                    if (isNumeric == true)
-                    {
-                        char[] event_sequence_codes = result.EventSequence.ToCharArray();
+					if (isNumeric == true)
+					{
+						char[] event_sequence_codes = result.EventSequence.ToCharArray();
 
-                        int event_sequence_count = event_sequence_codes.Count();
-                        x = 0;
+						int event_sequence_count = event_sequence_codes.Count();
+						x = 0;
 
-                        foreach (char event_sequence_code in event_sequence_codes)
-                        {
-                            x++;
-                            if (x < event_sequence_count)
-                            {
-                                result.EventSequenceDesc = result.EventHitLocationDesc + RetrieveReferenceDataDesc("field_position", event_sequence_code.ToString()) + outputDelimiter;
-                            }
-                            else
-                            {
-                                result.EventSequenceDesc = result.EventHitLocationDesc + RetrieveReferenceDataDesc("field_position", event_sequence_code.ToString());
-                            }
-                        }
-                    }
-                    else
-                    {
-                        result.EventSequenceDesc = RetrieveReferenceDataDesc("event_sequence", result.EventSequence);
-                    }
+						foreach (char event_sequence_code in event_sequence_codes)
+						{
+							x++;
+							if (x < event_sequence_count)
+							{
+								result.EventSequenceDesc = result.EventHitLocationDesc + RetrieveReferenceDataDesc("field_position", event_sequence_code.ToString()) + outputDelimiter;
+							}
+							else
+							{
+								result.EventSequenceDesc = result.EventHitLocationDesc + RetrieveReferenceDataDesc("field_position", event_sequence_code.ToString());
+							}
+						}
+					}
+					else
+					{
+						result.EventSequenceDesc = RetrieveReferenceDataDesc("event_sequence", result.EventSequence);
+					}
 
-                    result.GameTeamCodeDesc = RetrieveReferenceDataDesc("game_team", result.GameTeamCode.ToString());
-                    result.EventSequenceModifierDesc = RetrieveReferenceDataDesc("play_modifier", result.EventModifier);
-                    result.EventHitLocationDesc = RetrieveReferenceDataDesc("hit_location", result.EventHitLocation);
-                    PlayInformation.Add(result);
-                }
-            }
-                return PlayInformation;
+					result.GameTeamCodeDesc = RetrieveReferenceDataDesc("game_team", result.GameTeamCode.ToString());
+					result.EventSequenceModifierDesc = RetrieveReferenceDataDesc("play_modifier", result.EventModifier);
+					result.EventHitLocationDesc = RetrieveReferenceDataDesc("hit_location", result.EventHitLocation);
+					PlayInformation.Add(result);
+				}
+			}
+				return PlayInformation;
 		}
 
 		public Collection<DataModels.PlayerInformation>RetrievePlayers(string seasonYear, string seasonGameType, string homeTeamID, string visitTeamID)
@@ -790,21 +787,21 @@ where play.game_id = 'x_game_id' ";
 	, Player.season_game_type SeasonGameType
 from player
 	join team on player.team_id = team.team_id
-	         and team.season_year = 'x_season_year'
+			 and team.season_year = 'x_season_year'
 			 and team.season_game_type = 'x_season_game_type'
 where Player.team_id in ('x_home_team_id', 'x_visit_team_id')
   and Player.season_year = 'x_season_year'
   and Player.season_game_type = 'x_season_game_type'";
 
-            sqlQuery = sqlQuery.Replace("x_season_year", seasonYear);
-            sqlQuery = sqlQuery.Replace("x_season_game_type", seasonGameType);
-            sqlQuery = sqlQuery.Replace("x_home_team_id", homeTeamID);
-            sqlQuery = sqlQuery.Replace("x_visit_team_id", visitTeamID);
+			sqlQuery = sqlQuery.Replace("x_season_year", seasonYear);
+			sqlQuery = sqlQuery.Replace("x_season_game_type", seasonGameType);
+			sqlQuery = sqlQuery.Replace("x_home_team_id", homeTeamID);
+			sqlQuery = sqlQuery.Replace("x_visit_team_id", visitTeamID);
 
-            Collection<DataModels.PlayerInformation> PlayerInformation = new Collection<DataModels.PlayerInformation>();
+			Collection<DataModels.PlayerInformation> PlayerInformation = new Collection<DataModels.PlayerInformation>();
 
-            // add System.Data.Linq assembly to the References
-            using (RetrosheetDataContext dbCtx = new RetrosheetDataContext())
+			// add System.Data.Linq assembly to the References
+			using (RetrosheetDataContext dbCtx = new RetrosheetDataContext())
 			{
 				//dbCtx.CommandTimeout = 120;  //2 minutes
 				IEnumerable<DataModels.PlayerInformation> results = dbCtx.ExecuteQuery<DataModels.PlayerInformation>(sqlQuery).ToList();
@@ -812,15 +809,15 @@ where Player.team_id in ('x_home_team_id', 'x_visit_team_id')
 
 				foreach (DataModels.PlayerInformation result in results)
 				{
-                    result.PlayerThrowsDesc = RetrieveReferenceDataDesc("throws", result.PlayerThrows);
-                    result.PlayerBatsDesc = RetrieveReferenceDataDesc("bats", result.PlayerBats);
-                    result.PlayerFieldPositionDesc = RetrieveReferenceDataDesc("field_position_x", result.PlayerFieldPosition);
-                    PlayerInformation.Add(result);
-                    //playerDictionary.Add(result.PlayerID, result);
+					result.PlayerThrowsDesc = RetrieveReferenceDataDesc("throws", result.PlayerThrows);
+					result.PlayerBatsDesc = RetrieveReferenceDataDesc("bats", result.PlayerBats);
+					result.PlayerFieldPositionDesc = RetrieveReferenceDataDesc("field_position_x", result.PlayerFieldPosition);
+					PlayerInformation.Add(result);
+					//playerDictionary.Add(result.PlayerID, result);
 				}
 			}
 
-            return PlayerInformation;
+			return PlayerInformation;
 		}
 
 
@@ -907,15 +904,15 @@ where Player.team_id in ('x_home_team_id', 'x_visit_team_id')
 		{
 			DataModels.PlayerInformation playerInformation = new DataModels.PlayerInformation();
 
-            try
-            {
-                playerInformation = playerDictionary[playerId];
-                return playerInformation;
-            }
-            catch
-            {
-                return playerInformation;
-            }
+			try
+			{
+				playerInformation = playerDictionary[playerId];
+				return playerInformation;
+			}
+			catch
+			{
+				return playerInformation;
+			}
 		}
 
 		private DataModels.TeamInformation RetrieveTeamInformation(string teamID)
@@ -1403,13 +1400,13 @@ order by _seasonYear, _sortKey, _displayUnderLeagueID, _displayUnderTeamID, _gam
 			}
 		}
 
-        public Collection<DataModels.BatterAdjustmentInformation> RetrieveBatterAdjustment(string seasonYear,
-                                                                                           string seasonGameType,
-                                                                                           string homeTeamID,
-                                                                                           string visitingTeamID,
-                                                                                           string gameID)
-        {
-            string sqlQuery = @"select 
+		public Collection<DataModels.BatterAdjustmentInformation> RetrieveBatterAdjustment(string seasonYear,
+																						   string seasonGameType,
+																						   string homeTeamID,
+																						   string visitingTeamID,
+																						   string gameID)
+		{
+			string sqlQuery = @"select 
   batter_adjustment.record_id RecordID
 , batter_adjustment.game_id GameID
 , batter_adjustment.inning  Inning
@@ -1424,69 +1421,69 @@ order by _seasonYear, _sortKey, _displayUnderLeagueID, _displayUnderTeamID, _gam
 from batter_adjustment
 	join team on team.season_year = 'x_season_year'
 			 and team.season_game_type = 'x_season_game_type'
-             and team.team_id = (
-	            case batter_adjustment.game_team_code
-		        when 0 then 'x_visiting_team_id'
-		        else 'x_home_team_id'
-	         end)
-    join player on player.player_id = batter_adjustment.player_id
-            and player.season_year = 'x_season_year'
-            and player.season_game_type = 'x_season_game_type'
-            and player.team_id = (
-	            case batter_adjustment.game_team_code
-		        when 0 then 'x_visiting_team_id'
-		        else 'x_home_team_id'
-	        end)
+			 and team.team_id = (
+				case batter_adjustment.game_team_code
+				when 0 then 'x_visiting_team_id'
+				else 'x_home_team_id'
+			 end)
+	join player on player.player_id = batter_adjustment.player_id
+			and player.season_year = 'x_season_year'
+			and player.season_game_type = 'x_season_game_type'
+			and player.team_id = (
+				case batter_adjustment.game_team_code
+				when 0 then 'x_visiting_team_id'
+				else 'x_home_team_id'
+			end)
 where Batter_Adjustment.game_id = 'x_game_id'
 ";
 
-            sqlQuery = sqlQuery.Replace("x_season_year", seasonYear);
-            sqlQuery = sqlQuery.Replace("x_season_game_type", seasonGameType);
-            sqlQuery = sqlQuery.Replace("x_visiting_team_id", visitingTeamID);
-            sqlQuery = sqlQuery.Replace("x_home_team_id", homeTeamID);
-            sqlQuery = sqlQuery.Replace("x_game_id", gameID);
+			sqlQuery = sqlQuery.Replace("x_season_year", seasonYear);
+			sqlQuery = sqlQuery.Replace("x_season_game_type", seasonGameType);
+			sqlQuery = sqlQuery.Replace("x_visiting_team_id", visitingTeamID);
+			sqlQuery = sqlQuery.Replace("x_home_team_id", homeTeamID);
+			sqlQuery = sqlQuery.Replace("x_game_id", gameID);
 
-            Collection<DataModels.BatterAdjustmentInformation> BatterAdjustmentInformation = new Collection<DataModels.BatterAdjustmentInformation>();
+			Collection<DataModels.BatterAdjustmentInformation> BatterAdjustmentInformation = new Collection<DataModels.BatterAdjustmentInformation>();
 
-            // add System.Data.Linq assembly to the References
-            using (RetrosheetDataContext dbCtx = new RetrosheetDataContext())
-            {
-                //dbCtx.CommandTimeout = 120;  //2 minutes
-                IEnumerable<DataModels.BatterAdjustmentInformation> results = dbCtx.ExecuteQuery<DataModels.BatterAdjustmentInformation>(sqlQuery).ToList();
-                Console.WriteLine("DataModels.BatterAdjustmentInformation record count " + results.Count());
+			// add System.Data.Linq assembly to the References
+			using (RetrosheetDataContext dbCtx = new RetrosheetDataContext())
+			{
+				//dbCtx.CommandTimeout = 120;  //2 minutes
+				IEnumerable<DataModels.BatterAdjustmentInformation> results = dbCtx.ExecuteQuery<DataModels.BatterAdjustmentInformation>(sqlQuery).ToList();
+				Console.WriteLine("DataModels.BatterAdjustmentInformation record count " + results.Count());
 
-                foreach (DataModels.BatterAdjustmentInformation result in results)
-                {
-                    result.GameTeamCodeDesc = RetrieveReferenceDataDesc("game_team", result.GameTeamCode.ToString());
-                    result.BatsDesc = RetrieveReferenceDataDesc("bats", result.PlayerBats);
-                    BatterAdjustmentInformation.Add(result);
-                }
-            }
-            return BatterAdjustmentInformation;
-        }
+				foreach (DataModels.BatterAdjustmentInformation result in results)
+				{
+					result.GameTeamCodeDesc = RetrieveReferenceDataDesc("game_team", result.GameTeamCode.ToString());
+					result.BatsDesc = RetrieveReferenceDataDesc("bats", result.PlayerBats);
+					BatterAdjustmentInformation.Add(result);
+				}
+			}
+			return BatterAdjustmentInformation;
+		}
 
-        public Collection<DataModels.PlayerEjectionInformation> RetrievePlayerEjection(string gameID)
-        {
-            string sqlQuery = @"SELECT 
-	    ejection.record_id RecordID
+		public Collection<DataModels.PlayerEjectionInformation> RetrievePlayerEjection(string gameID)
+		{
+			string sqlQuery = @"SELECT 
+		ejection.record_id RecordID
 	  , ejection.game_id GameID
 	  , ejection.inning Inning
 	  , ejection.game_team_code GameTeamCode
 	  , ejection.sequence Sequence
 	  , ejection.comment_sequence CommentSequence
 	  , ejection.player_id PlayerID
-      , case manager.person_id 
-            when null 
-			    then null
-            else
-                manager.last_name
-            end PlayerLastName
-      , case manager.person_id
-            when null
-                then  null
-            else
-                manager.first_name
-            end PlayerFirstName
+	  , case manager.person_id 
+			when null 
+				then null
+			else
+				manager.last_name
+			end PlayerLastName
+	  , case manager.person_id
+			when null
+				then  null
+			else
+				manager.first_name
+			end PlayerFirstName
 	  , ejection.job_code JobCode
 	  , ejection.umpire_id UmpireCode
 	  , umpire.last_name UmpireLastName
@@ -1495,163 +1492,163 @@ where Batter_Adjustment.game_id = 'x_game_id'
 	  , ejection.reason Reason
   FROM ejection
 	  join personnel umpire on umpire.person_id = ejection.umpire_id
-      left join personnel manager on manager.person_id = ejection.player_id
-                         and manager.role = ejection.job_code
+	  left join personnel manager on manager.person_id = ejection.player_id
+						 and manager.role = ejection.job_code
   where ejection.game_id = 'x_game_id'
   order by   ejection.game_id
-           , ejection.inning
-           , ejection.game_team_code
-           , ejection.sequence
-           , ejection.comment_sequence";
+		   , ejection.inning
+		   , ejection.game_team_code
+		   , ejection.sequence
+		   , ejection.comment_sequence";
 
-            sqlQuery = sqlQuery.Replace("x_game_id", gameID);
+			sqlQuery = sqlQuery.Replace("x_game_id", gameID);
 
-            Collection<DataModels.PlayerEjectionInformation> PlayerEjectionInformation = new Collection<DataModels.PlayerEjectionInformation>();
-            DataModels.PlayerEjectionInformation x_playerEjectionInformation = new DataModels.PlayerEjectionInformation();
+			Collection<DataModels.PlayerEjectionInformation> PlayerEjectionInformation = new Collection<DataModels.PlayerEjectionInformation>();
+			DataModels.PlayerEjectionInformation x_playerEjectionInformation = new DataModels.PlayerEjectionInformation();
 
-            string x_playerEjectionInformationReason = null;
+			string x_playerEjectionInformationReason = null;
 
-            // add System.Data.Linq assembly to the References
-            using (RetrosheetDataContext dbCtx = new RetrosheetDataContext())
-            {
-                //dbCtx.CommandTimeout = 120;  //2 minutes
-                IEnumerable<DataModels.PlayerEjectionInformation> results = dbCtx.ExecuteQuery<DataModels.PlayerEjectionInformation>(sqlQuery).ToList();
-                Console.WriteLine("DataModels.PlayerEjectionInformation record count " + results.Count());
+			// add System.Data.Linq assembly to the References
+			using (RetrosheetDataContext dbCtx = new RetrosheetDataContext())
+			{
+				//dbCtx.CommandTimeout = 120;  //2 minutes
+				IEnumerable<DataModels.PlayerEjectionInformation> results = dbCtx.ExecuteQuery<DataModels.PlayerEjectionInformation>(sqlQuery).ToList();
+				Console.WriteLine("DataModels.PlayerEjectionInformation record count " + results.Count());
 
-                foreach (DataModels.PlayerEjectionInformation result in results)
-                {
-                    if (x_playerEjectionInformation.GameID == null)
-                    {
-                        x_playerEjectionInformation = result;
+				foreach (DataModels.PlayerEjectionInformation result in results)
+				{
+					if (x_playerEjectionInformation.GameID == null)
+					{
+						x_playerEjectionInformation = result;
 
-                        x_playerEjectionInformation.GameTeamCodeDesc = RetrieveReferenceDataDesc("game_team", result.GameTeamCode.ToString());
-                        x_playerEjectionInformation.JobCodeDesc = RetrieveReferenceDataDesc("personnel", result.JobCode);
-                        x_playerEjectionInformation.UmpireRole = RetrieveReferenceDataDesc("personnel", result.UmpireRole);
+						x_playerEjectionInformation.GameTeamCodeDesc = RetrieveReferenceDataDesc("game_team", result.GameTeamCode.ToString());
+						x_playerEjectionInformation.JobCodeDesc = RetrieveReferenceDataDesc("personnel", result.JobCode);
+						x_playerEjectionInformation.UmpireRole = RetrieveReferenceDataDesc("personnel", result.UmpireRole);
 
-                        if (x_playerEjectionInformation.PlayerLastName == null)
-                        {
+						if (x_playerEjectionInformation.PlayerLastName == null)
+						{
 
-                            x_playerEjectionInformation.PlayerLastName = RetrievePlayerInformation(result.PlayerID).PlayerLastName;
-                            x_playerEjectionInformation.PlayerFirstName = RetrievePlayerInformation(result.PlayerID).PlayerFirstName;
-                        }
+							x_playerEjectionInformation.PlayerLastName = RetrievePlayerInformation(result.PlayerID).PlayerLastName;
+							x_playerEjectionInformation.PlayerFirstName = RetrievePlayerInformation(result.PlayerID).PlayerFirstName;
+						}
 
-                    }
-                    else if ((result.Inning != x_playerEjectionInformation.Inning)
-                        || (result.GameTeamCode != x_playerEjectionInformation.GameTeamCode)
-                        || (result.Sequence != x_playerEjectionInformation.Sequence)
-                        || (result.PlayerID != x_playerEjectionInformation.PlayerID))
-                    {
-                        x_playerEjectionInformation.Reason = x_playerEjectionInformationReason;
-                        x_playerEjectionInformationReason = null;
-                        PlayerEjectionInformation.Add(x_playerEjectionInformation);
+					}
+					else if ((result.Inning != x_playerEjectionInformation.Inning)
+						|| (result.GameTeamCode != x_playerEjectionInformation.GameTeamCode)
+						|| (result.Sequence != x_playerEjectionInformation.Sequence)
+						|| (result.PlayerID != x_playerEjectionInformation.PlayerID))
+					{
+						x_playerEjectionInformation.Reason = x_playerEjectionInformationReason;
+						x_playerEjectionInformationReason = null;
+						PlayerEjectionInformation.Add(x_playerEjectionInformation);
 
-                        x_playerEjectionInformation = result;
+						x_playerEjectionInformation = result;
 
-                        x_playerEjectionInformation.GameTeamCodeDesc = RetrieveReferenceDataDesc("game_team", result.GameTeamCode.ToString());
-                        x_playerEjectionInformation.JobCodeDesc = RetrieveReferenceDataDesc("personnel", result.JobCode);
-                        x_playerEjectionInformation.UmpireRole = RetrieveReferenceDataDesc("personnel", result.UmpireRole);
+						x_playerEjectionInformation.GameTeamCodeDesc = RetrieveReferenceDataDesc("game_team", result.GameTeamCode.ToString());
+						x_playerEjectionInformation.JobCodeDesc = RetrieveReferenceDataDesc("personnel", result.JobCode);
+						x_playerEjectionInformation.UmpireRole = RetrieveReferenceDataDesc("personnel", result.UmpireRole);
 
-                        if (x_playerEjectionInformation.PlayerLastName == null)
-                        {
-                            x_playerEjectionInformation.PlayerLastName = RetrievePlayerInformation(result.PlayerID).PlayerLastName;
-                            x_playerEjectionInformation.PlayerFirstName = RetrievePlayerInformation(result.PlayerID).PlayerFirstName;
-                        }
-                    }
+						if (x_playerEjectionInformation.PlayerLastName == null)
+						{
+							x_playerEjectionInformation.PlayerLastName = RetrievePlayerInformation(result.PlayerID).PlayerLastName;
+							x_playerEjectionInformation.PlayerFirstName = RetrievePlayerInformation(result.PlayerID).PlayerFirstName;
+						}
+					}
 
-                    x_playerEjectionInformationReason = x_playerEjectionInformationReason + " " + result.Reason;
-                }
+					x_playerEjectionInformationReason = x_playerEjectionInformationReason + " " + result.Reason;
+				}
 
-                if (x_playerEjectionInformation.GameID != null)
-                {
-                    x_playerEjectionInformation.Reason = x_playerEjectionInformationReason;
-                    PlayerEjectionInformation.Add(x_playerEjectionInformation);
-                }
-            }
+				if (x_playerEjectionInformation.GameID != null)
+				{
+					x_playerEjectionInformation.Reason = x_playerEjectionInformationReason;
+					PlayerEjectionInformation.Add(x_playerEjectionInformation);
+				}
+			}
 
-            return PlayerEjectionInformation;
-        }
+			return PlayerEjectionInformation;
+		}
 
-        public Collection<DataModels.SubstitutePlayerInformation> RetrieveSubstitutePlayer(string seasonYear,
-                                                                                           string seasonGameType,
-                                                                                           string gameID)
-        {
-            string sqlQuery = @"SELECT 
-	    substitute_player.record_id RecordID
-      , substitute_player.game_id GameID
+		public Collection<DataModels.SubstitutePlayerInformation> RetrieveSubstitutePlayer(string seasonYear,
+																						   string seasonGameType,
+																						   string gameID)
+		{
+			string sqlQuery = @"SELECT 
+		substitute_player.record_id RecordID
+	  , substitute_player.game_id GameID
 	  , substitute_player.inning Inning
 	  , substitute_player.game_team_code GameTeamCode
 	  , substitute_player.sequence Sequence
 	  , substitute_player.player_id PlayerID
 	  , player.last_name PlayerLastName
 	  , player.first_name PlayerFirstName
-      , player.throws PlayerThrows
-      , player.bats PlayerBats
+	  , player.throws PlayerThrows
+	  , player.bats PlayerBats
 	  , substitute_player.batting_order BattingOrder
 	  , substitute_player.field_position FieldPosition
 	  , substitute_player.team_id TeamID
 	  , team.name TeamName
   FROM substitute_player 
   join team on team.season_year = 'x_season_year'
-           and team.season_game_type = 'x_season_game_type'
-           and substitute_player.team_id = team.team_id
+		   and team.season_game_type = 'x_season_game_type'
+		   and substitute_player.team_id = team.team_id
   join player on substitute_player.player_id = player.player_id
-             and player.season_year = 'x_season_year'
+			 and player.season_year = 'x_season_year'
 			 and player.season_game_type = 'x_season_game_type'
 			 and player.team_id = substitute_player.team_id
   where substitute_player.game_id = 'x_game_id'";
 
-            sqlQuery = sqlQuery.Replace("x_season_year", seasonYear);
-            sqlQuery = sqlQuery.Replace("x_season_game_type", seasonGameType);
-            sqlQuery = sqlQuery.Replace("x_game_id", gameID);
+			sqlQuery = sqlQuery.Replace("x_season_year", seasonYear);
+			sqlQuery = sqlQuery.Replace("x_season_game_type", seasonGameType);
+			sqlQuery = sqlQuery.Replace("x_game_id", gameID);
 
-            Collection<DataModels.SubstitutePlayerInformation> SubstitutePlayerInformation = new Collection<DataModels.SubstitutePlayerInformation>();
+			Collection<DataModels.SubstitutePlayerInformation> SubstitutePlayerInformation = new Collection<DataModels.SubstitutePlayerInformation>();
 
-            // add System.Data.Linq assembly to the References
-            using (RetrosheetDataContext dbCtx = new RetrosheetDataContext())
-            {
-                //dbCtx.CommandTimeout = 120;  //2 minutes
-                IEnumerable<DataModels.SubstitutePlayerInformation> results = dbCtx.ExecuteQuery<DataModels.SubstitutePlayerInformation>(sqlQuery).ToList();
-                Console.WriteLine("DataModels.SubstitutePlayerInformation record count " + results.Count());
+			// add System.Data.Linq assembly to the References
+			using (RetrosheetDataContext dbCtx = new RetrosheetDataContext())
+			{
+				//dbCtx.CommandTimeout = 120;  //2 minutes
+				IEnumerable<DataModels.SubstitutePlayerInformation> results = dbCtx.ExecuteQuery<DataModels.SubstitutePlayerInformation>(sqlQuery).ToList();
+				Console.WriteLine("DataModels.SubstitutePlayerInformation record count " + results.Count());
 
-                foreach (DataModels.SubstitutePlayerInformation result in results)
-                {
-                    result.GameTeamCodeDesc = RetrieveReferenceDataDesc("game_team", result.GameTeamCode.ToString());
-                    result.FieldPositionDesc = RetrieveReferenceDataDesc("field_position", result.FieldPosition.ToString());
-                    result.PlayerBatsDesc = RetrieveReferenceDataDesc( "bats", result.PlayerBats);
-                    result.PlayerThrowsDesc = RetrieveReferenceDataDesc("throws", result.PlayerThrows);
-                        
-                    SubstitutePlayerInformation.Add(result);
+				foreach (DataModels.SubstitutePlayerInformation result in results)
+				{
+					result.GameTeamCodeDesc = RetrieveReferenceDataDesc("game_team", result.GameTeamCode.ToString());
+					result.FieldPositionDesc = RetrieveReferenceDataDesc("field_position", result.FieldPosition.ToString());
+					result.PlayerBatsDesc = RetrieveReferenceDataDesc( "bats", result.PlayerBats);
+					result.PlayerThrowsDesc = RetrieveReferenceDataDesc("throws", result.PlayerThrows);
+						
+					SubstitutePlayerInformation.Add(result);
 
-                    if (!playerDictionary.ContainsKey(result.PlayerID))
-                    {
-                        DataModels.PlayerInformation playerInformation = new DataModels.PlayerInformation();
-                        playerInformation.RecordID = result.RecordID;
-                        playerInformation.PlayerID = result.PlayerID;
-                        playerInformation.PlayerLastName = result.PlayerLastName;
-                        playerInformation.PlayerFirstName = result.PlayerFirstName;
-                        playerInformation.PlayerThrows = result.PlayerThrows;
-                        playerInformation.PlayerThrowsDesc = result.PlayerThrowsDesc;
-                        playerInformation.PlayerBats = result.PlayerBats;
-                        playerInformation.PlayerBatsDesc = result.PlayerBatsDesc;
-                        playerInformation.PlayerTeamID = result.TeamID;
-                        playerInformation.PlayerTeamName = result.TeamName;
-                        playerInformation.PlayerFieldPosition = result.FieldPosition.ToString();
-                        playerInformation.PlayerFieldPositionDesc = result.FieldPositionDesc;
-                        playerInformation.SeasonYear = seasonYear;
-                        playerInformation.SeasonGameType = seasonGameType;
-                        playerDictionary.Add(playerInformation.PlayerID, playerInformation);
-                    }
-                }
-            }
+					if (!playerDictionary.ContainsKey(result.PlayerID))
+					{
+						DataModels.PlayerInformation playerInformation = new DataModels.PlayerInformation();
+						playerInformation.RecordID = result.RecordID;
+						playerInformation.PlayerID = result.PlayerID;
+						playerInformation.PlayerLastName = result.PlayerLastName;
+						playerInformation.PlayerFirstName = result.PlayerFirstName;
+						playerInformation.PlayerThrows = result.PlayerThrows;
+						playerInformation.PlayerThrowsDesc = result.PlayerThrowsDesc;
+						playerInformation.PlayerBats = result.PlayerBats;
+						playerInformation.PlayerBatsDesc = result.PlayerBatsDesc;
+						playerInformation.PlayerTeamID = result.TeamID;
+						playerInformation.PlayerTeamName = result.TeamName;
+						playerInformation.PlayerFieldPosition = result.FieldPosition.ToString();
+						playerInformation.PlayerFieldPositionDesc = result.FieldPositionDesc;
+						playerInformation.SeasonYear = seasonYear;
+						playerInformation.SeasonGameType = seasonGameType;
+						playerDictionary.Add(playerInformation.PlayerID, playerInformation);
+					}
+				}
+			}
 
-            return SubstitutePlayerInformation;
-        }
+			return SubstitutePlayerInformation;
+		}
 
 
-        public Collection<DataModels.GameCommentInformation> RetrieveGameComment(string gameID)
-        {
-            string sqlQuery = @"SELECT 
-	    game_comment.record_id RecordID
+		public Collection<DataModels.GameCommentInformation> RetrieveGameComment(string gameID)
+		{
+			string sqlQuery = @"SELECT 
+		game_comment.record_id RecordID
 	  , game_comment.game_id GameID
 	  , game_comment.inning Inning
 	  , game_comment.game_team_code GameTeamCode
@@ -1661,136 +1658,141 @@ where Batter_Adjustment.game_id = 'x_game_id'
   FROM game_comment
   where game_comment.game_id = 'x_game_id'
   order by 	  
-        game_comment.game_id
+		game_comment.game_id
 	  , game_comment.inning
 	  , game_comment.game_team_code
 	  , game_comment.sequence
 	  , game_comment.comment_sequence";
 
-            sqlQuery = sqlQuery.Replace("x_game_id", gameID);
+			sqlQuery = sqlQuery.Replace("x_game_id", gameID);
 
-            Collection<DataModels.GameCommentInformation> GameCommentInformation = new Collection<DataModels.GameCommentInformation>();
-            DataModels.GameCommentInformation x_gameCommentInformation = new DataModels.GameCommentInformation();
+			Collection<DataModels.GameCommentInformation> GameCommentInformation = new Collection<DataModels.GameCommentInformation>();
+			DataModels.GameCommentInformation x_gameCommentInformation = new DataModels.GameCommentInformation();
 
-            string x_gameCommentInformationComment = null;
+			string x_gameCommentInformationComment = null;
 
-            // add System.Data.Linq assembly to the References
-            using (RetrosheetDataContext dbCtx = new RetrosheetDataContext())
-            {
-                //dbCtx.CommandTimeout = 120;  //2 minutes
-                IEnumerable<DataModels.GameCommentInformation> results = dbCtx.ExecuteQuery<DataModels.GameCommentInformation>(sqlQuery).ToList();
-                Console.WriteLine("DataModels.GameCommentInformation record count " + results.Count());
+			// add System.Data.Linq assembly to the References
+			using (RetrosheetDataContext dbCtx = new RetrosheetDataContext())
+			{
+				//dbCtx.CommandTimeout = 120;  //2 minutes
+				IEnumerable<DataModels.GameCommentInformation> results = dbCtx.ExecuteQuery<DataModels.GameCommentInformation>(sqlQuery).ToList();
+				Console.WriteLine("DataModels.GameCommentInformation record count " + results.Count());
 
-                foreach (DataModels.GameCommentInformation result in results)
-                {
-                    if (x_gameCommentInformation.GameID == null)
-                    {
-                        x_gameCommentInformation = result;
-                        x_gameCommentInformation.GameTeamCodeDesc = RetrieveReferenceDataDesc("game_team", result.GameTeamCode.ToString());
-                    }
-                    else if ((result.Inning != x_gameCommentInformation.Inning)
-                        || (result.GameTeamCode != x_gameCommentInformation.GameTeamCode)
-                        || (result.Sequence != x_gameCommentInformation.Sequence))
-                    {
-                        x_gameCommentInformation.Comment = x_gameCommentInformationComment.Replace(" $","");
-                        x_gameCommentInformationComment = null;
-                        GameCommentInformation.Add(x_gameCommentInformation);
+				foreach (DataModels.GameCommentInformation result in results)
+				{
+					if (x_gameCommentInformation.GameID == null)
+					{
+						x_gameCommentInformation = result;
+						x_gameCommentInformation.GameTeamCodeDesc = RetrieveReferenceDataDesc("game_team", result.GameTeamCode.ToString());
+					}
+					else if ((result.Inning != x_gameCommentInformation.Inning)
+						|| (result.GameTeamCode != x_gameCommentInformation.GameTeamCode)
+						|| (result.Sequence != x_gameCommentInformation.Sequence))
+					{
+						x_gameCommentInformation.Comment = x_gameCommentInformationComment.Replace(" $","");
+						x_gameCommentInformationComment = null;
+						GameCommentInformation.Add(x_gameCommentInformation);
 
-                        x_gameCommentInformation = result;
+						x_gameCommentInformation = result;
 
-                        x_gameCommentInformation.GameTeamCodeDesc = RetrieveReferenceDataDesc("game_team", result.GameTeamCode.ToString());
-                    }
+						x_gameCommentInformation.GameTeamCodeDesc = RetrieveReferenceDataDesc("game_team", result.GameTeamCode.ToString());
+					}
 
-                    x_gameCommentInformationComment = x_gameCommentInformationComment + " " + result.Comment;
-                }
+					x_gameCommentInformationComment = x_gameCommentInformationComment + " " + result.Comment;
+				}
 
-                if (x_gameCommentInformation.GameID != null)
-                {
-                    x_gameCommentInformation.Comment = x_gameCommentInformationComment.Replace(" $", "");
-                    GameCommentInformation.Add(x_gameCommentInformation);
-                }
-            }
+				if (x_gameCommentInformation.GameID != null)
+				{
+					x_gameCommentInformation.Comment = x_gameCommentInformationComment.Replace(" $", "");
+					GameCommentInformation.Add(x_gameCommentInformation);
+				}
+			}
 
-            return GameCommentInformation;
-        }
-
-
+			return GameCommentInformation;
+		}
 
 
 
 
 
 
-        public Collection<DataModels.ReplayInformation> RetrieveReplay(string seasonYear,
-                                                                       string seasonGameType,
-                                                                       string gameID)
-        {
-            string sqlQuery = @"SELECT  
+
+
+		public Collection<DataModels.ReplayInformation> RetrieveReplay(string seasonYear,
+																	   string seasonGameType,
+																	   string gameID)
+		{
+			string sqlQuery = @"SELECT  
 		replay.record_id RecordID
-      , replay.game_id GameID
-      , replay.inning Inning
-      , replay.game_team_code GameTeamCode
-      , replay.sequence Sequence
-      , replay.comment_sequence CommentSequence
-      , replay.player_id PlayerID
-      , replay.team_id PlayerTeamID
+	  , replay.game_id GameID
+	  , replay.inning Inning
+	  , replay.game_team_code GameTeamCode
+	  , replay.sequence Sequence
+	  , replay.comment_sequence CommentSequence
+	  , replay.player_id PlayerID
+	  , replay.team_id PlayerTeamID
 	  , team.name PlayerTeamName
-      , replay.umpire_id UmpireID
+	  , replay.umpire_id UmpireID
 	  , personnel.last_name UmpireLastName
 	  , personnel.first_name UmpireFirstName
-      , replay.ballpark_id BallparkID
+	  , replay.ballpark_id BallparkID
 	  , ballpark.name BallparkName
 	  , ballpark.aka BallparkAKA
-      , replay.reason Reason
-      , replay.reversed Reversed
-      , replay.initiated Initiated
-      , replay.replay_challenge_team_id InitiatedTeamID
-	  , initiateTeam.name InitiatedTeamName
-      , replay.type Type
+	  , replay.reason Reason
+	  , replay.reversed Reversed
+	  , replay.initiated Initiator
+	  , replay.replay_challenge_team_id InitiatorTeamID
+	  , initiateTeam.name InitiatorTeamName
+	  , replay.type Type
   FROM  replay 
   join team on replay.team_id = team.team_id
-                and team.season_year = 'x_season_year'
+				and team.season_year = 'x_season_year'
 				and team.season_game_type = 'x_season_game_type'
   left join personnel on replay.umpire_id = personnel.person_id
-                and personnel.role = 'U'
+				and personnel.role = 'U'
   join ballpark on replay.ballpark_id = ballpark.ballpark_id
-  join team initiateTeam on replay.replay_challenge_team_id = replay.replay_challenge_team_id
-                and initiateTeam.season_year = 'x_season_year'
+  join team initiateTeam on replay.replay_challenge_team_id = initiateTeam.team_id
+				and initiateTeam.season_year = 'x_season_year'
 				and initiateTeam.season_game_type = 'x_season_game_type'
+  where replay.game_id = 'x_game_id'
   order by
-        replay.game_id 
-      , replay.inning 
-      , replay.game_team_code 
-      , replay.sequence 
-      , replay.comment_sequence 
-      , replay.player_id 
-      , replay.team_id 
-      , replay.umpire_id ";
+		replay.game_id 
+	  , replay.inning 
+	  , replay.game_team_code 
+	  , replay.sequence 
+	  , replay.comment_sequence 
+	  , replay.player_id 
+	  , replay.team_id 
+	  , replay.umpire_id ";
 
-            sqlQuery = sqlQuery.Replace("x_season_year", seasonYear);
-            sqlQuery = sqlQuery.Replace("x_season_game_type", seasonGameType);
-            sqlQuery = sqlQuery.Replace("x_game_id", gameID);
+			sqlQuery = sqlQuery.Replace("x_season_year", seasonYear);
+			sqlQuery = sqlQuery.Replace("x_season_game_type", seasonGameType);
+			sqlQuery = sqlQuery.Replace("x_game_id", gameID);
 
-            Collection<DataModels.ReplayInformation> ReplayInformation = new Collection<DataModels.ReplayInformation>();
+			Collection<DataModels.ReplayInformation> ReplayInformation = new Collection<DataModels.ReplayInformation>();
 
-            // add System.Data.Linq assembly to the References
-            using (RetrosheetDataContext dbCtx = new RetrosheetDataContext())
-            {
-                //dbCtx.CommandTimeout = 120;  //2 minutes
-                IEnumerable<DataModels.ReplayInformation> results = dbCtx.ExecuteQuery<DataModels.ReplayInformation>(sqlQuery).ToList();
-                Console.WriteLine("DataModels.ReplayInformation record count " + results.Count());
+			// add System.Data.Linq assembly to the References
+			using (RetrosheetDataContext dbCtx = new RetrosheetDataContext())
+			{
+				//dbCtx.CommandTimeout = 120;  //2 minutes
+				IEnumerable<DataModels.ReplayInformation> results = dbCtx.ExecuteQuery<DataModels.ReplayInformation>(sqlQuery).ToList();
+				Console.WriteLine("DataModels.ReplayInformation record count " + results.Count());
 
-                foreach (DataModels.ReplayInformation result in results)
-                {
+				foreach (DataModels.ReplayInformation result in results)
+				{
+					result.GameTeamCodeDesc = RetrieveReferenceDataDesc("game_team", result.GameTeamCode.ToString());
+					result.PlayerLastName = RetrievePlayerInformation(result.PlayerID).PlayerLastName;
+					result.PlayerFirstName = RetrievePlayerInformation(result.PlayerID).PlayerFirstName;
+					result.ReasonDesc = RetrieveReferenceDataDesc("instant_replay_reason", result.Reason);
+					result.InitiatorDesc = RetrieveReferenceDataDesc("instant_replay_initiator", result.Initiator);
+					result.TypeDesc = RetrieveReferenceDataDesc("instant_replay_type", result.Type);
 
-                }
+					ReplayInformation.Add(result);
+				}
 
-                return ReplayInformation;
-            }
-        }
-
-
-
+				return ReplayInformation;
+			}
+		}
 
 
 
@@ -1798,89 +1800,129 @@ where Batter_Adjustment.game_id = 'x_game_id'
 
 
 
-        public Collection<DataModels.GameDataInformation> RetrieveGameData(string gameID)
-        {
-            string sqlQuery = @"SELECT game_data.record_id RecordID
-      ,game_data.game_id GameID
-      ,game_data.data_type DataType
-      ,game_data.player_id PlayerID
-      ,game_data.data_value DataValue
+
+
+
+		public Collection<DataModels.GameDataInformation> RetrieveGameData(string gameID)
+		{
+			string sqlQuery = @"SELECT game_data.record_id RecordID
+	  ,game_data.game_id GameID
+	  ,game_data.data_type DataType
+	  ,game_data.player_id PlayerID
+	  ,game_data.data_value DataValue
   FROM game_data
   where game_data.game_id = 'x_game_id' ";
 
-            sqlQuery = sqlQuery.Replace("x_game_id", gameID);
+			sqlQuery = sqlQuery.Replace("x_game_id", gameID);
 
-            Collection<DataModels.GameDataInformation> GameDataInformation = new Collection<DataModels.GameDataInformation>();
+			Collection<DataModels.GameDataInformation> GameDataInformation = new Collection<DataModels.GameDataInformation>();
 
-            // add System.Data.Linq assembly to the References
-            using (RetrosheetDataContext dbCtx = new RetrosheetDataContext())
-            {
-                //dbCtx.CommandTimeout = 120;  //2 minutes
-                IEnumerable<DataModels.GameDataInformation> results = dbCtx.ExecuteQuery<DataModels.GameDataInformation>(sqlQuery).ToList();
-                Console.WriteLine("DataModels.GameDataInformation record count " + results.Count());
+			// add System.Data.Linq assembly to the References
+			using (RetrosheetDataContext dbCtx = new RetrosheetDataContext())
+			{
+				//dbCtx.CommandTimeout = 120;  //2 minutes
+				IEnumerable<DataModels.GameDataInformation> results = dbCtx.ExecuteQuery<DataModels.GameDataInformation>(sqlQuery).ToList();
+				Console.WriteLine("DataModels.GameDataInformation record count " + results.Count());
 
-                foreach (DataModels.GameDataInformation result in results)
-                {
-                    result.PlayerLastName = RetrievePlayerInformation(result.PlayerID).PlayerLastName;
-                    result.PlayerFirstName = RetrievePlayerInformation(result.PlayerID).PlayerFirstName;
-                    result.DataTypeDesc = RetrieveReferenceDataDesc("game_data_type", result.DataType);
-                    GameDataInformation.Add(result);
-                }
+				foreach (DataModels.GameDataInformation result in results)
+				{
+					result.PlayerLastName = RetrievePlayerInformation(result.PlayerID).PlayerLastName;
+					result.PlayerFirstName = RetrievePlayerInformation(result.PlayerID).PlayerFirstName;
+					result.DataTypeDesc = RetrieveReferenceDataDesc("game_data_type", result.DataType);
+					GameDataInformation.Add(result);
+				}
 
-                return GameDataInformation;
-            }
-        }
+				return GameDataInformation;
+			}
+		}
 
 
-        public Collection<DataModels.PitcherAdjustmentInformation> RetrievePitcherAdjustmentInformation(string seasonYear,
-                                                                                                string seasonGameType,
-                                                                                                string gameID)
-        {
-            string sqlQuery = @"SELECT 
-       pitcher_adjustment.record_id RecordID
-      ,pitcher_adjustment.game_id GameID
-      ,pitcher_adjustment.inning Inning
-      ,pitcher_adjustment.game_team_code GameTeamCode
-      ,pitcher_adjustment.sequence Sequence
-      ,pitcher_adjustment.player_id PlayerID
-      ,pitcher_adjustment.pitcher_hand PlayerHand
-      ,pitcher_adjustment.team_id TeamID
+		public Collection<DataModels.PitcherAdjustmentInformation> RetrievePitcherAdjustmentInformation(string seasonYear,
+																								string seasonGameType,
+																								string gameID)
+		{
+			string sqlQuery = @"SELECT 
+	   pitcher_adjustment.record_id RecordID
+	  ,pitcher_adjustment.game_id GameID
+	  ,pitcher_adjustment.inning Inning
+	  ,pitcher_adjustment.game_team_code GameTeamCode
+	  ,pitcher_adjustment.sequence Sequence
+	  ,pitcher_adjustment.player_id PlayerID
+	  ,pitcher_adjustment.pitcher_hand PlayerHand
+	  ,pitcher_adjustment.team_id TeamID
 	  ,team.name TeamName
   FROM pitcher_adjustment
   join team on pitcher_adjustment.team_id = team.team_id
-           and team.season_year = 'x_season_year'
+		   and team.season_year = 'x_season_year'
 		   and team.season_game_type = 'x_season_game_type'
   WHERE pitcher_adjustment.game_id = 'x_game_id'";
 
-            sqlQuery = sqlQuery.Replace("x_season_year", seasonYear);
-            sqlQuery = sqlQuery.Replace("x_season_game_type", seasonGameType);
-            sqlQuery = sqlQuery.Replace("x_game_id", gameID);
+			sqlQuery = sqlQuery.Replace("x_season_year", seasonYear);
+			sqlQuery = sqlQuery.Replace("x_season_game_type", seasonGameType);
+			sqlQuery = sqlQuery.Replace("x_game_id", gameID);
 
-            Collection<DataModels.PitcherAdjustmentInformation> PitcherAdjustmentInformation = new Collection<DataModels.PitcherAdjustmentInformation>();
+			Collection<DataModels.PitcherAdjustmentInformation> PitcherAdjustmentInformation = new Collection<DataModels.PitcherAdjustmentInformation>();
 
-            // add System.Data.Linq assembly to the References
-            using (RetrosheetDataContext dbCtx = new RetrosheetDataContext())
-            {
-                //dbCtx.CommandTimeout = 120;  //2 minutes
-                IEnumerable<DataModels.PitcherAdjustmentInformation> results = dbCtx.ExecuteQuery<DataModels.PitcherAdjustmentInformation>(sqlQuery).ToList();
-                Console.WriteLine("DataModels.PitcherAdjustmentInformation record count " + results.Count());
+			// add System.Data.Linq assembly to the References
+			using (RetrosheetDataContext dbCtx = new RetrosheetDataContext())
+			{
+				//dbCtx.CommandTimeout = 120;  //2 minutes
+				IEnumerable<DataModels.PitcherAdjustmentInformation> results = dbCtx.ExecuteQuery<DataModels.PitcherAdjustmentInformation>(sqlQuery).ToList();
+				Console.WriteLine("DataModels.PitcherAdjustmentInformation record count " + results.Count());
 
-                foreach (DataModels.PitcherAdjustmentInformation result in results)
-                {
-                    result.PlayerLastName = RetrievePlayerInformation(result.PlayerID).PlayerLastName;
-                    result.PlayerFirstName = RetrievePlayerInformation(result.PlayerID).PlayerFirstName;
-                    result.PlayerHandDesc = RetrieveReferenceDataDesc("throws", result.PlayerHand);
-                    PitcherAdjustmentInformation.Add(result);
-                }
+				foreach (DataModels.PitcherAdjustmentInformation result in results)
+				{
+					result.PlayerLastName = RetrievePlayerInformation(result.PlayerID).PlayerLastName;
+					result.PlayerFirstName = RetrievePlayerInformation(result.PlayerID).PlayerFirstName;
+					result.PlayerHandDesc = RetrieveReferenceDataDesc("throws", result.PlayerHand);
+					PitcherAdjustmentInformation.Add(result);
+				}
 
-                return PitcherAdjustmentInformation;
-            }
-        }
-
-
+				return PitcherAdjustmentInformation;
+			}
+		}
 
 
-        private TreeViewModels.Game LoadTreeViewData_Game(TreeViewModels.Game game, _GameSelectionListItem result)
+
+
+		public Collection<DataModels.SubstituteUmpireInformation> RetrieveSubstituteUmpireInformation(string gameID)
+		{
+			string sqlQuery = @"SELECT 
+	   substitute_umpire.record_id RecordID
+	  ,substitute_umpire.game_id GameID
+	  ,substitute_umpire.inning Inning
+	  ,substitute_umpire.sequence Sequence
+	  ,substitute_umpire.comment_sequence CommentSequence
+	  ,substitute_umpire.field_position FieldPosition
+	  ,substitute_umpire.umpire_id UmpireID
+	  ,personnel.last_name UmpireLastName
+	  ,personnel.first_name UmpireFirstName
+  FROM substitute_umpire
+  left join personnel on substitute_umpire.umpire_id = personnel.person_id
+					 and personnel.role = 'U'
+  where substitute_umpire.game_id = 'x_game_id'";
+			sqlQuery = sqlQuery.Replace("x_game_id", gameID);
+
+			Collection<DataModels.SubstituteUmpireInformation> SubstituteUmpireInformation = new Collection<DataModels.SubstituteUmpireInformation>();
+
+			// add System.Data.Linq assembly to the References
+			using (RetrosheetDataContext dbCtx = new RetrosheetDataContext())
+			{
+				//dbCtx.CommandTimeout = 120;  //2 minutes
+				IEnumerable<DataModels.SubstituteUmpireInformation> results = dbCtx.ExecuteQuery<DataModels.SubstituteUmpireInformation>(sqlQuery).ToList();
+				Console.WriteLine("DataModels.SubstituteUmpireInformation record count " + results.Count());
+
+				foreach (DataModels.SubstituteUmpireInformation result in results)
+				{
+					result.FieldPositionDesc = RetrieveReferenceDataDesc("ump_position", result.FieldPosition);
+					SubstituteUmpireInformation.Add(result);
+				}
+
+				return SubstituteUmpireInformation;
+			}
+		}
+
+		private TreeViewModels.Game LoadTreeViewData_Game(TreeViewModels.Game game, _GameSelectionListItem result)
 		{
 			game.GameID = result._gameID;
 			game.GameDate = result._gameDate;

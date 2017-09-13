@@ -13,7 +13,11 @@
             <ColumnDefinition Width="Auto" />
         </Grid.ColumnDefinitions>
 
-        <TreeView Name="trvSeasons" ItemsSource="{Binding Season}" SelectedItemChanged="trvSeasons_SelectedItemChanged" Grid.Column="0" 
+        <TreeView Name="trvSeasons" 
+                  ItemsSource="{Binding Season}" 
+                  SelectedItemChanged="trvSeasons_SelectedItemChanged" 
+                  MouseDoubleClick="trvSeasons_MouseDoubleClick"
+                  Grid.Column="0" 
                   BorderThickness="0"  >
 
             <TreeView.ItemTemplate>
@@ -85,6 +89,7 @@
                 </Button.Style>
             </Button>
 
+            <Label Name="lblGameSelection" VerticalAlignment="Center" Grid.Column="1" />
         </StackPanel>
 
     </Grid>

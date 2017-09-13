@@ -25,6 +25,7 @@ namespace Retrosheet_PlayBall
         public Retrosheet_PlayBall_PlayByPlay(string gameID)
         {
             InitializeComponent();
+            ShowsNavigationUI = true;
 
             RetrieveData retrieveData = new RetrieveData();
 
@@ -52,6 +53,10 @@ namespace Retrosheet_PlayBall
                                                                                                gameInformation.VisitingTeamID,
                                                                                                gameInformation.GameID);
 
+            Collection<DataModels.ReplayInformation> ReplayInformation = retrieveData.RetrieveReplay(gameInformation.SeasonYear,
+                                                                                                     gameInformation.SeasonGameType,
+                                                                                                     gameInformation.GameID);
+
             Collection<DataModels.BatterAdjustmentInformation> BatterAdjustmentInformation = retrieveData.RetrieveBatterAdjustment(gameInformation.SeasonYear,
                                                                                                                                    gameInformation.SeasonGameType,
                                                                                                                                    gameInformation.HomeTeamID,
@@ -67,6 +72,9 @@ namespace Retrosheet_PlayBall
             Collection<DataModels.PitcherAdjustmentInformation> PitcherAdjustmentInformation = retrieveData.RetrievePitcherAdjustmentInformation(gameInformation.SeasonYear,
                                                                                                                                                  gameInformation.SeasonGameType,
                                                                                                                                                  gameInformation.GameID);
+
+            Collection<DataModels.SubstituteUmpireInformation> SubstituteUmpireInformation = retrieveData.RetrieveSubstituteUmpireInformation(gameInformation.GameID);
+
         }
 
     }
