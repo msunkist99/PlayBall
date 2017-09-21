@@ -338,6 +338,11 @@ namespace Retrosheet_DataFileIO
                     playDTO.EventModifier = columnValue[12];
                     playDTO.EventRunnerAdvance = columnValue[13];
                     playDTO.EventHitLocation = columnValue[14];
+                    playDTO.EventFieldedBy = columnValue[15];
+                    playDTO.EventPlayOnRunner = columnValue[16];
+                    playDTO.EventType = columnValue[17];
+                    playDTO.EventColumnSix = columnValue[18];
+
 
                     PlayPersist.CreatePlay(playDTO);
                 }

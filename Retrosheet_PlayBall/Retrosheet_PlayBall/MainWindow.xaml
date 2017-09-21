@@ -5,6 +5,6 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Retrosheet_PlayBall"
         mc:Ignorable="d"
-        Title="Retrosheet Play Ball" Height="600" Width="800" Source="Retrosheet_PlayBall_home.xaml" >
+        Title="Retrosheet Play Ball" Height="750" Width="1375" Source="Retrosheet_PlayBall_home.xaml" >
 
 </NavigationWindow>

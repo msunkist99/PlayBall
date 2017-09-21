@@ -171,6 +171,10 @@
           <Property Name="event_modifier" Type="varchar" MaxLength="50" />
           <Property Name="event_runner_advance" Type="varchar" MaxLength="50" />
           <Property Name="event_hit_location" Type="varchar" MaxLength="50" />
+          <Property Name="event_fielded_by" Type="varchar" MaxLength="50" />
+          <Property Name="event_play_on_runner" Type="varchar" MaxLength="50" />
+          <Property Name="event_type" Type="varchar" MaxLength="50" />
+          <Property Name="event_columnSix" Type="varchar" MaxLength="50" />
         </EntityType>
         <EntityType Name="Player">
           <Key>
@@ -570,6 +574,10 @@
           <Property Name="event_modifier" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
           <Property Name="event_runner_advance" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
           <Property Name="event_hit_location" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="event_fielded_by" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="event_play_on_runner" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="event_type" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="event_columnSix" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
         </EntityType>
       </Schema>
     </edmx:ConceptualModels>
@@ -840,6 +848,10 @@
           <EntitySetMapping Name="Plays">
             <EntityTypeMapping TypeName="RetrosheetDBModel.Play">
               <MappingFragment StoreEntitySet="Play">
+                <ScalarProperty Name="event_columnSix" ColumnName="event_columnSix" />
+                <ScalarProperty Name="event_type" ColumnName="event_type" />
+                <ScalarProperty Name="event_play_on_runner" ColumnName="event_play_on_runner" />
+                <ScalarProperty Name="event_fielded_by" ColumnName="event_fielded_by" />
                 <ScalarProperty Name="event_hit_location" ColumnName="event_hit_location" />
                 <ScalarProperty Name="event_runner_advance" ColumnName="event_runner_advance" />
                 <ScalarProperty Name="event_modifier" ColumnName="event_modifier" />

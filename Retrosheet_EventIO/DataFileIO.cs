@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 ////  need this for StreamReader
 using System.IO;
+using System.Text.RegularExpressions;
 
 namespace Retrosheet_DataFileIO
 {
@@ -353,26 +354,48 @@ namespace Retrosheet_DataFileIO
 
                     stringArray[4] = stringArray[4].Substring(0, 1) + outputDelimiter + stringArray[4].Substring(1, 1);
                     // next split up the contents of columnSix into the three parts that make up the Event
+                    //  eventSequence
+                    //  eventModifier
+                    //  eventRunnerAdvance
                     // split by forward slash and period
                     string columnSix = stringArray[6];
 
-                    // eventModifier may contain multiple modifiers delimited with forward slash /
-                    // eventRunnerAdvance may contain multiple advances delimited by semicolon ;
-                    // multiple modifiers and advances are NOT split into seperate fields
-                    //string eventDescription ;
+                    // columnSix
+                    // characters up to the leftmost / make up the eventSequence information
+                    //  eventSequence - if the leftmost characters are non-numeric this is the eventType.  Default event type is '~generic out'.
+                    //  values inclosed in () indicate the eventPlayOnRunner values, i.e 'play on runner on first', 'play on runner on second', 'play on runner on third', - default is 'play on batter'
+                    //  there can be multiple eventPlayOnRunnerValues
+                    //  remaining numeric characters make up the eventFieldedBy values - each of the numeric characters will be 1-9 and 
+                    //  tell you the fielder(s) involved in the event
+
+                    // characters between the leftmost / and leftmost . make up the eventModifier information
+                    //  there can be multiple eventModifier values delimited with /
+                    //  the first eventModifier can contain the eventHitLocation value
+                    //  multiple eventModifier values are delimited by a | in the database column
+
+                    // characters following the . make up the eventRunnerAdvance information
+                    //  there can be multiple eventRunnerAdvances delimited with ;
+                    //  multiple eventRunnerAdvance values are delimited by a | in the database column
+
                     int forwardSlashIndex = columnSix.IndexOf('/');
                     int periodIndex = columnSix.IndexOf('.');
 
-                    string eventSequence = null;
-                    string eventModifier = null;
-                    string eventRunnerAdvance = null;
-                    string eventHitLocation = null;
+                    string eventSequence = "";
+                    string eventModifier = "";
+                    string eventRunnerAdvance = "";
+                    string eventHitLocation = "";
+                    string eventFieldedBy = "";
+                    string eventPlayOnRunner = "";
+                    string eventType = "";
+
+                    // first split up columnSix into
+                    // eventSequence, eventModifier, eventRunnerAdvance
 
                     if ((forwardSlashIndex < 0) && (periodIndex < 0))
-                        // no modifiers, no runner advances
+                        // no eventModifiers, no eventRunnerAdvance
+                        // only eventSequence
                     {
                         eventSequence = columnSix;
-
                     }
                     else if ((periodIndex > -1) && (forwardSlashIndex > periodIndex))
                     {
@@ -381,27 +404,113 @@ namespace Retrosheet_DataFileIO
                         eventRunnerAdvance = columnSix.Substring(periodIndex + 1);
                     }
                     else if ((forwardSlashIndex > -1) && (periodIndex < 0))
-                        // there are modifiers but no runner advances
+                        // there are eventModifier values but no eventRunnerAdvance values
                     {
                         eventSequence = columnSix.Substring(0, forwardSlashIndex);
                         eventModifier = columnSix.Substring(forwardSlashIndex + 1);
                     }
                     else if ((forwardSlashIndex < 0) && (periodIndex > -1))
                     {
-                        // there are no modifiers but there are runner advances
+                        // there are no eventModifiers but there are eventRunnerAdvances
                         eventSequence = columnSix.Substring(0, periodIndex);
                         eventRunnerAdvance = columnSix.Substring(periodIndex + 1);
                     }
                     else
                     {
-                        // there are both modifiers and runner advances
+                        // there are both eventModifiers and eventRunnerAdvances
                         eventSequence = columnSix.Substring(0, forwardSlashIndex);
                         eventModifier = columnSix.Substring(forwardSlashIndex + 1, periodIndex - forwardSlashIndex -1);
                         eventRunnerAdvance = columnSix.Substring(periodIndex + 1);
                     }
 
+                    // eventSequence - look for '(1)', '(2)', '(3)' - and set eventPlayOnRunner value
+                    // eventSequence - look for numeric value - and set eventFieldedBy value
+                    // eventSequence - any remaining values should be non-numeric - set eventType value 
+
+                    if ((eventSequence.Contains("(")) && (eventSequence.Contains(")")))
+                    {
+                        int openParmIndex = eventSequence.IndexOf("(");
+                        int closeParmIndex = eventSequence.IndexOf(")");
+                        eventPlayOnRunner = eventSequence.Substring(openParmIndex + 1, closeParmIndex - openParmIndex - 1);
+                        eventSequence = eventSequence.Replace((eventSequence.Substring(openParmIndex, closeParmIndex - openParmIndex + 1)), "");
+                    }
+
+                    /*
+                    // if there are multiple values in eventPlayOnRunner then deliminate with "|"
+                    if (eventPlayOnRunner != "")
+                    {
+                        char[] eventPlayOnRunnerArray = eventPlayOnRunner.ToArray();
+                        eventPlayOnRunner = "";
+                        foreach (char value in eventPlayOnRunnerArray)
+                        {
+                            eventPlayOnRunner = eventPlayOnRunner + value.ToString() + outputDelimiter;
+                        }
+                        //  remove trailing "|"
+                        if (eventPlayOnRunner.Substring(eventPlayOnRunner.Length - 1) == "|")
+                        {
+                            eventPlayOnRunner = eventPlayOnRunner.Substring(0, eventPlayOnRunner.Length - 1);
+                        }
+                    }
+                    */
+
+                    /*
+                    if (eventSequence.Contains("(1)"))
+                    {
+                        eventPlayOnRunner = "1";
+                        eventSequence = eventSequence.Replace("(1)", string.Empty);
+                    }
+                    else if (eventSequence.Contains("(2)"))
+                    {
+                        eventPlayOnRunner = "2";
+                        eventSequence = eventSequence.Replace("(2)", string.Empty);
+                    }
+                    else if (eventSequence.Contains("(3)"))
+                    {
+                        eventPlayOnRunner = "3";
+                        eventSequence = eventSequence.Replace("(3)", string.Empty);
+                    }
+                    else
+                    {
+                        eventPlayOnRunner = "B";
+                    }
+                    */
+
+                    eventType = Regex.Replace(eventSequence, @"\d", "");
+                    eventFieldedBy = Regex.Replace(eventSequence, @"\D", "");
+
+                    /*
+                    // eventType may contain multiple type values = replace + delimiter with |
+                    eventType.Replace("+", "|");
+                    */
+
+                    if (eventType == "")
+                    {
+                        eventType = "~";  // default generic out
+                    }
+
+                    /*
+                    // if there are multiple values in eventFieldedBy then deliminate with "|"
+                    if (eventFieldedBy != "")
+                    {
+                        char[] eventFieldedByArray = eventFieldedBy.ToArray();
+                        eventFieldedBy = "";
+                        foreach (char value in eventFieldedByArray)
+                        {
+                            eventFieldedBy = eventFieldedBy + value.ToString() + outputDelimiter;
+                        }
+                        //  remove trailing "|"
+                        if (eventFieldedBy.Substring(eventFieldedBy.Length - 1) == "|")
+                        {
+                            eventFieldedBy = eventFieldedBy.Substring(0, eventFieldedBy.Length - 1);
+                        }
+                    }
+                    */
+
+
+                    eventSequence = "";  //  everything that was originally in the eventSequence should now have been moved to eventType or eventFieldedBy, so empty eventSequence
+
                     //  eventModifier may contain the hit location so lets grab that
-                    if (eventModifier != null)
+                    if (eventModifier != "")
                     {
                         foreach (string hitLocation in hitLocations)
                         {
@@ -409,17 +518,45 @@ namespace Retrosheet_DataFileIO
                             {
                                 eventHitLocation = hitLocation;
                                 eventModifier = eventModifier.Replace(hitLocation, string.Empty);
-                                if (eventModifier.StartsWith("/"))
-                                {
-                                    eventModifier = eventModifier.Substring(1);
-                                }
                                 break;
                             }
                         }
                     }
 
+                    if (eventModifier != "")
+                    {
+                        if (eventModifier.Substring(0, 1) == "/")
+                        {
+                            eventModifier = eventModifier.Substring(1);
+                        }
+                    }
+
+                    /*
+                    // eventModifier - there can be multiple modifier values - replace the / delimiter with |
+                    if (eventModifier != "")
+                    {
+                        eventModifier = eventModifier.Replace("/","|");
+                    }
+                    */
+
+                    /*
+                    // eventRunnerAdvance - there can be multiple runner advance values - replace the ; delimiter with |
+                    if (eventRunnerAdvance != "")
+                    {
+                        eventRunnerAdvance = eventRunnerAdvance.Replace(";", "|");
+                    }
+                    */
+
                     // put the textLine back together from the stringArray
-                    stringArray[6] = eventSequence + outputDelimiter + eventModifier + outputDelimiter + eventRunnerAdvance + outputDelimiter + eventHitLocation; ;
+                    // eventSequence should be empty
+                    // capture columnSix original contents in the database for debugging and analysis purposes
+                    stringArray[6] = eventSequence + outputDelimiter + eventModifier
+                                                   + outputDelimiter + eventRunnerAdvance
+                                                   + outputDelimiter + eventHitLocation
+                                                   + outputDelimiter + eventFieldedBy
+                                                   + outputDelimiter + eventPlayOnRunner
+                                                   + outputDelimiter + eventType
+                                                   + outputDelimiter + columnSix;
                     textLine = null;
 
                     for (int i = 0; i < stringArray.Length ; i++)

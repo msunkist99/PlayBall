@@ -5,22 +5,150 @@
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
       xmlns:local="clr-namespace:Retrosheet_PlayBall"
       mc:Ignorable="d" 
-      d:DesignHeight="300" d:DesignWidth="300"
-      Title="Retrosheet Play Ball - Play-By-Play">
+      d:DesignHeight="1200" d:DesignWidth="1200"
+      Title="Retrosheet Play Ball">
 
     <Grid>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="1*"/>
-            <ColumnDefinition Width="2*"/>
-            <ColumnDefinition Width="1*"/>
+            <ColumnDefinition Width="25*"/>
+            <ColumnDefinition Width="25*"/>
+            <ColumnDefinition Width="25*"/>
+            <ColumnDefinition Width="25*"/>
         </Grid.ColumnDefinitions>
 
         <Grid.RowDefinitions>
-            <RowDefinition Height="1*"/>
-            <RowDefinition Height="2*"/>
-            <RowDefinition Height="1*"/>
-            <RowDefinition Height="1*"/>
+            <RowDefinition Height="25"/>
+            <RowDefinition Height="25*"/>
+            <RowDefinition Height="25*"/>
+            <RowDefinition Height="25*"/>
+            <RowDefinition Height="25*"/>
         </Grid.RowDefinitions>
-        
+
+        <TextBlock Name="PageTitle" Grid.Row="0" Grid.ColumnSpan="4" 
+                   HorizontalAlignment="Center" VerticalAlignment="Center"
+                   FontSize="12" FontWeight="Bold"/>
+
+        <DataGrid Name="dgGameInfoItems" GridLinesVisibility="None" BorderThickness="1,0,0,0" ColumnHeaderHeight="22" FontSize="10" RowHeaderWidth="0" 
+                  AutoGenerateColumns="False" 
+                  Grid.Column="0"
+                  Grid.Row="1"
+                  Grid.RowSpan="2"
+                  CanUserAddRows="False"
+                  HeadersVisibility="None">
+            
+            <DataGrid.Columns>
+                <DataGridTextColumn Header=""  Binding="{Binding GameItemDesc}" />
+                <DataGridTextColumn Header=""  Binding="{Binding GameItemValue}" Width="200" >
+                        <DataGridTextColumn.ElementStyle>
+                            <Style>
+                                <Setter Property="TextBlock.TextWrapping" Value="Wrap"/>
+                                <Setter Property="TextBlock.TextAlignment" Value="Left"/>
+                            </Style>
+                        </DataGridTextColumn.ElementStyle>
+                </DataGridTextColumn>
+            </DataGrid.Columns>
+
+        </DataGrid>
+
+        <StackPanel Grid.Column="2" Grid.ColumnSpan="2" Grid.Row="1" Orientation="Horizontal" >
+
+            <DataGrid Name="dgVisitingPlayers"  GridLinesVisibility="None" BorderThickness="0,0,1,0"  RowHeight="15" ColumnHeaderHeight="22" FontSize="10" RowHeaderWidth="0" 
+                      AutoGenerateColumns="False" 
+                      CanUserAddRows="False">
+                <DataGrid.Columns>
+                    <DataGridTextColumn Header="Batting Order" Binding="{Binding Batting}"/>
+                    <DataGridTextColumn Header="Visiting Team" Binding="{Binding Name}"/>
+                    <DataGridTextColumn Header="Field Position" Binding="{Binding Position}"/>
+                    <DataGridTextColumn Header="Bats / Throws"  Binding="{Binding BatsThrows}"/>
+                </DataGrid.Columns>
+
+            </DataGrid>
+
+            <DataGrid Name="dgHomePlayers" GridLinesVisibility="None" BorderThickness="1,0,0,0" RowHeight="15" ColumnHeaderHeight="22" FontSize="10" RowHeaderWidth="0"
+                      AutoGenerateColumns="False" 
+                      CanUserAddRows="False">
+                <DataGrid.Columns>
+                    <DataGridTextColumn Header="Home Team" Binding="{Binding Name}"/>
+                    <DataGridTextColumn Header="Field Position" Binding="{Binding Position}"/>
+                    <DataGridTextColumn Header="Bats / Throws"  Binding="{Binding BatsThrows}"/>
+                </DataGrid.Columns>
+
+
+            </DataGrid>
+
+        </StackPanel>
+
+        <DataGrid Grid.Column="1" 
+                  Grid.Row="2" 
+                  Name="dgPlayEvents" 
+                  RowHeaderWidth="0" 
+                  Grid.ColumnSpan="3" 
+                  ColumnHeaderHeight="22" 
+                  FontSize="10" 
+                  AutoGenerateColumns="False" 
+                  Margin="0,0,-78,0"
+                  CanUserAddRows="False"
+                  HorizontalGridLinesBrush="LightGray"
+                  VerticalGridLinesBrush="LightGray"
+                  SelectionMode="Single"
+                  CanUserSortColumns="False"
+                  SelectedCellsChanged="dbPlayEvents_SelectedCellsChanged">
+
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="Inning"  Binding="{Binding Inning}" />
+                <DataGridTextColumn Header="Team Name"  Binding="{Binding TeamName}"  Width="100"/>
+                <DataGridTextColumn Header="At Bat" Binding="{Binding PlayerName}"  Width="100" />
+                <DataGridTextColumn Header="Count" Binding="{Binding Count}" />
+                <DataGridTextColumn Header="Pitches" Binding="{Binding PitchDesc}" Width="200">
+                    <DataGridTextColumn.ElementStyle>
+                        <Style>
+                            <Setter Property="TextBlock.TextWrapping" Value="Wrap"/>
+                            <Setter Property="TextBlock.TextAlignment" Value="Left"/>
+                        </Style>
+                    </DataGridTextColumn.ElementStyle>
+                </DataGridTextColumn>
+
+                <DataGridTextColumn Header="Details" Binding="{Binding EventModifierDesc}" Width="125">
+                    <DataGridTextColumn.ElementStyle>
+                        <Style>
+                            <Setter Property="TextBlock.TextWrapping" Value="Wrap"/>
+                            <Setter Property="TextBlock.TextAlignment" Value="Left"/>
+                        </Style>
+                    </DataGridTextColumn.ElementStyle>
+                </DataGridTextColumn>
+                <DataGridTextColumn Header="Fielded By" Binding="{Binding EventFieldedByDesc}" Width="200">
+                    <DataGridTextColumn.ElementStyle>
+                        <Style>
+                            <Setter Property="TextBlock.TextWrapping" Value="Wrap"/>
+                            <Setter Property="TextBlock.TextAlignment" Value="Left"/>
+                        </Style>
+                    </DataGridTextColumn.ElementStyle>
+                </DataGridTextColumn>                
+                <DataGridTextColumn Header="Runners" Binding="{Binding EventRunnerAdvance}" Width="125">
+                    <DataGridTextColumn.ElementStyle>
+                        <Style>
+                            <Setter Property="TextBlock.TextWrapping" Value="Wrap"/>
+                            <Setter Property="TextBlock.TextAlignment" Value="Left"/>
+                        </Style>
+                    </DataGridTextColumn.ElementStyle>
+                </DataGridTextColumn>
+                <DataGridTextColumn Header="Hit Location" Binding="{Binding EventHitLocationDesc}" Width="125">
+                    <DataGridTextColumn.ElementStyle>
+                        <Style>
+                            <Setter Property="TextBlock.TextWrapping" Value="Wrap"/>
+                            <Setter Property="TextBlock.TextAlignment" Value="Left"/>
+                        </Style>
+                    </DataGridTextColumn.ElementStyle>
+                </DataGridTextColumn>
+            </DataGrid.Columns>
+
+        </DataGrid>
+
+        <StackPanel Grid.Column="1" Grid.ColumnSpan="3" Grid.Row="3" Orientation="Vertical" >
+            <TextBlock Name="tblkComments" Text="{Binding GameComment}" TextWrapping="Wrap"/>
+            <TextBlock Name="tblkReplayComment" Text="{Binding ReplayComment}" TextWrapping="Wrap"/>
+            <TextBlock Name="tblkReplayRuling" Text="{Binding ReplayRuling}" TextWrapping="Wrap"/>
+        </StackPanel>
+ 
     </Grid>
 </Page>

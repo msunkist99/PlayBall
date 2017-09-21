@@ -83,6 +83,7 @@ namespace Retrosheet_RetrieveData
             public int GameTeamCode { get; set; }
             public string GameTeamCodeDesc { get; set; }
             public int BattingOrder { get; set; }
+            public string BattingOrderDesc { get; set; }
 
             // may have to cast from int to string to access reference value
             public int FieldPosition { get; set; }
@@ -126,8 +127,10 @@ namespace Retrosheet_RetrieveData
             public string PlayerID { get; set; }
             public string PlayerLastName { get; set; }
             public string PlayerFirstName { get; set; }
+            public string PlayerName { get; set; }
             public int CountBalls { get; set; }
             public int CountStrikes { get; set; }
+            public string Count { get; set; }
             public string Pitches { get; set; }
             public string EventSequence { get; set; }
             public string EventModifier { get; set; }
@@ -137,10 +140,19 @@ namespace Retrosheet_RetrieveData
             public string PitchDesc { get; set; }
             public string EventHitLocationDesc { get; set; }
             public string EventSequenceDesc { get; set; }
-            public string EventSequenceModifierDesc { get; set; }
+            public string EventModifierDesc { get; set; }
             public string EventRunnerAdvanceDesc { get; set; }
             public string TeamID { get; set; }
             public string TeamName { get; set; }
+
+            public string EventFieldedBy { get; set; }
+            public string EventFieldedByDesc { get; set; }
+            public string EventPlayOnRunner { get; set; }
+            public string EventPlayOnRunnerDesc { get; set; }
+            public string EventType { get; set; }
+            public string EventTypeDesc { get; set; }
+            public string EventColumnSix { get; set; }
+
 
         }
 
@@ -151,11 +163,13 @@ namespace Retrosheet_RetrieveData
 
             public string VisitingTeamID { get; set; }
             public string VisitTeamLeague { get; set; }
+            public string VisitTeamLeagueName { get; set; }
             public string VisitTeamName { get; set; }
             public string VisitTeamCity { get; set; }
 
             public string HomeTeamID { get; set; }
             public string HomeTeamLeague { get; set; }
+            public string HomeTeamLeagueName { get; set; }
             public string HomeTeamName { get; set; }
             public string HomeTeamCity { get; set; }
 
@@ -185,7 +199,7 @@ namespace Retrosheet_RetrieveData
             public string UmpireThirdBaseFirstName { get; set; }
 
             public string FieldCondition { get; set; }
-            public string Recipitation { get; set; }
+            public string Precipitation { get; set; }
             public string Sky { get; set; }
             public int Temperature { get; set; }
             public string WindDirection { get; set; }
@@ -208,6 +222,7 @@ namespace Retrosheet_RetrieveData
             public string Oscorer { get; set; }
             public string SeasonYear { get; set; }
             public string SeasonGameType { get; set; }
+            public string SeasonGameTypeDesc { get; set; }
             public string EditTime { get; set; }
             public string HowScored { get; set; }
             public string InputProgVers { get; set; }
@@ -306,12 +321,14 @@ namespace Retrosheet_RetrieveData
             public string UmpireID { get; set; }
             public string UmpireLastName { get; set; }
             public string UmpireFirstName { get; set; }
+            public string UmpireName { get; set; }
             public string BallparkID { get; set; }
             public string BallparkName { get; set; }
             public string BallparkAKA { get; set; }
             public string Reason { get; set; }
             public string ReasonDesc { get; set; }
             public string Reversed { get; set; }
+            public string ReversedDesc { get; set; }
             public string Initiator { get; set; }
             public string InitiatorDesc { get; set; }
             public string InitiatorTeamID { get; set; }

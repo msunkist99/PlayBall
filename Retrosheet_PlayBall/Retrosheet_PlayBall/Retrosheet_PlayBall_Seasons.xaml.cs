@@ -3,6 +3,7 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Navigation;
 using Retrosheet_RetrieveData;
 
 namespace Retrosheet_PlayBall
@@ -27,6 +28,8 @@ namespace Retrosheet_PlayBall
             trvSeasons.ItemsSource = Seasons;
         }
 
+
+
         private void btnSelect_Click(object sender, RoutedEventArgs e)
         {
             if (trvSeasons.SelectedItem != null)
@@ -35,14 +38,13 @@ namespace Retrosheet_PlayBall
                 {
                     /// using cast on trvSeasons.SelectedItem
                     Retrosheet_RetrieveData.TreeViewModels.Game item = (Retrosheet_RetrieveData.TreeViewModels.Game)trvSeasons.SelectedItem;
-                    lblGameSelection.Content = "Item selected:  " + item.GameDesc + " " + item.GameID;
 
-                    MessageBox.Show("Item selected:  " + item.GameDesc + " " + item.GameID, Title);
+                    //MessageBox.Show("Item selected:  " + item.GameDesc + " " + item.GameID, Title);
 
                     Retrosheet_PlayBall_PlayByPlay PlayPage = new Retrosheet_PlayBall_PlayByPlay(item.GameID);
-                    lblGameSelection.Content = "";
 
                     this.NavigationService.Navigate(PlayPage);
+                    btnSelect.Content = "Select Game";
                 }
                 else
                 {
@@ -80,13 +82,40 @@ namespace Retrosheet_PlayBall
             {
                 if (trvSeasons.SelectedItem.GetType().Name == "Game")
                 {
+                    btnSelect.Content = "Please wait...";
+
                     Retrosheet_RetrieveData.TreeViewModels.Game item = (Retrosheet_RetrieveData.TreeViewModels.Game)trvSeasons.SelectedItem;
-                    lblGameSelection.Content = "Item selected:  " + item.GameDesc + " " + item.GameID;
-                    MessageBox.Show("Item selected:  " + item.GameDesc + " " + item.GameID, Title);
+                    //lblGameSelection.Content = "Item selected:  " + item.GameDesc + " " + item.GameID;
+                    MessageBox.Show("Game selected:  " + item.GameDesc + " " + "\r\nClick OK to load game", Title);
                     Retrosheet_PlayBall_PlayByPlay PlayPage = new Retrosheet_PlayBall_PlayByPlay(item.GameID);
-                    lblGameSelection.Content = "";
+
+                    btnSelect.Content = "Select Game";
 
                     this.NavigationService.Navigate(PlayPage);
+                }
+            }
+        }
+
+        private void btnSelect_PreviewMouseDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        {
+            if (trvSeasons.SelectedItem != null)
+            {
+                if (trvSeasons.SelectedItem.GetType().Name == "Game")
+                {
+                    btnSelect.Content = "Please wait...";
+                    //Retrosheet_RetrieveData.TreeViewModels.Game item = (Retrosheet_RetrieveData.TreeViewModels.Game)trvSeasons.SelectedItem;
+                    //lblGameSelection.Content = "Item selected:  " + item.GameDesc + " " + item.GameID;
+                }
+            }
+        }
+
+        private void trvSeasons_PreviewMouseDoubleClick(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        {
+            if (trvSeasons.SelectedItem != null)
+            {
+                if (trvSeasons.SelectedItem.GetType().Name == "Game")
+                {
+                    btnSelect.Content = "Please wait...";
                 }
             }
         }
