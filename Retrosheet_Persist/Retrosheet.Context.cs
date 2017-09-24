@@ -42,6 +42,7 @@ namespace Retrosheet_Persist
         public virtual DbSet<Player> Players { get; set; }
         public virtual DbSet<Team> Teams { get; set; }
         public virtual DbSet<Reference_Data> Reference_Data { get; set; }
+        public virtual DbSet<Play_Bevent> Play_Bevent { get; set; }
         public virtual DbSet<Play> Plays { get; set; }
     }
 }

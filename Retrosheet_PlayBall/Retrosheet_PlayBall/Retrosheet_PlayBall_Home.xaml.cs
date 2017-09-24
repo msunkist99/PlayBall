@@ -12,6 +12,8 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using System.Diagnostics;
+using System.Windows.Navigation;
 
 
 namespace Retrosheet_PlayBall
@@ -38,6 +40,14 @@ namespace Retrosheet_PlayBall
         private void btnButton_PreviewMouseDown(object sender, MouseButtonEventArgs e)
         {
             btnButton.Content = "Please wait...";
+        }
+
+        private void Hyperlink_RequestNavigate(object sender,
+                                               System.Windows.Navigation.RequestNavigateEventArgs e)
+        {
+            System.Diagnostics.Process.Start("http://www.retrosheet.org");
+            System.Diagnostics.Process.Start(new ProcessStartInfo(e.Uri.AbsoluteUri));
+            e.Handled = true;
         }
     }
 }

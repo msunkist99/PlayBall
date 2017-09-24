@@ -23,6 +23,7 @@ namespace Retrosheet_PlayBall
     public partial class Retrosheet_PlayBall_PlayByPlay : Page
     {
         private Collection<DataModels.PlayInformation> PlayInformation;
+        private Collection<DataModels.PlayBeventInformation> PlayBeventInformation;
         private Collection<DataModels.ReplayInformation> ReplayInformation;
         private Collection<DataModels.GameCommentInformation> GameCommentInformation;
 
@@ -49,13 +50,21 @@ namespace Retrosheet_PlayBall
                                                                                                                               gameInformation.GameID);
 
             Collection<DataModels.SubstitutePlayerInformation> SubstitutePlayerInformation = retrieveData.RetrieveSubstitutePlayer(gameInformation.SeasonYear,
-                                                                                                                                  gameInformation.SeasonGameType,
-                                                                                                                                  gameInformation.GameID);
+                                                                                                                                   gameInformation.SeasonGameType,
+                                                                                                                                   gameInformation.GameID);
+            /*                                                                                                                     
             PlayInformation = retrieveData.RetrievePlay(gameInformation.SeasonYear,
                                                         gameInformation.SeasonGameType,
                                                         gameInformation.HomeTeamID,
                                                         gameInformation.VisitingTeamID,
                                                         gameInformation.GameID);
+            */
+
+            PlayBeventInformation = retrieveData.RetrievePlayBevent(gameInformation.SeasonYear,
+                                                                    gameInformation.SeasonGameType,
+                                                                    gameInformation.HomeTeamID,
+                                                                    gameInformation.VisitingTeamID,
+                                                                    gameInformation.GameID);
 
             ReplayInformation = retrieveData.RetrieveReplay(gameInformation.SeasonYear,
                                                                                                      gameInformation.SeasonGameType,
@@ -139,7 +148,9 @@ namespace Retrosheet_PlayBall
             dgPlayEvents.ItemsSource = playEvents;
             */
 
-            dgPlayEvents.ItemsSource = PlayInformation;
+            dgPlayEvents.ItemsSource = PlayBeventInformation;
+            imgEventHitLocationDiagram.DataContext = PlayBeventInformation[0];
+
 
             /*
             List<Umpire> umpires = new List<Umpire>();
@@ -243,10 +254,10 @@ namespace Retrosheet_PlayBall
             var index = dg.SelectedIndex;
 
             var gameComments = from gameComment in GameCommentInformation
-                               where gameComment.GameID == PlayInformation[index].GameID
-                                  && gameComment.Inning == PlayInformation[index].Inning
-                                  && gameComment.GameTeamCode == PlayInformation[index].GameTeamCode
-                                  && gameComment.Sequence == PlayInformation[index].Sequence
+                               where gameComment.GameID == PlayBeventInformation[index].GameID
+                                  && gameComment.Inning == PlayBeventInformation[index].Inning
+                                  && gameComment.GameTeamCode == PlayBeventInformation[index].GameTeamCode
+                                  && gameComment.Sequence == PlayBeventInformation[index].EventNum
                                orderby gameComment.CommentSequence
                                select new
                                {
@@ -257,10 +268,10 @@ namespace Retrosheet_PlayBall
             tblkComments.DataContext = gameComments;
 
             var replayComments = from replayComment in ReplayInformation
-                                 where replayComment.GameID == PlayInformation[index].GameID
-                                    && replayComment.Inning == PlayInformation[index].Inning
-                                    && replayComment.GameTeamCode == PlayInformation[index].GameTeamCode
-                                    && replayComment.Sequence == PlayInformation[index].Sequence
+                                 where replayComment.GameID == PlayBeventInformation[index].GameID
+                                    && replayComment.Inning == PlayBeventInformation[index].Inning
+                                    && replayComment.GameTeamCode == PlayBeventInformation[index].GameTeamCode
+                                    && replayComment.Sequence == PlayBeventInformation[index].EventNum
                                  orderby replayComment.CommentSequence
                                  select new
                                  {
@@ -270,6 +281,7 @@ namespace Retrosheet_PlayBall
 
             tblkReplayComment.DataContext = replayComments;
             tblkReplayRuling.DataContext = replayComments;
+            imgEventHitLocationDiagram.DataContext = PlayBeventInformation[index];
         }
     }
 }

@@ -10,25 +10,6 @@ namespace Retrosheet_RetrieveData
 {
     public class DataModels
     {
-        public class xGameInformation : GameInformationDTO
-        {
-            public BallparkInformation Ballpark = new BallparkInformation();
-            public TeamInformation VisitingTeam = new TeamInformation();
-            public TeamInformation HomeTeam = new TeamInformation();
-            public UmpireInformation UmpireHome = new UmpireInformation();
-            public UmpireInformation UmpireFirst = new UmpireInformation();
-            public UmpireInformation UmpireSecond = new UmpireInformation();
-            public UmpireInformation UmpireThird = new UmpireInformation();
-            public PlayerInformation WinningPitcher = new PlayerInformation();
-            public PlayerInformation LosingPitcher = new PlayerInformation();
-            public PlayerInformation SavePitcher = new PlayerInformation();
-            public PlayerInformation WinningRBIPlayer = new PlayerInformation();
-
-            public string GameNumberDesc { get; set; }
-            public string WindDirectionDesc { get; set; }
-            public string SeasonGameTypeDesc { get; set; }
-        }
-
         public class UmpireInformation
         {
             public PersonnelDTO UmpirePersonel = new PersonnelDTO();
@@ -152,8 +133,154 @@ namespace Retrosheet_RetrieveData
             public string EventType { get; set; }
             public string EventTypeDesc { get; set; }
             public string EventColumnSix { get; set; }
+            public string EventHitLocationDiagram { get; set; }
+        }
+
+        public class PlayBeventInformation
+        {
+            public Guid RecordID { get; set; }
+            public string GameID { get; set; }
+            public int Inning { get; set; }
+            public int GameTeamCode { get; set; }
+            public string GameTeamCodeDesc { get; set; }
+            public int EventNum { get; set; }
+
+            public string BatterPlayerID { get; set; }
+            public string BatterLastName { get; set; }
+            public string BatterFirstName { get; set; }
+            public string BatterName { get; set; }
+            //public string BatterBats { get; set; }
+            //public string BatterBatsDesc { get; set; }
+            //public string BatterThrows { get; set; }
+            //public string BatterThrowsDesc { get; set; }
+            public int BatterDefPosition { get; set; }
+            public string BatterDefPositionDesc { get; set; }
+
+            public string PitcherPlayerID { get; set; }
+            public string PitcherLastName { get; set; }
+            public string PitcherFirstName { get; set; }
+            public string PitcherName { get; set; }
+            public string PitcherBats { get; set; }
+            public string PitcherBatsDesc { get; set; }
+            public string PitcherThrows { get; set; }
+            public string PitcherThrowsDesc { get; set; }
+
+            public string CatcherPlayerID { get; set; }
+            public string CatcherLastName { get; set; }
+            public string CatcherFirstName { get; set; }
+            public string CatcherName { get; set; }
+            public string CatcherBats { get; set; }
+            public string CatcherBatsDesc { get; set; }
+            public string CatcherThrows { get; set; }
+            public string CatcherThrowsDesc { get; set; }
+
+            public string FirstBasePlayerID { get; set; }
+            public string FirstBaseLastName { get; set; }
+            public string FirstBaseFirstName { get; set; }
+            public string FirstBaseName { get; set; }
+            public string FirstBaseBats { get; set; }
+            public string FirstBaseBatsDesc { get; set; }
+            public string FirstBaseThrows { get; set; }
+            public string FirstBaseThrowsDesc { get; set; }
+
+            public string SecondBasePlayerID { get; set; }
+            public string SecondBaseLastName { get; set; }
+            public string SecondBaseFirstName { get; set; }
+            public string SecondBaseName { get; set; }
+            public string SecondBaseBats { get; set; }
+            public string SecondBaseBatsDesc { get; set; }
+            public string SecondBaseThrows { get; set; }
+            public string SecondBaseThrowsDesc { get; set; }
+
+            public string ThirdBasePlayerID { get; set; }
+            public string ThirdBaseLastName { get; set; }
+            public string ThirdBaseFirstName { get; set; }
+            public string ThirdBaseName { get; set; }
+            public string ThirdBaseBats { get; set; }
+            public string ThirdBaseBatsDesc { get; set; }
+            public string ThirdBaseThrows { get; set; }
+            public string ThirdBaseThrowsDesc { get; set; }
+
+            public string ShortStopPlayerID { get; set; }
+            public string ShortStopLastName { get; set; }
+            public string ShortStopFirstName { get; set; }
+            public string ShortStopName { get; set; }
+            public string ShortStopBats { get; set; }
+            public string ShortStopBatsDesc { get; set; }
+            public string ShortStopThrows { get; set; }
+            public string ShortStopThrowsDesc { get; set; }
+
+            public string LeftFieldPlayerID { get; set; }
+            public string LeftFieldLastName { get; set; }
+            public string LeftFieldFirstName { get; set; }
+            public string LeftFieldName { get; set; }
+            public string LeftFieldBats { get; set; }
+            public string LeftFieldBatsDesc { get; set; }
+            public string LeftFieldThrows { get; set; }
+            public string LeftFieldThrowsDesc { get; set; }
+
+            public string CenterFieldPlayerID { get; set; }
+            public string CenterFieldLastName { get; set; }
+            public string CenterFieldFirstName { get; set; }
+            public string CenterFieldName { get; set; }
+            public string CenterFieldBats { get; set; }
+            public string CenterFieldBatsDesc { get; set; }
+            public string CenterFieldThrows { get; set; }
+            public string CenterFieldThrowsDesc { get; set; }
+
+            public string RightFieldPlayerID { get; set; }
+            public string RightFieldLastName { get; set; }
+            public string RightFieldFirstName { get; set; }
+            public string RightFieldName { get; set; }
+            public string RightFieldBats { get; set; }
+            public string RightFieldBatsDesc { get; set; }
+            public string RightFieldThrows { get; set; }
+            public string RightFieldThrowsDesc { get; set; }
 
 
+            public int CountBalls { get; set; }
+            public int CountStrikes { get; set; }
+            public string CountDesc { get; set; }
+            public int CountOuts { get; set; }
+
+            public string Pitches { get; set; }
+            public string PitchDesc { get; set; }
+
+            public string BattedBallType { get; set; }
+            public string BattedBallTypeDesc { get; set; }
+
+            public int DestBatter { get; set; }
+            public int DestFirstRunner { get; set; }
+            public int DestSecondRunner { get; set; }
+            public int DestThirdRunner { get; set; }
+            public string DestBatterDesc { get; set; }
+            public string DestFirstRunnerDesc { get; set; }
+            public string DestSecondRunnerDesc { get; set; }
+            public string DestThirdRunnerDesc { get; set; }
+
+            public string HitLocation { get; set; }
+
+            public string TeamID { get; set; }
+            public string TeamName { get; set; }
+
+            public int FieldedBy { get; set; }
+            public string FieldedByDesc { get; set; }
+
+            public string PlayOnBatter { get; set; }
+            public string PlayOnFirstRunner { get; set; }
+            public string PlayOnSecondRunner { get; set; }
+            public string PlayOnThirdRunner { get; set; }
+            public string PlayOnBatterDesc { get; set; }
+            public string PlayOnFirstRunnerDesc { get; set; }
+            public string PlayOnSecondRunnerDesc { get; set; }
+            public string PlayOnThirdRunnerDesc { get; set; }
+
+            public string EventType { get; set; }
+            public string EventTypeDesc { get; set; }
+
+            public string PlayDetails { get; set; }
+            public string DestinationDetails { get; set; }
+            public string HitLocationDiagram { get; set; }
         }
 
         public class GameInformation

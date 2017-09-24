@@ -28,5 +28,6 @@ namespace Retrosheet_EventData.Model
         public string EventPlayOnRunner { get; set; }
         public string EventType { get; set; }
         public string EventColumnSix { get; set; }
+        public int EventNum { get; set; }
     }
 }

@@ -21,11 +21,12 @@ namespace Retrosheet_DataFileIO
         private string gameID = null;
         private int inning = 0;
         private int gameTeamCode = 0;
-        private int sequence = 0;
+        private int eventNum = 0;
         private int commentSequence = 0;
-        private int sequenceHold = 0;
+        private int eventNumHold = 0;
         private string homeTeamID = null;
         private string visitingTeamID = null;
+        //private int eventNum = 0;
 
         // constructor
         public DataFileIO()
@@ -265,7 +266,7 @@ namespace Retrosheet_DataFileIO
                     gameID = columnValue[1];
                     inning = 0;
                     gameTeamCode = 0;
-                    sequence = 0;
+                    eventNum = 0;
                     commentSequence = 0;
                     homeTeamID = null;
                     visitingTeamID = null;
@@ -352,251 +353,26 @@ namespace Retrosheet_DataFileIO
                     textLine = textLine.Replace(inputDelimiter, outputDelimiter);
                     string[] stringArray = textLine.Split(outputDelimiter);
 
-                    stringArray[4] = stringArray[4].Substring(0, 1) + outputDelimiter + stringArray[4].Substring(1, 1);
-                    // next split up the contents of columnSix into the three parts that make up the Event
-                    //  eventSequence
-                    //  eventModifier
-                    //  eventRunnerAdvance
-                    // split by forward slash and period
-                    string columnSix = stringArray[6];
-
-                    // columnSix
-                    // characters up to the leftmost / make up the eventSequence information
-                    //  eventSequence - if the leftmost characters are non-numeric this is the eventType.  Default event type is '~generic out'.
-                    //  values inclosed in () indicate the eventPlayOnRunner values, i.e 'play on runner on first', 'play on runner on second', 'play on runner on third', - default is 'play on batter'
-                    //  there can be multiple eventPlayOnRunnerValues
-                    //  remaining numeric characters make up the eventFieldedBy values - each of the numeric characters will be 1-9 and 
-                    //  tell you the fielder(s) involved in the event
-
-                    // characters between the leftmost / and leftmost . make up the eventModifier information
-                    //  there can be multiple eventModifier values delimited with /
-                    //  the first eventModifier can contain the eventHitLocation value
-                    //  multiple eventModifier values are delimited by a | in the database column
-
-                    // characters following the . make up the eventRunnerAdvance information
-                    //  there can be multiple eventRunnerAdvances delimited with ;
-                    //  multiple eventRunnerAdvance values are delimited by a | in the database column
-
-                    int forwardSlashIndex = columnSix.IndexOf('/');
-                    int periodIndex = columnSix.IndexOf('.');
-
-                    string eventSequence = "";
-                    string eventModifier = "";
-                    string eventRunnerAdvance = "";
-                    string eventHitLocation = "";
-                    string eventFieldedBy = "";
-                    string eventPlayOnRunner = "";
-                    string eventType = "";
-
-                    // first split up columnSix into
-                    // eventSequence, eventModifier, eventRunnerAdvance
-
-                    if ((forwardSlashIndex < 0) && (periodIndex < 0))
-                        // no eventModifiers, no eventRunnerAdvance
-                        // only eventSequence
+                    //skip the No Play/No Event play records
+                    if (stringArray[6].Contains("NP"))
                     {
-                        eventSequence = columnSix;
-                    }
-                    else if ((periodIndex > -1) && (forwardSlashIndex > periodIndex))
-                    {
-                        // there are no modifiers and the runner advance data contains a forward slash
-                        eventSequence = columnSix.Substring(0, periodIndex);
-                        eventRunnerAdvance = columnSix.Substring(periodIndex + 1);
-                    }
-                    else if ((forwardSlashIndex > -1) && (periodIndex < 0))
-                        // there are eventModifier values but no eventRunnerAdvance values
-                    {
-                        eventSequence = columnSix.Substring(0, forwardSlashIndex);
-                        eventModifier = columnSix.Substring(forwardSlashIndex + 1);
-                    }
-                    else if ((forwardSlashIndex < 0) && (periodIndex > -1))
-                    {
-                        // there are no eventModifiers but there are eventRunnerAdvances
-                        eventSequence = columnSix.Substring(0, periodIndex);
-                        eventRunnerAdvance = columnSix.Substring(periodIndex + 1);
-                    }
-                    else
-                    {
-                        // there are both eventModifiers and eventRunnerAdvances
-                        eventSequence = columnSix.Substring(0, forwardSlashIndex);
-                        eventModifier = columnSix.Substring(forwardSlashIndex + 1, periodIndex - forwardSlashIndex -1);
-                        eventRunnerAdvance = columnSix.Substring(periodIndex + 1);
+                        break;
                     }
 
-                    // eventSequence - look for '(1)', '(2)', '(3)' - and set eventPlayOnRunner value
-                    // eventSequence - look for numeric value - and set eventFieldedBy value
-                    // eventSequence - any remaining values should be non-numeric - set eventType value 
-
-                    if ((eventSequence.Contains("(")) && (eventSequence.Contains(")")))
-                    {
-                        int openParmIndex = eventSequence.IndexOf("(");
-                        int closeParmIndex = eventSequence.IndexOf(")");
-                        eventPlayOnRunner = eventSequence.Substring(openParmIndex + 1, closeParmIndex - openParmIndex - 1);
-                        eventSequence = eventSequence.Replace((eventSequence.Substring(openParmIndex, closeParmIndex - openParmIndex + 1)), "");
-                    }
-
-                    /*
-                    // if there are multiple values in eventPlayOnRunner then deliminate with "|"
-                    if (eventPlayOnRunner != "")
-                    {
-                        char[] eventPlayOnRunnerArray = eventPlayOnRunner.ToArray();
-                        eventPlayOnRunner = "";
-                        foreach (char value in eventPlayOnRunnerArray)
-                        {
-                            eventPlayOnRunner = eventPlayOnRunner + value.ToString() + outputDelimiter;
-                        }
-                        //  remove trailing "|"
-                        if (eventPlayOnRunner.Substring(eventPlayOnRunner.Length - 1) == "|")
-                        {
-                            eventPlayOnRunner = eventPlayOnRunner.Substring(0, eventPlayOnRunner.Length - 1);
-                        }
-                    }
-                    */
-
-                    /*
-                    if (eventSequence.Contains("(1)"))
-                    {
-                        eventPlayOnRunner = "1";
-                        eventSequence = eventSequence.Replace("(1)", string.Empty);
-                    }
-                    else if (eventSequence.Contains("(2)"))
-                    {
-                        eventPlayOnRunner = "2";
-                        eventSequence = eventSequence.Replace("(2)", string.Empty);
-                    }
-                    else if (eventSequence.Contains("(3)"))
-                    {
-                        eventPlayOnRunner = "3";
-                        eventSequence = eventSequence.Replace("(3)", string.Empty);
-                    }
-                    else
-                    {
-                        eventPlayOnRunner = "B";
-                    }
-                    */
-
-                    eventType = Regex.Replace(eventSequence, @"\d", "");
-                    eventFieldedBy = Regex.Replace(eventSequence, @"\D", "");
-
-                    /*
-                    // eventType may contain multiple type values = replace + delimiter with |
-                    eventType.Replace("+", "|");
-                    */
-
-                    if (eventType == "")
-                    {
-                        eventType = "~";  // default generic out
-                    }
-
-                    /*
-                    // if there are multiple values in eventFieldedBy then deliminate with "|"
-                    if (eventFieldedBy != "")
-                    {
-                        char[] eventFieldedByArray = eventFieldedBy.ToArray();
-                        eventFieldedBy = "";
-                        foreach (char value in eventFieldedByArray)
-                        {
-                            eventFieldedBy = eventFieldedBy + value.ToString() + outputDelimiter;
-                        }
-                        //  remove trailing "|"
-                        if (eventFieldedBy.Substring(eventFieldedBy.Length - 1) == "|")
-                        {
-                            eventFieldedBy = eventFieldedBy.Substring(0, eventFieldedBy.Length - 1);
-                        }
-                    }
-                    */
-
-
-                    eventSequence = "";  //  everything that was originally in the eventSequence should now have been moved to eventType or eventFieldedBy, so empty eventSequence
-
-                    //  eventModifier may contain the hit location so lets grab that
-                    if (eventModifier != "")
-                    {
-                        foreach (string hitLocation in hitLocations)
-                        {
-                            if (eventModifier.Contains(hitLocation))
-                            {
-                                eventHitLocation = hitLocation;
-                                eventModifier = eventModifier.Replace(hitLocation, string.Empty);
-                                break;
-                            }
-                        }
-                    }
-
-                    if (eventModifier != "")
-                    {
-                        if (eventModifier.Substring(0, 1) == "/")
-                        {
-                            eventModifier = eventModifier.Substring(1);
-                        }
-                    }
-
-                    /*
-                    // eventModifier - there can be multiple modifier values - replace the / delimiter with |
-                    if (eventModifier != "")
-                    {
-                        eventModifier = eventModifier.Replace("/","|");
-                    }
-                    */
-
-                    /*
-                    // eventRunnerAdvance - there can be multiple runner advance values - replace the ; delimiter with |
-                    if (eventRunnerAdvance != "")
-                    {
-                        eventRunnerAdvance = eventRunnerAdvance.Replace(";", "|");
-                    }
-                    */
-
-                    // put the textLine back together from the stringArray
-                    // eventSequence should be empty
-                    // capture columnSix original contents in the database for debugging and analysis purposes
-                    stringArray[6] = eventSequence + outputDelimiter + eventModifier
-                                                   + outputDelimiter + eventRunnerAdvance
-                                                   + outputDelimiter + eventHitLocation
-                                                   + outputDelimiter + eventFieldedBy
-                                                   + outputDelimiter + eventPlayOnRunner
-                                                   + outputDelimiter + eventType
-                                                   + outputDelimiter + columnSix;
-                    textLine = null;
-
-                    for (int i = 0; i < stringArray.Length ; i++)
-                    {
-                        textLine += stringArray[i] ;
-                        if(i < stringArray.Length - 1)
-                        {
-                            textLine += outputDelimiter;
-                        }
-                    } 
-
-                    //  capture the second part of the record key
+                    eventNum++;
                     if (inning != Int32.Parse(columnValue[1]))
                     {
                         inning = Int32.Parse(columnValue[1]);
-                        sequence = 0;
                         commentSequence = 0;
                     }
 
-                    //  capture the third part of the record key
                     //  0 - top of the inning - visiting team
                     //  1 - bottom of the inning - home team
                     if (gameTeamCode != Int32.Parse(columnValue[2]))
                     {
                         gameTeamCode = Int32.Parse(columnValue[2]);
-                        sequence = 0;
                         commentSequence = 0;
                     }
-
-                    //  capture the fourth part of the record key
-                    ++sequence;
-
-                    WriteEventFile(outputPath,
-                              outputFile + "_" + columnValue[0],
-                              gameID + outputDelimiter
-                              + inning + outputDelimiter
-                              + gameTeamCode + outputDelimiter
-                              + sequence + outputDelimiter
-                              + textLine,
-                              true);
                     break;
 
                 case "sub":
@@ -610,7 +386,7 @@ namespace Retrosheet_DataFileIO
                                   gameID + outputDelimiter
                                   + inning + outputDelimiter
                                   + gameTeamCode + outputDelimiter
-                                  + sequence + outputDelimiter
+                                  + eventNum + outputDelimiter
                                   + textLine + outputDelimiter + visitingTeamID,
                                   true);
                     }
@@ -621,7 +397,7 @@ namespace Retrosheet_DataFileIO
                                   gameID + outputDelimiter
                                   + inning + outputDelimiter
                                   + gameTeamCode + outputDelimiter
-                                  + sequence + outputDelimiter
+                                  + eventNum + outputDelimiter
                                   + textLine + outputDelimiter + homeTeamID,
                                   true);
                     }
@@ -649,7 +425,7 @@ namespace Retrosheet_DataFileIO
                                   gameID + outputDelimiter
                                   + inning + outputDelimiter
                                   + gameTeamCode + outputDelimiter
-                                  + sequence + outputDelimiter
+                                  + eventNum + outputDelimiter
                                   + textLine + outputDelimiter + visitingTeamID,
                                   true);
                     }
@@ -661,7 +437,7 @@ namespace Retrosheet_DataFileIO
                                   gameID + outputDelimiter
                                   + inning + outputDelimiter
                                   + gameTeamCode + outputDelimiter
-                                  + sequence + outputDelimiter
+                                  + eventNum + outputDelimiter
                                   + textLine + outputDelimiter + homeTeamID,
                                   true);
                     }
@@ -683,7 +459,7 @@ namespace Retrosheet_DataFileIO
                                   gameID + outputDelimiter
                                   + inning + outputDelimiter
                                   + gameTeamCode + outputDelimiter
-                                  + sequence + outputDelimiter
+                                  + eventNum + outputDelimiter
                                   + textLine + outputDelimiter + homeTeamID,
                                   true);
                     }
@@ -695,7 +471,7 @@ namespace Retrosheet_DataFileIO
                                   gameID + outputDelimiter
                                   + inning + outputDelimiter
                                   + gameTeamCode + outputDelimiter
-                                  + sequence + outputDelimiter
+                                  + eventNum + outputDelimiter
                                   + textLine + outputDelimiter + visitingTeamID,
                                   true);
                     }
@@ -715,17 +491,17 @@ namespace Retrosheet_DataFileIO
                               gameID + outputDelimiter
                               + inning + outputDelimiter
                               + gameTeamCode + outputDelimiter
-                              + sequence + outputDelimiter
+                              + eventNum + outputDelimiter
                               + textLine,
                               true);
                     break;
 
                 case "com":
 
-                    if (sequenceHold != sequence)
+                    if (eventNumHold != eventNum)
                     {
                         commentSequence = 0;
-                        sequenceHold = sequence;
+                        eventNumHold = eventNum;
                     }
                     columnValue[1] = columnValue[1].Replace("\"","");
 
@@ -741,7 +517,7 @@ namespace Retrosheet_DataFileIO
                                       gameID + outputDelimiter
                                       + inning + outputDelimiter
                                       + gameTeamCode + outputDelimiter
-                                      + sequence + outputDelimiter
+                                      + eventNum + outputDelimiter
                                       + commentSequence + outputDelimiter
                                       + textLine,
                                       true);
@@ -757,7 +533,7 @@ namespace Retrosheet_DataFileIO
                                       gameID + outputDelimiter
                                       + inning + outputDelimiter
                                       + gameTeamCode + outputDelimiter
-                                      + sequence + outputDelimiter 
+                                      + eventNum + outputDelimiter 
                                       + commentSequence + outputDelimiter
                                       + textLine,
                                       true);
@@ -773,7 +549,7 @@ namespace Retrosheet_DataFileIO
                                       gameID + outputDelimiter
                                       + inning + outputDelimiter
                                       + gameTeamCode + outputDelimiter
-                                      + sequence + outputDelimiter
+                                      + eventNum + outputDelimiter
                                       + commentSequence + outputDelimiter
                                       + textLine,
                                       true);
@@ -789,7 +565,7 @@ namespace Retrosheet_DataFileIO
                                       gameID + outputDelimiter
                                       + inning + outputDelimiter
                                       + gameTeamCode + outputDelimiter
-                                      + sequence + outputDelimiter
+                                      + eventNum + outputDelimiter
                                       + commentSequence + outputDelimiter
                                       + textLine,
                                       true);
@@ -805,7 +581,7 @@ namespace Retrosheet_DataFileIO
                                       gameID + outputDelimiter
                                       + inning + outputDelimiter
                                       + gameTeamCode + outputDelimiter
-                                      + sequence + outputDelimiter
+                                      + eventNum + outputDelimiter
                                       + commentSequence + outputDelimiter
                                       + textLine,
                                       true);
@@ -821,7 +597,7 @@ namespace Retrosheet_DataFileIO
                                       gameID + outputDelimiter
                                       + inning + outputDelimiter
                                       + gameTeamCode + outputDelimiter
-                                      + sequence + outputDelimiter
+                                      + eventNum + outputDelimiter
                                       + commentSequence + outputDelimiter
                                       + "com" + outputDelimiter
                                       + commentText,
@@ -837,7 +613,7 @@ namespace Retrosheet_DataFileIO
                               gameID + outputDelimiter
                               + inning + outputDelimiter
                               + gameTeamCode + outputDelimiter
-                              + sequence + outputDelimiter
+                              + eventNum + outputDelimiter
                               + commentSequence + outputDelimiter
                                + textLine,
                               true);

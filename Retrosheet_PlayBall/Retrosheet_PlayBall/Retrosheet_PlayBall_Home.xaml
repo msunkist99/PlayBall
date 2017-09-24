@@ -36,15 +36,18 @@
                 Padding="10,10,10,10"
                 Background="White">
             <StackPanel>
-                <Label HorizontalAlignment="Center" Foreground="Black" Padding="2">The information used in the Play Ball application was obtained free of</Label>
-                <Label HorizontalAlignment="Center" Foreground="Black" Padding="2">charge from and is copyrighted by Retrosheet.</Label>
-                <Label HorizontalAlignment="Center" Foreground="Black" Padding="2">Interested parties may contact Retrosheet @</Label>
-                <Label HorizontalAlignment="Center" Foreground="Black" Padding="2">www.retrosheet.org</Label>
-                <Label HorizontalAlignment="Center" Foreground="Black" Padding="2">20 Sunset Road</Label>
-                <Label HorizontalAlignment="Center" Foreground="Black" Padding="2">Newark, Delaware 19711</Label>
+                <TextBlock HorizontalAlignment="Center" Foreground="Black" Padding="2">The information used in the Play Ball application was obtained free of</TextBlock>
+                <TextBlock HorizontalAlignment="Center" Foreground="Black" Padding="2">charge from and is copyrighted by Retrosheet.</TextBlock>
+                <TextBlock HorizontalAlignment="Center" Foreground="Black" Padding="2">Interested parties may contact Retrosheet @</TextBlock>
+                <TextBlock HorizontalAlignment="Center" Foreground="Black" Padding="2">
+                    <Hyperlink RequestNavigate="Hyperlink_RequestNavigate"
+                               NavigateUri="http://www.retrosheet.org">www.retrosheet.org</Hyperlink> 
+                </TextBlock>
+                <TextBlock HorizontalAlignment="Center" Foreground="Black" Padding="2">20 Sunset Road</TextBlock>
+                <TextBlock HorizontalAlignment="Center" Foreground="Black" Padding="2">Newark, Delaware 19711</TextBlock>
                 <Image HorizontalAlignment="Center" Width="200"  Source="c:\users\mmr\documents\retrosheet\icons\retro-logo.gif" Margin="0,5,0,0" />
-                <Label HorizontalAlignment="Center" Foreground="Black" Padding="5" FontStyle="Italic">© 1996-2017 by Retrosheet.</Label>
-                <Label HorizontalAlignment="Center" Foreground="Black" Padding="5" FontStyle="Italic">All Rights Reserved.</Label>
+                <TextBlock HorizontalAlignment="Center" Foreground="Black" Padding="5" FontStyle="Italic">© 1996-2017 by Retrosheet.</TextBlock>
+                <TextBlock HorizontalAlignment="Center" Foreground="Black" Padding="5" FontStyle="Italic">All Rights Reserved.</TextBlock>
             </StackPanel>
         </Border>
 

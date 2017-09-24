@@ -5,25 +5,28 @@ using System.Text;
 using System.Threading.Tasks;
 ////  need this for StreamReader
 using System.IO;
+using System.Text.RegularExpressions;
 
 namespace Retrosheet_DataFileIO
 {
     public class DataFileIO
     {
-        //private string inputPathFile;
-        //private string outputPath;
-        //private string outputFile;
-        //private string textLine;
-
         private const char inputDelimiter = ',';
         private const char outputDelimiter = '|';
+
+        string hitLocationsString = "78XD|7LDF|7LSF|89XD|9LDF|9LSF|23F|25F|34D|34S|3DF|4MD|4MS|56D|56S|5DF|6MD|6MS|78D|78S|7LD|7LF|7LS|89D|89S|8XD|9LD|9LF|9LS|13|15|1S|23|25|2F|34|3D|3F|3S|4D|4M|4S|56|5D|5F|5S|6D|6M|6S|78|7D|7L|7S|89|8D|8S|9D|9L|9S|1|2|3|4|5|6|7|8|9";
+        string[] hitLocations;
 
         // the following four variables make up the full key
         private string gameID = null;
         private int inning = 0;
         private int gameTeamCode = 0;
         private int sequence = 0;
-        private int comSequence = 0;
+        private int commentSequence = 0;
+        private int sequenceHold = 0;
+        private string homeTeamID = null;
+        private string visitingTeamID = null;
+        private int eventNum = 0;
 
         // constructor
         public DataFileIO()
@@ -39,9 +42,14 @@ namespace Retrosheet_DataFileIO
         }
 
         public void ProcessEventFiles(string inputPath,
-                                      string outputPath)
+                                      string outputPath,
+                                      string seasonYear,
+                                      string seasonGameType)
         {
             string outputFile;
+
+
+            hitLocations = hitLocationsString.Split(outputDelimiter);
 
             DeleteDirectory(outputPath);
 
@@ -61,20 +69,23 @@ namespace Retrosheet_DataFileIO
                     ReadEventFiles(inputPath + @"\" + fileName,
                                            outputFullPath, 
                                            outputFile,
-                                           "event");
-                    //outputTextbox.Text += fileName + Environment.NewLine;
+                                           "event",
+                                           seasonYear,
+                                           seasonGameType);
                 }
                 // player file
                 else if (fileName.IndexOf(".ROS") > -1)
                 {
                     outputFile = fileName.Substring(3, 4) + fileName.Substring(0, 3);
+
                     outputPath = inputPath + @"\Output\" + outputFile + @"\";
                     //  the @ tells the compiler to ignore special characters (\) in the string
                     ReadEventFiles(inputPath + @"\" + fileName,
                                            outputPath,
                                            outputFile,
-                                           "player");
-                    //outputTextbox.Text += fileName + Environment.NewLine;
+                                           "player",
+                                           seasonYear,
+                                           seasonGameType);
                 }
                 // team file
                 else if (fileName.IndexOf("TEAM") > -1)
@@ -84,8 +95,9 @@ namespace Retrosheet_DataFileIO
                     ReadEventFiles(inputPath + @"\" + fileName,
                                            outputPath,
                                            outputFile,
-                                           "team");
-                    //outputTextbox.Text += fileName + Environment.NewLine;
+                                           "team",
+                                           seasonYear,
+                                           seasonGameType);
                 }
             }
         }
@@ -94,13 +106,12 @@ namespace Retrosheet_DataFileIO
         private void ReadEventFiles(string inputPathFile,
                                     string outputPath,
                                     string outputFile,
-                                    string fileType )
+                                    string fileType,
+                                    string seasonYear,
+                                    string seasonGameType)
         {
             string[] columnValue;
             string textLine = null ;
-            //string inputPathFile = inputPathFile;
-            //string outputPath = outputPath;
-            //string outputFile = outputFile;
 
             if (!Directory.Exists(outputPath))
             {
@@ -129,19 +140,25 @@ namespace Retrosheet_DataFileIO
                         CreateEventOutput(outputPath,
                                           outputFile,
                                           textLine,
-                                          columnValue);
+                                          columnValue,
+                                          seasonYear,
+                                          seasonGameType);
                     }
                     else if (fileType == "player")
                     {
                         CreatePlayerOutput(outputPath,
                                            outputFile,
-                                           textLine);
+                                           textLine,
+                                           seasonYear,
+                                           seasonGameType);
                     }
                     else if (fileType == "team")
                     {
                         CreateTeamOutput(outputPath,
                                          outputFile,
-                                         textLine);
+                                         textLine,
+                                         seasonYear,
+                                         seasonGameType);
                     }
                 }
             }
@@ -215,27 +232,30 @@ namespace Retrosheet_DataFileIO
                         //columnValue = textLine.Split('|');
                         WriteEventFile(outputPath, outputFile, textLine, true);
                     }
-
                 }
             }
         }
 
         private void CreateTeamOutput(string outputPath,
                                       string outputFile,
-                                      string textLine)
+                                      string textLine,
+                                       string seasonYear,
+                                       string seasonGameType)
         {
             textLine = textLine.Replace(inputDelimiter, outputDelimiter);
 
             WriteEventFile(outputPath,
                       outputFile + "_team",
-                      textLine,
+                      seasonYear + outputDelimiter + seasonGameType + outputDelimiter + textLine,
                       true);
         }
 
         private void CreateEventOutput(string outputPath,
                                        string outputFile,
                                        string textLine,
-                                       string[] columnValue)
+                                       string[] columnValue,
+                                       string season_year,
+                                       string season_game_type)
         {
             string commentText = null;
 
@@ -247,8 +267,22 @@ namespace Retrosheet_DataFileIO
                     inning = 0;
                     gameTeamCode = 0;
                     sequence = 0;
-                    comSequence = 0;
+                    commentSequence = 0;
+                    homeTeamID = null;
+                    visitingTeamID = null;
+                    eventNum = 0;
 
+                    WriteEventFile(outputPath,
+                                   outputFile + "_gameinfo" ,
+                                   gameID + outputDelimiter + "info" + outputDelimiter + "season_game_type"
+                                   + outputDelimiter + season_game_type,
+                                   true);
+
+                    WriteEventFile(outputPath,
+                                   outputFile + "_gameinfo" ,
+                                   gameID + outputDelimiter + "info" + outputDelimiter + "season_year"
+                                   + outputDelimiter + season_year,
+                                   true);
                     break;
 
                 case "version":
@@ -257,8 +291,9 @@ namespace Retrosheet_DataFileIO
                 case "info":
 
                     textLine = textLine.Replace(inputDelimiter, outputDelimiter);
+                    
 
-                    if ((columnValue[1] == "edittime") ||
+                    /*if ((columnValue[1] == "edittime") ||
                         (columnValue[1] == "howscored") ||
                         (columnValue[1] == "inputprogvers") ||
                         (columnValue[1] == "inputter") ||
@@ -273,80 +308,266 @@ namespace Retrosheet_DataFileIO
                     }
                     else
                     {
-                        WriteEventFile(outputPath,
-                                  outputFile + "_game" + columnValue[0],
-                                  gameID + outputDelimiter + textLine,
-                                  true);
+                    */
+
+                    if (columnValue[1] == "hometeam")
+                    {
+                        homeTeamID = columnValue[2];
                     }
+
+                    if (columnValue[1] == "visteam")
+                    {
+                        visitingTeamID = columnValue[2];
+                    }
+
+                    WriteEventFile(outputPath,
+                                   outputFile + "_game" + columnValue[0],
+                                   gameID + outputDelimiter + textLine,
+                                   true);
+                    //}
                     break;
 
                 case "start":
 
                     textLine = textLine.Replace(inputDelimiter, outputDelimiter);
 
+                    if (columnValue[3] == "0")
+                    {
+                        WriteEventFile(outputPath,
+                                       outputFile + "_" + columnValue[0],
+                                       gameID + outputDelimiter + textLine + outputDelimiter + visitingTeamID,
+                                       true);
+
+                    }
+                    else
+                    {
                     WriteEventFile(outputPath,
-                              outputFile + "_" + columnValue[0],
-                              gameID + outputDelimiter + textLine,
-                              true);
+                                   outputFile + "_" + columnValue[0],
+                                   gameID + outputDelimiter + textLine + outputDelimiter + homeTeamID,
+                                   true);
+                    }
+
                     break;
 
                 case "play":
 
                     textLine = textLine.Replace(inputDelimiter, outputDelimiter);
+                    string[] stringArray = textLine.Split(outputDelimiter);
 
+                    //skip the No Play/No Event play records
+                    if (stringArray[6].Contains("NP"))
+                    {
+                        break;
+                    }
+
+                    stringArray[4] = stringArray[4].Substring(0, 1) + outputDelimiter + stringArray[4].Substring(1, 1);
                     // next split up the contents of columnSix into the three parts that make up the Event
+                    //  eventSequence
+                    //  eventModifier
+                    //  eventRunnerAdvance
                     // split by forward slash and period
-                    string[] stringArray = textLine.Split(outputDelimiter );
                     string columnSix = stringArray[6];
 
-                    // eventModifier may contain multiple modifiers delimited with forward slash /
-                    // eventRunnerAdvance may contain multiple advances delimited by semicolon ;
-                    // multiple modifiers and advances are NOT split into seperate fields
-                    string eventDescription ;
-                    string eventModifier;
-                    string eventRunnerAdvance;
+                    // columnSix
+                    // characters up to the leftmost / make up the eventSequence information
+                    //  eventSequence - if the leftmost characters are non-numeric this is the eventType.  Default event type is '~generic out'.
+                    //  values inclosed in () indicate the eventPlayOnRunner values, i.e 'play on runner on first', 'play on runner on second', 'play on runner on third', - default is 'play on batter'
+                    //  there can be multiple eventPlayOnRunnerValues
+                    //  remaining numeric characters make up the eventFieldedBy values - each of the numeric characters will be 1-9 and 
+                    //  tell you the fielder(s) involved in the event
+
+                    // characters between the leftmost / and leftmost . make up the eventModifier information
+                    //  there can be multiple eventModifier values delimited with /
+                    //  the first eventModifier can contain the eventHitLocation value
+                    //  multiple eventModifier values are delimited by a | in the database column
+
+                    // characters following the . make up the eventRunnerAdvance information
+                    //  there can be multiple eventRunnerAdvances delimited with ;
+                    //  multiple eventRunnerAdvance values are delimited by a | in the database column
+
                     int forwardSlashIndex = columnSix.IndexOf('/');
                     int periodIndex = columnSix.IndexOf('.');
 
+                    string eventSequence = "";
+                    string eventModifier = "";
+                    string eventRunnerAdvance = "";
+                    string eventHitLocation = "";
+                    string eventFieldedBy = "";
+                    string eventPlayOnRunner = "";
+                    string eventType = "";
+
+                    // first split up columnSix into
+                    // eventSequence, eventModifier, eventRunnerAdvance
+
                     if ((forwardSlashIndex < 0) && (periodIndex < 0))
-                    // there are no modifiers or advances, only the description
+                        // no eventModifiers, no eventRunnerAdvance
+                        // only eventSequence
                     {
-                        eventDescription = columnSix;
-                        eventModifier = null;
-                        eventRunnerAdvance = null;
+                        eventSequence = columnSix;
                     }
                     else if ((periodIndex > -1) && (forwardSlashIndex > periodIndex))
-                    // there are no modifiers and the runner advances contain forward slashes
                     {
-                        eventDescription = columnSix.Substring(0, periodIndex);
-                        eventModifier = null;
-                        eventRunnerAdvance = columnSix.Substring(periodIndex + 1);
-
-                    }
-                    else if (forwardSlashIndex < 0) 
-                    // there are no modifiers, only description and runner advances
-                    {
-                        eventDescription = columnSix.Substring(0, periodIndex);
-                        eventModifier = null;
+                        // there are no modifiers and the runner advance data contains a forward slash
+                        eventSequence = columnSix.Substring(0, periodIndex);
                         eventRunnerAdvance = columnSix.Substring(periodIndex + 1);
                     }
-                    else if (periodIndex < 0)
-                    // there are no runner advances, only description and modifiers
+                    else if ((forwardSlashIndex > -1) && (periodIndex < 0))
+                        // there are eventModifier values but no eventRunnerAdvance values
                     {
-                        eventDescription = columnSix.Substring(0, forwardSlashIndex);
+                        eventSequence = columnSix.Substring(0, forwardSlashIndex);
                         eventModifier = columnSix.Substring(forwardSlashIndex + 1);
-                        eventRunnerAdvance = null;
+                    }
+                    else if ((forwardSlashIndex < 0) && (periodIndex > -1))
+                    {
+                        // there are no eventModifiers but there are eventRunnerAdvances
+                        eventSequence = columnSix.Substring(0, periodIndex);
+                        eventRunnerAdvance = columnSix.Substring(periodIndex + 1);
                     }
                     else
-                    // all three are present - description, modifier, runner advance
                     {
-                        eventDescription = columnSix.Substring(0, forwardSlashIndex);
-                        eventModifier = columnSix.Substring(forwardSlashIndex + 1, periodIndex - forwardSlashIndex - 1);
+                        // there are both eventModifiers and eventRunnerAdvances
+                        eventSequence = columnSix.Substring(0, forwardSlashIndex);
+                        eventModifier = columnSix.Substring(forwardSlashIndex + 1, periodIndex - forwardSlashIndex -1);
                         eventRunnerAdvance = columnSix.Substring(periodIndex + 1);
                     }
 
+                    // eventSequence - look for '(1)', '(2)', '(3)' - and set eventPlayOnRunner value
+                    // eventSequence - look for numeric value - and set eventFieldedBy value
+                    // eventSequence - any remaining values should be non-numeric - set eventType value 
+
+                    if ((eventSequence.Contains("(")) && (eventSequence.Contains(")")))
+                    {
+                        int openParmIndex = eventSequence.IndexOf("(");
+                        int closeParmIndex = eventSequence.IndexOf(")");
+                        eventPlayOnRunner = eventSequence.Substring(openParmIndex + 1, closeParmIndex - openParmIndex - 1);
+                        eventSequence = eventSequence.Replace((eventSequence.Substring(openParmIndex, closeParmIndex - openParmIndex + 1)), "");
+                    }
+
+                    /*
+                    // if there are multiple values in eventPlayOnRunner then deliminate with "|"
+                    if (eventPlayOnRunner != "")
+                    {
+                        char[] eventPlayOnRunnerArray = eventPlayOnRunner.ToArray();
+                        eventPlayOnRunner = "";
+                        foreach (char value in eventPlayOnRunnerArray)
+                        {
+                            eventPlayOnRunner = eventPlayOnRunner + value.ToString() + outputDelimiter;
+                        }
+                        //  remove trailing "|"
+                        if (eventPlayOnRunner.Substring(eventPlayOnRunner.Length - 1) == "|")
+                        {
+                            eventPlayOnRunner = eventPlayOnRunner.Substring(0, eventPlayOnRunner.Length - 1);
+                        }
+                    }
+                    */
+
+                    /*
+                    if (eventSequence.Contains("(1)"))
+                    {
+                        eventPlayOnRunner = "1";
+                        eventSequence = eventSequence.Replace("(1)", string.Empty);
+                    }
+                    else if (eventSequence.Contains("(2)"))
+                    {
+                        eventPlayOnRunner = "2";
+                        eventSequence = eventSequence.Replace("(2)", string.Empty);
+                    }
+                    else if (eventSequence.Contains("(3)"))
+                    {
+                        eventPlayOnRunner = "3";
+                        eventSequence = eventSequence.Replace("(3)", string.Empty);
+                    }
+                    else
+                    {
+                        eventPlayOnRunner = "B";
+                    }
+                    */
+
+                    eventType = Regex.Replace(eventSequence, @"\d", "");
+                    eventFieldedBy = Regex.Replace(eventSequence, @"\D", "");
+
+                    /*
+                    // eventType may contain multiple type values = replace + delimiter with |
+                    eventType.Replace("+", "|");
+                    */
+
+                    if (eventType == "")
+                    {
+                        eventType = "~";  // default generic out
+                    }
+
+                    /*
+                    // if there are multiple values in eventFieldedBy then deliminate with "|"
+                    if (eventFieldedBy != "")
+                    {
+                        char[] eventFieldedByArray = eventFieldedBy.ToArray();
+                        eventFieldedBy = "";
+                        foreach (char value in eventFieldedByArray)
+                        {
+                            eventFieldedBy = eventFieldedBy + value.ToString() + outputDelimiter;
+                        }
+                        //  remove trailing "|"
+                        if (eventFieldedBy.Substring(eventFieldedBy.Length - 1) == "|")
+                        {
+                            eventFieldedBy = eventFieldedBy.Substring(0, eventFieldedBy.Length - 1);
+                        }
+                    }
+                    */
+
+
+                    eventSequence = "";  //  everything that was originally in the eventSequence should now have been moved to eventType or eventFieldedBy, so empty eventSequence
+
+                    //  eventModifier may contain the hit location so lets grab that
+                    if (eventModifier != "")
+                    {
+                        foreach (string hitLocation in hitLocations)
+                        {
+                            if (eventModifier.Contains(hitLocation))
+                            {
+                                eventHitLocation = hitLocation;
+                                eventModifier = eventModifier.Replace(hitLocation, string.Empty);
+                                break;
+                            }
+                        }
+                    }
+
+                    if (eventModifier != "")
+                    {
+                        if (eventModifier.Substring(0, 1) == "/")
+                        {
+                            eventModifier = eventModifier.Substring(1);
+                        }
+                    }
+
+                    /*
+                    // eventModifier - there can be multiple modifier values - replace the / delimiter with |
+                    if (eventModifier != "")
+                    {
+                        eventModifier = eventModifier.Replace("/","|");
+                    }
+                    */
+
+                    /*
+                    // eventRunnerAdvance - there can be multiple runner advance values - replace the ; delimiter with |
+                    if (eventRunnerAdvance != "")
+                    {
+                        eventRunnerAdvance = eventRunnerAdvance.Replace(";", "|");
+                    }
+                    */
+
                     // put the textLine back together from the stringArray
-                    stringArray[6] = eventDescription + outputDelimiter + eventModifier + outputDelimiter + eventRunnerAdvance;
+                    // eventSequence should be empty
+                    // capture columnSix original contents in the database for debugging and analysis purposes
+
+                    eventNum++;
+                    stringArray[6] = eventSequence + outputDelimiter + eventModifier
+                                                   + outputDelimiter + eventRunnerAdvance
+                                                   + outputDelimiter + eventHitLocation
+                                                   + outputDelimiter + eventFieldedBy
+                                                   + outputDelimiter + eventPlayOnRunner
+                                                   + outputDelimiter + eventType
+                                                   + outputDelimiter + columnSix
+                                                   + outputDelimiter + eventNum;
                     textLine = null;
 
                     for (int i = 0; i < stringArray.Length ; i++)
@@ -363,15 +584,17 @@ namespace Retrosheet_DataFileIO
                     {
                         inning = Int32.Parse(columnValue[1]);
                         sequence = 0;
-                        comSequence = 0;
+                        commentSequence = 0;
                     }
 
                     //  capture the third part of the record key
+                    //  0 - top of the inning - visiting team
+                    //  1 - bottom of the inning - home team
                     if (gameTeamCode != Int32.Parse(columnValue[2]))
                     {
                         gameTeamCode = Int32.Parse(columnValue[2]);
                         sequence = 0;
-                        comSequence = 0;
+                        commentSequence = 0;
                     }
 
                     //  capture the fourth part of the record key
@@ -391,14 +614,28 @@ namespace Retrosheet_DataFileIO
 
                     textLine = textLine.Replace(inputDelimiter, outputDelimiter);
 
-                    WriteEventFile(outputPath,
-                              outputFile + "_" + columnValue[0],
-                              gameID + outputDelimiter
-                              + inning + outputDelimiter
-                              + gameTeamCode + outputDelimiter
-                              + sequence + outputDelimiter
-                              + textLine,
-                              true);
+                    if (columnValue[3] == "0")
+                    {
+                        WriteEventFile(outputPath,
+                                  outputFile + "_" + columnValue[0],
+                                  gameID + outputDelimiter
+                                  + inning + outputDelimiter
+                                  + gameTeamCode + outputDelimiter
+                                  + sequence + outputDelimiter
+                                  + textLine + outputDelimiter + visitingTeamID,
+                                  true);
+                    }
+                    else
+                    {
+                        WriteEventFile(outputPath,
+                                  outputFile + "_" + columnValue[0],
+                                  gameID + outputDelimiter
+                                  + inning + outputDelimiter
+                                  + gameTeamCode + outputDelimiter
+                                  + sequence + outputDelimiter
+                                  + textLine + outputDelimiter + homeTeamID,
+                                  true);
+                    }
                     break;
 
                 case "data":
@@ -415,28 +652,69 @@ namespace Retrosheet_DataFileIO
 
                     textLine = textLine.Replace(inputDelimiter, outputDelimiter);
 
-                    WriteEventFile(outputPath,
-                              outputFile + "_" + columnValue[0],
-                              gameID + outputDelimiter
-                              + inning + outputDelimiter
-                              + gameTeamCode + outputDelimiter
-                              + sequence + outputDelimiter
-                              + textLine,
-                              true);
+                    if (gameTeamCode == 0)
+                    //  top of the inning - visiting team is batting
+                    {
+                        WriteEventFile(outputPath,
+                                  outputFile + "_" + columnValue[0],
+                                  gameID + outputDelimiter
+                                  + inning + outputDelimiter
+                                  + gameTeamCode + outputDelimiter
+                                  + sequence + outputDelimiter
+                                  + textLine + outputDelimiter + visitingTeamID,
+                                  true);
+                    }
+                    else if (gameTeamCode == 1)
+                    //  bottom of the inning - home team is batting
+                    {
+                        WriteEventFile(outputPath,
+                                  outputFile + "_" + columnValue[0],
+                                  gameID + outputDelimiter
+                                  + inning + outputDelimiter
+                                  + gameTeamCode + outputDelimiter
+                                  + sequence + outputDelimiter
+                                  + textLine + outputDelimiter + homeTeamID,
+                                  true);
+                    }
+                    else
+                    {
+                        Console.WriteLine();
+                    }
                     break;
 
                 case "padj":
 
                     textLine = textLine.Replace(inputDelimiter, outputDelimiter);
 
-                    WriteEventFile(outputPath,
-                              outputFile + "_" + columnValue[0],
-                              gameID + outputDelimiter
-                              + inning + outputDelimiter
-                              + gameTeamCode + outputDelimiter
-                              + sequence + outputDelimiter
-                              + textLine,
-                              true);
+                    if (gameTeamCode == 0)
+                    {
+                    // top of the inning - home team is pitching
+                        WriteEventFile(outputPath,
+                                  outputFile + "_" + columnValue[0],
+                                  gameID + outputDelimiter
+                                  + inning + outputDelimiter
+                                  + gameTeamCode + outputDelimiter
+                                  + sequence + outputDelimiter
+                                  + textLine + outputDelimiter + homeTeamID,
+                                  true);
+                    }
+                    else if (gameTeamCode == 1)
+                    {
+                     // bottom of the inning - visiting team is pitching
+                        WriteEventFile(outputPath,
+                                  outputFile + "_" + columnValue[0],
+                                  gameID + outputDelimiter
+                                  + inning + outputDelimiter
+                                  + gameTeamCode + outputDelimiter
+                                  + sequence + outputDelimiter
+                                  + textLine + outputDelimiter + visitingTeamID,
+                                  true);
+                    }
+                    else
+                    {
+                        Console.WriteLine();
+                    }
+
                     break;
 
                 case "ladj":
@@ -455,13 +733,17 @@ namespace Retrosheet_DataFileIO
 
                 case "com":
 
+                    if (sequenceHold != sequence)
+                    {
+                        commentSequence = 0;
+                        sequenceHold = sequence;
+                    }
                     columnValue[1] = columnValue[1].Replace("\"","");
 
                     switch (columnValue[1])
                     {
                         case "replay":
 
-                            comSequence = 0;
                             textLine = textLine.Replace("\"", "");
                             textLine = textLine.Replace(inputDelimiter, outputDelimiter);
 
@@ -471,13 +753,13 @@ namespace Retrosheet_DataFileIO
                                       + inning + outputDelimiter
                                       + gameTeamCode + outputDelimiter
                                       + sequence + outputDelimiter
+                                      + commentSequence + outputDelimiter
                                       + textLine,
                                       true);
                             break;
 
                         case "ej":
 
-                            comSequence = 0;
                             textLine = textLine.Replace("\"", "");
                             textLine = textLine.Replace(inputDelimiter, outputDelimiter);
 
@@ -486,14 +768,14 @@ namespace Retrosheet_DataFileIO
                                       gameID + outputDelimiter
                                       + inning + outputDelimiter
                                       + gameTeamCode + outputDelimiter
-                                      + sequence + outputDelimiter
+                                      + sequence + outputDelimiter 
+                                      + commentSequence + outputDelimiter
                                       + textLine,
                                       true);
                             break;
 
                         case "umpchange":
 
-                            comSequence = 0;
                             textLine = textLine.Replace("\"", "");
                             textLine = textLine.Replace(inputDelimiter, outputDelimiter);
 
@@ -503,13 +785,13 @@ namespace Retrosheet_DataFileIO
                                       + inning + outputDelimiter
                                       + gameTeamCode + outputDelimiter
                                       + sequence + outputDelimiter
+                                      + commentSequence + outputDelimiter
                                       + textLine,
                                       true);
                             break;
 
                         case "protest":
 
-                            comSequence = 0;
                             textLine = textLine.Replace("\"", "");
                             textLine = textLine.Replace(inputDelimiter, outputDelimiter);
 
@@ -519,13 +801,13 @@ namespace Retrosheet_DataFileIO
                                       + inning + outputDelimiter
                                       + gameTeamCode + outputDelimiter
                                       + sequence + outputDelimiter
+                                      + commentSequence + outputDelimiter
                                       + textLine,
                                       true);
                             break;
 
                         case "suspend":
 
-                            comSequence = 0;
                             textLine = textLine.Replace("\"", "");
                             textLine = textLine.Replace(inputDelimiter, outputDelimiter);
 
@@ -535,13 +817,13 @@ namespace Retrosheet_DataFileIO
                                       + inning + outputDelimiter
                                       + gameTeamCode + outputDelimiter
                                       + sequence + outputDelimiter
+                                      + commentSequence + outputDelimiter
                                       + textLine,
                                       true);
                             break;
 
                         default:
-
-                            ++comSequence;
+                            ++commentSequence;
                             commentText = textLine.Substring( textLine.IndexOf("com,") + 5);
                             commentText = commentText.Replace("\"", "");
 
@@ -551,7 +833,7 @@ namespace Retrosheet_DataFileIO
                                       + inning + outputDelimiter
                                       + gameTeamCode + outputDelimiter
                                       + sequence + outputDelimiter
-                                      + comSequence + outputDelimiter
+                                      + commentSequence + outputDelimiter
                                       + "com" + outputDelimiter
                                       + commentText,
                                       true);
@@ -567,7 +849,8 @@ namespace Retrosheet_DataFileIO
                               + inning + outputDelimiter
                               + gameTeamCode + outputDelimiter
                               + sequence + outputDelimiter
-                              + textLine,
+                              + commentSequence + outputDelimiter
+                               + textLine,
                               true);
                     break;
             }
@@ -575,13 +858,19 @@ namespace Retrosheet_DataFileIO
 
         private void CreatePlayerOutput(string outputPath,
                                         string outputFile,
-                                        string textLine)
+                                        string textLine,
+                                        string seasonYear,
+                                        string seasonGameType)
         {
             textLine = textLine.Replace(inputDelimiter, outputDelimiter);
 
+            // the last column of the player record tends to have a trailing space.
+            // use trim to clean up that trailing space
+            textLine = textLine.Trim();
+
             WriteEventFile(outputPath,
                       outputFile + "_players",
-                      textLine,
+                      seasonYear + outputDelimiter + seasonGameType + outputDelimiter + textLine,
                       true);
 
         }

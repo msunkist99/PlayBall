@@ -18,10 +18,10 @@
 
         <Grid.RowDefinitions>
             <RowDefinition Height="25"/>
-            <RowDefinition Height="25*"/>
-            <RowDefinition Height="25*"/>
-            <RowDefinition Height="25*"/>
-            <RowDefinition Height="25*"/>
+            <RowDefinition Height="28*"/>
+            <RowDefinition Height="24*"/>
+            <RowDefinition Height="24*"/>
+            <RowDefinition Height="24*"/>
         </Grid.RowDefinitions>
 
         <TextBlock Name="PageTitle" Grid.Row="0" Grid.ColumnSpan="4" 
@@ -50,11 +50,12 @@
 
         </DataGrid>
 
-        <StackPanel Grid.Column="2" Grid.ColumnSpan="2" Grid.Row="1" Orientation="Horizontal" >
+        <StackPanel Grid.Column="1" Grid.ColumnSpan="3" Grid.Row="1" Orientation="Horizontal" >
 
             <DataGrid Name="dgVisitingPlayers"  GridLinesVisibility="None" BorderThickness="0,0,1,0"  RowHeight="15" ColumnHeaderHeight="22" FontSize="10" RowHeaderWidth="0" 
                       AutoGenerateColumns="False" 
-                      CanUserAddRows="False">
+                      CanUserAddRows="False"
+                      IsReadOnly="True">
                 <DataGrid.Columns>
                     <DataGridTextColumn Header="Batting Order" Binding="{Binding Batting}"/>
                     <DataGridTextColumn Header="Visiting Team" Binding="{Binding Name}"/>
@@ -66,16 +67,17 @@
 
             <DataGrid Name="dgHomePlayers" GridLinesVisibility="None" BorderThickness="1,0,0,0" RowHeight="15" ColumnHeaderHeight="22" FontSize="10" RowHeaderWidth="0"
                       AutoGenerateColumns="False" 
-                      CanUserAddRows="False">
+                      CanUserAddRows="False"
+                      IsReadOnly="True">
                 <DataGrid.Columns>
                     <DataGridTextColumn Header="Home Team" Binding="{Binding Name}"/>
                     <DataGridTextColumn Header="Field Position" Binding="{Binding Position}"/>
                     <DataGridTextColumn Header="Bats / Throws"  Binding="{Binding BatsThrows}"/>
                 </DataGrid.Columns>
 
-
             </DataGrid>
 
+            <Image Name="imgEventHitLocationDiagram" Source="{Binding HitLocationDiagram}" VerticalAlignment="Center" HorizontalAlignment="Center" Height="250" Width="250" />
         </StackPanel>
 
         <DataGrid Grid.Column="1" 
@@ -92,13 +94,18 @@
                   VerticalGridLinesBrush="LightGray"
                   SelectionMode="Single"
                   CanUserSortColumns="False"
+                  CanUserDeleteRows="False"
+                  CanUserReorderColumns="False"
+                  CanUserResizeColumns="False"
+                  CanUserResizeRows="False"
+                  IsReadOnly="True"
                   SelectedCellsChanged="dbPlayEvents_SelectedCellsChanged">
 
             <DataGrid.Columns>
                 <DataGridTextColumn Header="Inning"  Binding="{Binding Inning}" />
                 <DataGridTextColumn Header="Team Name"  Binding="{Binding TeamName}"  Width="100"/>
-                <DataGridTextColumn Header="At Bat" Binding="{Binding PlayerName}"  Width="100" />
-                <DataGridTextColumn Header="Count" Binding="{Binding Count}" />
+                <DataGridTextColumn Header="At Bat" Binding="{Binding BatterName}"  Width="100" />
+                <DataGridTextColumn Header="Count" Binding="{Binding CountDesc}" />
                 <DataGridTextColumn Header="Pitches" Binding="{Binding PitchDesc}" Width="200">
                     <DataGridTextColumn.ElementStyle>
                         <Style>
@@ -108,7 +115,7 @@
                     </DataGridTextColumn.ElementStyle>
                 </DataGridTextColumn>
 
-                <DataGridTextColumn Header="Details" Binding="{Binding EventModifierDesc}" Width="125">
+                <DataGridTextColumn Header="Details" Binding="{Binding PlayDetails}" Width="125">
                     <DataGridTextColumn.ElementStyle>
                         <Style>
                             <Setter Property="TextBlock.TextWrapping" Value="Wrap"/>
@@ -116,7 +123,9 @@
                         </Style>
                     </DataGridTextColumn.ElementStyle>
                 </DataGridTextColumn>
-                <DataGridTextColumn Header="Fielded By" Binding="{Binding EventFieldedByDesc}" Width="200">
+
+
+                <DataGridTextColumn Header="Runners" Binding="{Binding DestinationDetails}" Width="200">
                     <DataGridTextColumn.ElementStyle>
                         <Style>
                             <Setter Property="TextBlock.TextWrapping" Value="Wrap"/>
@@ -124,7 +133,7 @@
                         </Style>
                     </DataGridTextColumn.ElementStyle>
                 </DataGridTextColumn>                
-                <DataGridTextColumn Header="Runners" Binding="{Binding EventRunnerAdvance}" Width="125">
+                <DataGridTextColumn Header="Runner Advances" Binding="{Binding EventRunnerAdvance}" Width="125">
                     <DataGridTextColumn.ElementStyle>
                         <Style>
                             <Setter Property="TextBlock.TextWrapping" Value="Wrap"/>
@@ -132,7 +141,9 @@
                         </Style>
                     </DataGridTextColumn.ElementStyle>
                 </DataGridTextColumn>
-                <DataGridTextColumn Header="Hit Location" Binding="{Binding EventHitLocationDesc}" Width="125">
+
+
+                <DataGridTextColumn Header="remove this" Binding="{Binding EventColumnSix}" Width="125">
                     <DataGridTextColumn.ElementStyle>
                         <Style>
                             <Setter Property="TextBlock.TextWrapping" Value="Wrap"/>

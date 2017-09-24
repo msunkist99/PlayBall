@@ -19,6 +19,7 @@
         <EntityTypeShape EntityType="RetrosheetDBModel.Player" Width="1.5" PointX="7.375" PointY="11.75" />
         <EntityTypeShape EntityType="RetrosheetDBModel.Team" Width="1.5" PointX="9.375" PointY="12.75" />
         <EntityTypeShape EntityType="RetrosheetDBModel.Reference_Data" Width="1.5" PointX="11.375" PointY="0.75" />
+        <EntityTypeShape EntityType="RetrosheetDBModel.Play_Bevent" Width="1.5" PointX="13.375" PointY="0.75" />
         <EntityTypeShape EntityType="RetrosheetDBModel.Play" Width="1.5" PointX="11.375" PointY="10.75" />
       </Diagram>
     </edmx:Diagrams>

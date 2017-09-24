@@ -175,6 +175,52 @@
           <Property Name="event_play_on_runner" Type="varchar" MaxLength="50" />
           <Property Name="event_type" Type="varchar" MaxLength="50" />
           <Property Name="event_columnSix" Type="varchar" MaxLength="50" />
+          <Property Name="event_num" Type="int" />
+        </EntityType>
+        <EntityType Name="Play_Bevent">
+          <Key>
+            <PropertyRef Name="record_id" />
+          </Key>
+          <Property Name="game_id" Type="varchar" MaxLength="50" />
+          <Property Name="visiting_team_id" Type="varchar" MaxLength="50" />
+          <Property Name="inning" Type="varchar" MaxLength="50" />
+          <Property Name="batting_team_id" Type="varchar" MaxLength="50" />
+          <Property Name="outs" Type="varchar" MaxLength="50" />
+          <Property Name="count_balls" Type="varchar" MaxLength="50" />
+          <Property Name="count_strikes" Type="varchar" MaxLength="50" />
+          <Property Name="visiting_score" Type="varchar" MaxLength="50" />
+          <Property Name="home_score" Type="varchar" MaxLength="50" />
+          <Property Name="batter_player_id" Type="varchar" MaxLength="50" />
+          <Property Name="batter_bats" Type="varchar" MaxLength="50" />
+          <Property Name="pitcher_player_id" Type="varchar" MaxLength="50" />
+          <Property Name="pitcher_throws" Type="varchar" MaxLength="50" />
+          <Property Name="first_runner_player_id" Type="varchar" MaxLength="50" />
+          <Property Name="second_runner_player_id" Type="varchar" MaxLength="50" />
+          <Property Name="third_runner_player_id" Type="varchar" MaxLength="50" />
+          <Property Name="event_text" Type="varchar" MaxLength="50" />
+          <Property Name="leadoff_flag" Type="varchar" MaxLength="50" />
+          <Property Name="pinchhit_flag" Type="varchar" MaxLength="50" />
+          <Property Name="defensive_position" Type="varchar" MaxLength="50" />
+          <Property Name="lineup_position" Type="varchar" MaxLength="50" />
+          <Property Name="event_type" Type="varchar" MaxLength="50" />
+          <Property Name="batter_event_flag" Type="varchar" MaxLength="50" />
+          <Property Name="ab_flag" Type="varchar" MaxLength="50" />
+          <Property Name="hit_value" Type="varchar" MaxLength="50" />
+          <Property Name="sh_flag" Type="varchar" MaxLength="50" />
+          <Property Name="sf_flag" Type="varchar" MaxLength="50" />
+          <Property Name="outs_on_play" Type="varchar" MaxLength="50" />
+          <Property Name="RBI_on_play" Type="varchar" MaxLength="50" />
+          <Property Name="wild_pitch_flag" Type="varchar" MaxLength="50" />
+          <Property Name="passed_ball_flag" Type="varchar" MaxLength="50" />
+          <Property Name="fielded_by" Type="varchar" MaxLength="50" />
+          <Property Name="hit_location" Type="varchar" MaxLength="50" />
+          <Property Name="num_errors" Type="varchar" MaxLength="50" />
+          <Property Name="batter_dest" Type="varchar" MaxLength="50" />
+          <Property Name="first_runner_dest" Type="varchar" MaxLength="50" />
+          <Property Name="second_runner_dest" Type="varchar" MaxLength="50" />
+          <Property Name="third_runner_dest" Type="varchar" MaxLength="50" />
+          <Property Name="event_num" Type="varchar" MaxLength="50" />
+          <Property Name="record_id" Type="uniqueidentifier" Nullable="false" />
         </EntityType>
         <EntityType Name="Player">
           <Key>
@@ -282,6 +328,7 @@
           <EntitySet Name="Personnel" EntityType="Self.Personnel" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Pitcher_Adjustment" EntityType="Self.Pitcher_Adjustment" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Play" EntityType="Self.Play" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Play_Bevent" EntityType="Self.Play_Bevent" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Player" EntityType="Self.Player" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Reference_Data" EntityType="Self.Reference_Data" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Replay" EntityType="Self.Replay" Schema="dbo" store:Type="Tables" />
@@ -327,6 +374,7 @@
           <EntitySet Name="Players" EntityType="RetrosheetDBModel.Player" />
           <EntitySet Name="Teams" EntityType="RetrosheetDBModel.Team" />
           <EntitySet Name="Reference_Data" EntityType="RetrosheetDBModel.Reference_Data" />
+          <EntitySet Name="Play_Bevent" EntityType="RetrosheetDBModel.Play_Bevent" />
           <EntitySet Name="Plays" EntityType="RetrosheetDBModel.Play" />
         </EntityContainer>
         <EntityType Name="Batter_Adjustment">
@@ -557,6 +605,51 @@
           <Property Name="ref_data_code" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
           <Property Name="ref_data_desc" Type="String" Nullable="false" MaxLength="100" FixedLength="false" Unicode="false" />
         </EntityType>
+        <EntityType Name="Play_Bevent">
+          <Key>
+            <PropertyRef Name="record_id" />
+          </Key>
+          <Property Name="game_id" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="visiting_team_id" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="inning" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="batting_team_id" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="outs" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="count_balls" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="count_strikes" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="visiting_score" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="home_score" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="batter_player_id" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="batter_bats" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="pitcher_player_id" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="pitcher_throws" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="first_runner_player_id" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="second_runner_player_id" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="third_runner_player_id" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="event_text" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="leadoff_flag" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="pinchhit_flag" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="defensive_position" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="lineup_position" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="event_type" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="batter_event_flag" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="ab_flag" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="hit_value" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="sh_flag" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="sf_flag" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="outs_on_play" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="RBI_on_play" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="wild_pitch_flag" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="passed_ball_flag" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="fielded_by" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="hit_location" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="num_errors" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="batter_dest" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="first_runner_dest" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="second_runner_dest" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="third_runner_dest" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="event_num" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="record_id" Type="Guid" Nullable="false" />
+        </EntityType>
         <EntityType Name="Play">
           <Key>
             <PropertyRef Name="record_id" />
@@ -578,6 +671,7 @@
           <Property Name="event_play_on_runner" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
           <Property Name="event_type" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
           <Property Name="event_columnSix" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="event_num" Type="Int32" />
         </EntityType>
       </Schema>
     </edmx:ConceptualModels>
@@ -845,9 +939,56 @@
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
+          <EntitySetMapping Name="Play_Bevent">
+            <EntityTypeMapping TypeName="RetrosheetDBModel.Play_Bevent">
+              <MappingFragment StoreEntitySet="Play_Bevent">
+                <ScalarProperty Name="record_id" ColumnName="record_id" />
+                <ScalarProperty Name="event_num" ColumnName="event_num" />
+                <ScalarProperty Name="third_runner_dest" ColumnName="third_runner_dest" />
+                <ScalarProperty Name="second_runner_dest" ColumnName="second_runner_dest" />
+                <ScalarProperty Name="first_runner_dest" ColumnName="first_runner_dest" />
+                <ScalarProperty Name="batter_dest" ColumnName="batter_dest" />
+                <ScalarProperty Name="num_errors" ColumnName="num_errors" />
+                <ScalarProperty Name="hit_location" ColumnName="hit_location" />
+                <ScalarProperty Name="fielded_by" ColumnName="fielded_by" />
+                <ScalarProperty Name="passed_ball_flag" ColumnName="passed_ball_flag" />
+                <ScalarProperty Name="wild_pitch_flag" ColumnName="wild_pitch_flag" />
+                <ScalarProperty Name="RBI_on_play" ColumnName="RBI_on_play" />
+                <ScalarProperty Name="outs_on_play" ColumnName="outs_on_play" />
+                <ScalarProperty Name="sf_flag" ColumnName="sf_flag" />
+                <ScalarProperty Name="sh_flag" ColumnName="sh_flag" />
+                <ScalarProperty Name="hit_value" ColumnName="hit_value" />
+                <ScalarProperty Name="ab_flag" ColumnName="ab_flag" />
+                <ScalarProperty Name="batter_event_flag" ColumnName="batter_event_flag" />
+                <ScalarProperty Name="event_type" ColumnName="event_type" />
+                <ScalarProperty Name="lineup_position" ColumnName="lineup_position" />
+                <ScalarProperty Name="defensive_position" ColumnName="defensive_position" />
+                <ScalarProperty Name="pinchhit_flag" ColumnName="pinchhit_flag" />
+                <ScalarProperty Name="leadoff_flag" ColumnName="leadoff_flag" />
+                <ScalarProperty Name="event_text" ColumnName="event_text" />
+                <ScalarProperty Name="third_runner_player_id" ColumnName="third_runner_player_id" />
+                <ScalarProperty Name="second_runner_player_id" ColumnName="second_runner_player_id" />
+                <ScalarProperty Name="first_runner_player_id" ColumnName="first_runner_player_id" />
+                <ScalarProperty Name="pitcher_throws" ColumnName="pitcher_throws" />
+                <ScalarProperty Name="pitcher_player_id" ColumnName="pitcher_player_id" />
+                <ScalarProperty Name="batter_bats" ColumnName="batter_bats" />
+                <ScalarProperty Name="batter_player_id" ColumnName="batter_player_id" />
+                <ScalarProperty Name="home_score" ColumnName="home_score" />
+                <ScalarProperty Name="visiting_score" ColumnName="visiting_score" />
+                <ScalarProperty Name="count_strikes" ColumnName="count_strikes" />
+                <ScalarProperty Name="count_balls" ColumnName="count_balls" />
+                <ScalarProperty Name="outs" ColumnName="outs" />
+                <ScalarProperty Name="batting_team_id" ColumnName="batting_team_id" />
+                <ScalarProperty Name="inning" ColumnName="inning" />
+                <ScalarProperty Name="visiting_team_id" ColumnName="visiting_team_id" />
+                <ScalarProperty Name="game_id" ColumnName="game_id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
           <EntitySetMapping Name="Plays">
             <EntityTypeMapping TypeName="RetrosheetDBModel.Play">
               <MappingFragment StoreEntitySet="Play">
+                <ScalarProperty Name="event_num" ColumnName="event_num" />
                 <ScalarProperty Name="event_columnSix" ColumnName="event_columnSix" />
                 <ScalarProperty Name="event_type" ColumnName="event_type" />
                 <ScalarProperty Name="event_play_on_runner" ColumnName="event_play_on_runner" />

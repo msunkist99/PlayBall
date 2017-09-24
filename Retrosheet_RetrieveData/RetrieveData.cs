@@ -268,13 +268,16 @@ namespace Retrosheet_RetrieveData
 								and thirdBaseUmpire.role = 'U'
   left join Personnel homeUmpire on gameInfo.umpire_home_id = homeUmpire.person_id
 								and homeUmpire.role = 'U'
-  where gameInfo.game_id = ";
+  where game_id = 'x_game_id'";
+
+			sqlQuery = sqlQuery.Replace("x_game_id", gameID);
+
 
 			// add System.Data.Linq assembly to the References
 			using (RetrosheetDataContext dbCtx = new RetrosheetDataContext())
 			{
 				//dbCtx.CommandTimeout = 120;  //2 minutes
-				IEnumerable<DataModels.GameInformation> results = dbCtx.ExecuteQuery<DataModels.GameInformation>(sqlQuery + "'" + gameID + "'").ToList();
+				IEnumerable<DataModels.GameInformation> results = dbCtx.ExecuteQuery<DataModels.GameInformation>(sqlQuery).ToList();
 				Console.WriteLine("DataModels.GameInformation record count " + results.Count());
 
 				Collection<DataModels.GameInformation> GameInformation = new Collection<DataModels.GameInformation>();
@@ -752,8 +755,8 @@ where play.game_id = 'x_game_id'
 						}
 					}
 
-                    /*
-                    int event_sequence_n;
+					/*
+					int event_sequence_n;
 					bool isNumeric = int.TryParse(result.EventSequence, out event_sequence_n);
 
 					if (isNumeric == true)
@@ -780,50 +783,458 @@ where play.game_id = 'x_game_id'
 					{
 						result.EventSequenceDesc = RetrieveReferenceDataDesc("event_sequence", result.EventSequence);
 					}
-                    */
+					*/
 
-                    result.GameTeamCodeDesc = RetrieveReferenceDataDesc("game_team", result.GameTeamCode.ToString());
+					result.GameTeamCodeDesc = RetrieveReferenceDataDesc("game_team", result.GameTeamCode.ToString());
 
-                    string[] event_modifiers = result.EventModifier.Split('/');
-                    int event_modifier_count = event_modifiers.Count();
-                    x = 0;
-                    foreach (string event_modifier in event_modifiers)
-                    {
-                        x++;
-                        if (x < event_modifier_count)
-                        {
-                            result.EventModifierDesc = result.EventModifierDesc + RetrieveReferenceDataDesc("play_modifier", event_modifier) + ", ";
-                        }
-                        else
-                        {
-                            result.EventModifierDesc = result.EventModifierDesc + RetrieveReferenceDataDesc("play_modifier", event_modifier);
-                        }
-                    }
+					string[] event_modifiers = result.EventModifier.Split('/');
+					int event_modifier_count = event_modifiers.Count();
+					x = 0;
+					foreach (string event_modifier in event_modifiers)
+					{
+						x++;
+						if (x < event_modifier_count)
+						{
+							result.EventModifierDesc = result.EventModifierDesc + RetrieveReferenceDataDesc("play_modifier", event_modifier) + ", ";
+						}
+						else
+						{
+							result.EventModifierDesc = result.EventModifierDesc + RetrieveReferenceDataDesc("play_modifier", event_modifier);
+						}
+					}
 
-                    char[] event_fielded_by_values = result.EventFieldedBy.ToCharArray();
-                    int event_fielded_by_count = event_fielded_by_values.Count();
-                    x = 0;
-                    foreach (char event_field_by_value in event_fielded_by_values)
-                    {
-                        x++;
-                        if (x < event_fielded_by_count)
-                        {
-                            result.EventFieldedByDesc = result.EventFieldedByDesc + RetrieveReferenceDataDesc("field_position", event_field_by_value.ToString()) + ", ";
-                        }
-                        else
-                        {
-                            result.EventFieldedByDesc = result.EventFieldedByDesc + RetrieveReferenceDataDesc("field_position", event_field_by_value.ToString()) ;
-                        }
-                    }
+					char[] event_fielded_by_values = result.EventFieldedBy.ToCharArray();
+					int event_fielded_by_count = event_fielded_by_values.Count();
+					x = 0;
+					foreach (char event_field_by_value in event_fielded_by_values)
+					{
+						x++;
+						if (x < event_fielded_by_count)
+						{
+							result.EventFieldedByDesc = result.EventFieldedByDesc + RetrieveReferenceDataDesc("field_position", event_field_by_value.ToString()) + ", ";
+						}
+						else
+						{
+							result.EventFieldedByDesc = result.EventFieldedByDesc + RetrieveReferenceDataDesc("field_position", event_field_by_value.ToString()) ;
+						}
+					}
 
+					result.EventTypeDesc = RetrieveReferenceDataDesc("event_type", result.EventType);
 					result.EventModifierDesc = RetrieveReferenceDataDesc("play_modifier", result.EventModifier);
+
+					if((result.EventModifierDesc != "") && (result.EventTypeDesc !=""))
+					{
+						result.EventModifierDesc = result.EventModifierDesc + ", " + result.EventTypeDesc;
+					}
+					else if (result.EventTypeDesc != "")
+					{
+						result.EventModifierDesc = result.EventTypeDesc;
+					}
 					result.EventHitLocationDesc = RetrieveReferenceDataDesc("hit_location", result.EventHitLocation);
+					if (result.EventHitLocation != "")
+					{
+						result.EventHitLocationDiagram = RetrieveReferenceDataDesc("hit_location", "diagram_path") + RetrieveReferenceDataDesc("hit_diagram", result.EventHitLocation);
+					}
+					else
+					{
+						result.EventHitLocationDiagram = RetrieveReferenceDataDesc("hit_location", "diagram_path") + "blank.jpg";
+					}
+
 					result.PlayerName = string.Concat(result.PlayerLastName, ", ", result.PlayerFirstName);
 					result.Count = string.Concat(result.CountBalls, " / ", result.CountStrikes);
 					PlayInformation.Add(result);
 				}
 			}
 				return PlayInformation;
+		}
+
+		public Collection<DataModels.PlayBeventInformation> RetrievePlayBevent(string seasonYear,
+																			   string seasonGameType,
+																			   string homeTeamID,
+																			   string visitingTeamID,
+																			   string gameID)
+		{
+			string sqlQuery = @"select   
+  play_bevent.record_id RecordID 
+, play_bevent.game_id GameID 
+, play_bevent.inning Inning 
+, play_bevent.game_team_code GameTeamCode 
+, play_bevent.event_num EventNum 
+, play_bevent.batter_player_id BatterPlayerID 
+, play_bevent.batter_defensive_position BatterDefPosition
+, player.last_name BatterLastName 
+, player.first_name BatterFirstName 
+, Play_Bevent.outs CountOuts
+, play_bevent.count_balls CountBalls 
+, play_bevent.count_strikes CountStrikes 
+, play_bevent.pitch_sequence Pitches 
+, play_bevent.batted_ball_type BattedBallType
+, play_bevent.batter_dest DestBatter
+, Play_Bevent.first_runner_dest DestFirstRunner
+, Play_Bevent.second_runner_dest DestSecondRunner
+, Play_Bevent.third_runner_dest DestThirdRunner
+, play_bevent.hit_location HitLocation
+, team.team_id TeamID 
+, team.name TeamName
+, play_bevent.fielded_by FieldedBy 
+, Play_Bevent.play_on_batter PlayOnBatter
+, Play_Bevent.play_on_first_runner PlayOnFirstRunner
+, Play_Bevent.play_on_second_runner PlayOnSecondRunner
+, Play_Bevent.play_on_third_runner PlayOnThirdRunner
+, play_bevent.event_type EventType
+, catcher.player_id catcherPlayerID 
+, catcher.last_name CatcherLastName
+, catcher.first_name CatcherFirstName
+, catcher.bats CatcherBats
+, catcher.throws CatcherThrows
+, firstBase.player_id FirstBasePlayerID
+, firstBase.last_name firstBaseLastName
+, firstBase.first_name firstBaseFirstName
+, firstBase.bats firstBaseBats
+, firstBase.throws firstBaseThrows
+, secondBase.player_id SecondBasePlayerID
+, secondBase.last_name secondBaseLastName
+, secondBase.first_name secondBaseFirstName
+, secondBase.bats secondBaseBats
+, secondBase.throws secondBaseThrows
+, thirdbase.player_id thridBasePlayerID
+, thirdBase.last_name thirdBaseLastName
+, thirdBase.first_name thirdBaseFirstName
+, thirdBase.bats thirdBaseBats
+, thirdBase.throws thirdBaseThrows
+, shortstop.player_id ShortStopPlayerID
+, shortStop.last_name shortStopLastName
+, shortStop.first_name shortStopFirstName
+, shortStop.bats shortStopBats
+, shortStop.throws shortStopThrows
+, leftField.player_id leftFieldPlayerID
+, leftField.last_name leftFieldLastName
+, leftField.first_name leftFieldFirstName
+, leftField.bats leftFieldBats
+, leftField.throws leftFieldThrows
+, centerField.player_id centerFieldPlayerID
+, centerField.last_name centerFieldLastName
+, centerField.first_name centerFieldFirstName
+, centerField.bats centerFieldBats
+, centerField.throws centerFieldThrows
+, rightField.player_id rightFieldPlayerID
+, rightField.last_name rightFieldLastName
+, rightField.first_name rightFieldFirstName
+, rightField.bats rightFieldBats
+, rightField.throws rightFieldThrows
+, pitcher.player_id pitcherPlayerID
+, pitcher.last_name pitcherLastName
+, pitcher.first_name pitcherFirstName
+, pitcher.bats pitcherBats
+, pitcher.throws pitcherThrows
+from play_bevent  
+join team on team.season_year = 'x_season_year'  
+		and team.season_game_type = 'x_season_game_type'              
+		and team.team_id = (          
+		case play_bevent.game_team_code        
+			when 0 then 'x_visiting_team_id'        
+			else 'x_home_team_id'         
+		end)     
+join player on player.player_id = play_bevent.batter_player_id             
+		and player.season_year = 'x_season_year'             
+		and player.season_game_type = 'x_season_game_type'             
+		and player.team_id = (            
+		case play_bevent.game_team_code         
+			when 0 then 'x_visiting_team_id'        
+			else 'x_home_team_id'       
+		end)    
+join player catcher on catcher.player_id = play_bevent.catcher_player_id             
+		and catcher.season_year = 'x_season_year'             
+		and catcher.season_game_type = 'x_season_game_type'             
+		and catcher.team_id = (            
+		case play_bevent.game_team_code         
+			when 1 then 'x_visiting_team_id'        
+			else 'x_home_team_id'       
+		end)           
+join player firstBase on firstBase.player_id = play_bevent.first_base_player_id             
+		and firstBase.season_year = 'x_season_year'             
+		and firstBase.season_game_type = 'x_season_game_type'             
+		and firstBase.team_id = (            
+		case play_bevent.game_team_code         
+			when 1 then 'x_visiting_team_id'        
+			else 'x_home_team_id'       
+		end)           
+join player secondBase on secondBase.player_id = play_bevent.second_base_player_id             
+		and secondBase.season_year = 'x_season_year'             
+		and secondBase.season_game_type = 'x_season_game_type'             
+		and secondBase.team_id = (            
+		case play_bevent.game_team_code         
+			when 1 then 'x_visiting_team_id'        
+			else 'x_home_team_id'       
+		end)           
+join player thirdBase on thirdBase.player_id = play_bevent.third_base_player_id             
+		and thirdBase.season_year = 'x_season_year'             
+		and thirdBase.season_game_type = 'x_season_game_type'             
+		and thirdBase.team_id = (            
+		case play_bevent.game_team_code         
+			when 1 then 'x_visiting_team_id'        
+			else 'x_home_team_id'       
+		end)           
+join player shortstop on shortstop.player_id = play_bevent.shortstop_player_id             
+		and shortstop.season_year = 'x_season_year'             
+		and shortstop.season_game_type = 'x_season_game_type'             
+		and shortstop.team_id = (            
+		case play_bevent.game_team_code         
+			when 1 then 'x_visiting_team_id'        
+			else 'x_home_team_id'       
+		end)           
+join player leftField on leftField.player_id = play_bevent.left_field_player_id             
+		and leftField.season_year = 'x_season_year'             
+		and leftField.season_game_type = 'x_season_game_type'             
+		and leftField.team_id = (            
+		case play_bevent.game_team_code         
+			when 1 then 'x_visiting_team_id'        
+			else 'x_home_team_id'       
+		end)           
+join player centerField on centerField.player_id = play_bevent.center_field_player_id             
+		and centerField.season_year = 'x_season_year'             
+		and centerField.season_game_type = 'x_season_game_type'             
+		and centerField.team_id = (            
+		case play_bevent.game_team_code         
+			when 1 then 'x_visiting_team_id'        
+			else 'x_home_team_id'       
+		end)           
+join player rightField on rightField.player_id = play_bevent.right_field_player_id             
+		and rightField.season_year = 'x_season_year'             
+		and rightField.season_game_type = 'x_season_game_type'             
+		and rightField.team_id = (            
+		case play_bevent.game_team_code         
+			when 1 then 'x_visiting_team_id'        
+			else 'x_home_team_id'       
+		end)           
+join player pitcher on pitcher.player_id = play_bevent.pitcher_player_id             
+		and pitcher.season_year = 'x_season_year'             
+		and pitcher.season_game_type = 'x_season_game_type'             
+		and pitcher.team_id = (            
+		case play_bevent.game_team_code         
+			when 1 then 'x_visiting_team_id'        
+			else 'x_home_team_id'       
+		end)           
+where play_bevent.game_id = 'x_game_id'
+	order by play_bevent.inning,
+	play_bevent.event_num";
+
+			sqlQuery = sqlQuery.Replace("x_season_year", seasonYear);
+			sqlQuery = sqlQuery.Replace("x_season_game_type", seasonGameType);
+			sqlQuery = sqlQuery.Replace("x_visiting_team_id", visitingTeamID);
+			sqlQuery = sqlQuery.Replace("x_home_team_id", homeTeamID);
+			sqlQuery = sqlQuery.Replace("x_game_id", gameID);
+
+			Collection<DataModels.PlayBeventInformation> PlayBeventInformation = new Collection<DataModels.PlayBeventInformation>();
+
+			// add System.Data.Linq assembly to the References
+			using (RetrosheetDataContext dbCtx = new RetrosheetDataContext())
+			{
+				//dbCtx.CommandTimeout = 120;  //2 minutes
+				IEnumerable<DataModels.PlayBeventInformation> results = dbCtx.ExecuteQuery<DataModels.PlayBeventInformation>(sqlQuery).ToList();
+				Console.WriteLine("DataModels.PlayBeventInformation record count " + results.Count());
+
+				foreach (DataModels.PlayBeventInformation result in results)
+				{
+					var pitchCodes = result.Pitches.ToCharArray();
+					int pitchCodeCount = pitchCodes.Count();
+					int x = 0;
+					foreach (char pitchCode in pitchCodes)
+					{
+						x++;
+						if (x < pitchCodeCount)
+						{
+							result.PitchDesc = result.PitchDesc + RetrieveReferenceDataDesc("pitch_code", pitchCode.ToString()) + ", ";
+						}
+						else
+						{
+							result.PitchDesc = result.PitchDesc + RetrieveReferenceDataDesc("pitch_code", pitchCode.ToString());
+						}
+					}
+
+					result.GameTeamCodeDesc = RetrieveReferenceDataDesc("game_team", result.GameTeamCode.ToString());
+					result.EventTypeDesc = RetrieveReferenceDataDesc("event_type", result.EventType);
+
+					result.BatterName = string.Concat(result.BatterLastName, ", ", result.BatterFirstName);
+					//result.BatterBatsDesc = RetrieveReferenceDataDesc("bats", result.BatterBats);
+					result.BatterDefPositionDesc = RetrieveReferenceDataDesc("field_position", result.BatterDefPosition.ToString());
+					result.BattedBallTypeDesc = RetrieveReferenceDataDesc("batted_ball_type", result.BattedBallType);
+
+					result.DestBatterDesc = RetrieveReferenceDataDesc("runner_destination", result.DestBatter.ToString());
+					result.DestFirstRunnerDesc = RetrieveReferenceDataDesc("runner_destination", result.DestFirstRunner.ToString());
+					result.DestSecondRunnerDesc = RetrieveReferenceDataDesc("runner_destination", result.DestSecondRunner.ToString());
+					result.DestThirdRunnerDesc = RetrieveReferenceDataDesc("runner_destination", result.DestThirdRunner.ToString());
+
+					result.CatcherName = string.Concat(result.CatcherLastName, ", ", result.CatcherFirstName);
+					result.CatcherBatsDesc = RetrieveReferenceDataDesc("bats", result.CatcherBats);
+					result.CatcherThrowsDesc = RetrieveReferenceDataDesc("throws", result.CatcherThrows);
+
+					result.FirstBaseName = string.Concat(result.FirstBaseLastName, ", ", result.FirstBaseFirstName);
+					result.FirstBaseBatsDesc = RetrieveReferenceDataDesc("bats", result.FirstBaseBats);
+					result.FirstBaseThrowsDesc = RetrieveReferenceDataDesc("throws", result.FirstBaseThrows);
+
+					result.SecondBaseName = string.Concat(result.SecondBaseLastName, ", ", result.SecondBaseFirstName);
+					result.SecondBaseBatsDesc = RetrieveReferenceDataDesc("bats", result.SecondBaseBats);
+					result.SecondBaseThrowsDesc = RetrieveReferenceDataDesc("throws", result.SecondBaseThrows);
+
+					result.ThirdBaseName = string.Concat(result.ThirdBaseLastName, ", ", result.ThirdBaseFirstName);
+					result.ThirdBaseBatsDesc = RetrieveReferenceDataDesc("bats", result.ThirdBaseBats);
+					result.ThirdBaseThrowsDesc = RetrieveReferenceDataDesc("throws", result.ThirdBaseThrows);
+
+					result.ShortStopName = string.Concat(result.ShortStopLastName, ", ", result.ShortStopFirstName);
+					result.ShortStopBatsDesc = RetrieveReferenceDataDesc("bats", result.ShortStopBats);
+					result.ShortStopThrowsDesc = RetrieveReferenceDataDesc("throws", result.ShortStopThrows);
+
+					result.LeftFieldName = string.Concat(result.LeftFieldLastName, ", ", result.LeftFieldFirstName);
+					result.LeftFieldBatsDesc = RetrieveReferenceDataDesc("bats", result.LeftFieldBats);
+					result.LeftFieldThrowsDesc = RetrieveReferenceDataDesc("throws", result.LeftFieldThrows);
+
+					result.CenterFieldName = string.Concat(result.CenterFieldLastName, ", ", result.CenterFieldFirstName);
+					result.CenterFieldBatsDesc = RetrieveReferenceDataDesc("bats", result.CenterFieldBats);
+					result.CenterFieldThrowsDesc = RetrieveReferenceDataDesc("throws", result.CatcherThrows);
+
+					result.RightFieldName = string.Concat(result.RightFieldLastName, ", ", result.RightFieldFirstName);
+					result.RightFieldBatsDesc = RetrieveReferenceDataDesc("bats", result.RightFieldBats);
+					result.RightFieldThrowsDesc = RetrieveReferenceDataDesc("throws", result.CatcherThrows);
+
+					result.PitcherName = string.Concat(result.PitcherLastName, ", ", result.PitcherFirstName);
+					result.PitcherBatsDesc = RetrieveReferenceDataDesc("bats", result.PitcherBats);
+					result.PitcherThrowsDesc = RetrieveReferenceDataDesc("throws", result.PitcherThrows);
+
+					result.DestBatterDesc = RetrieveReferenceDataDesc("runner_destination", result.DestBatter.ToString());
+					result.DestFirstRunnerDesc = RetrieveReferenceDataDesc("runner_destination", result.DestFirstRunner.ToString());
+					result.DestSecondRunnerDesc = RetrieveReferenceDataDesc("runner_destination", result.DestSecondRunner.ToString());
+					result.DestThirdRunnerDesc = RetrieveReferenceDataDesc("runner_destination", result.DestThirdRunner.ToString());
+					
+					if (result.PlayOnBatter != null)
+						{
+						x = 0;
+						var playOn = result.PlayOnBatter.ToCharArray();
+						int playOnCount = playOn.Count();
+						foreach (char play in playOn)
+						{
+							x++;
+							if (x < playOnCount)
+							{
+								result.PlayOnBatterDesc = result.PlayOnBatterDesc + RetrieveReferenceDataDesc("field_position", play.ToString()) + ", ";
+							}
+							else
+							{
+								result.PlayOnBatterDesc = result.PlayOnBatterDesc + RetrieveReferenceDataDesc("field_position", play.ToString());
+							}
+						}
+					}
+
+					if (result.PlayOnFirstRunner != null)
+					{
+						x = 0;
+						var playOn = result.PlayOnFirstRunner.ToCharArray();
+						int playOnCount = playOn.Count();
+						foreach (char play in playOn)
+						{
+							x++;
+							if (x < playOnCount)
+							{
+								result.PlayOnFirstRunnerDesc = result.PlayOnFirstRunnerDesc + RetrieveReferenceDataDesc("field_position", play.ToString()) + ", ";
+							}
+							else
+							{
+								result.PlayOnFirstRunnerDesc = result.PlayOnFirstRunnerDesc + RetrieveReferenceDataDesc("field_position", play.ToString());
+							}
+						}
+					}
+
+					if(result.PlayOnSecondRunner != null)
+					{
+						x = 0;
+						var playOn = result.PlayOnSecondRunner.ToCharArray();
+						int playOnCount = playOn.Count();
+						foreach (char play in playOn)
+						{
+							x++;
+							if (x < playOnCount)
+							{
+								result.PlayOnSecondRunnerDesc = result.PlayOnSecondRunnerDesc + RetrieveReferenceDataDesc("field_position", play.ToString()) + ", ";
+							}
+							else
+							{
+								result.PlayOnSecondRunnerDesc = result.PlayOnSecondRunnerDesc + RetrieveReferenceDataDesc("field_position", play.ToString());
+							}
+						}
+					}
+
+					if (result.PlayOnThirdRunner != null)
+					{
+						x = 0;
+						var playOn = result.PlayOnThirdRunner.ToCharArray();
+						int playOnCount = playOn.Count();
+						foreach (char play in playOn)
+						{
+							x++;
+							if (x < playOnCount)
+							{
+								result.PlayOnThirdRunnerDesc = result.PlayOnThirdRunnerDesc + RetrieveReferenceDataDesc("field_position", play.ToString()) + ", ";
+							}
+							else
+							{
+								result.PlayOnThirdRunnerDesc = result.PlayOnThirdRunnerDesc + RetrieveReferenceDataDesc("field_position", play.ToString());
+							}
+						}
+					}
+
+					result.FieldedByDesc = RetrieveReferenceDataDesc("field_position", result.FieldedBy.ToString());
+					result.CountDesc = string.Concat(result.CountBalls, " / ", result.CountStrikes);
+
+					if (result.EventTypeDesc != "")
+					{
+						result.PlayDetails = result.EventTypeDesc + Environment.NewLine;
+					}
+
+					if (result.BattedBallTypeDesc != "")
+					{
+						result.PlayDetails = result.PlayDetails + result.BattedBallTypeDesc + Environment.NewLine;
+					}
+
+					if (result.FieldedByDesc != "")
+					{
+						result.PlayDetails = result.PlayDetails + "Fielded by - " + result.FieldedByDesc;
+					}
+
+					if (result.DestBatterDesc !="")
+					{
+						result.DestinationDetails = "Batter goes to " + result.DestBatterDesc + Environment.NewLine;
+					}
+
+					if ((result.DestFirstRunnerDesc != "") && (result.DestFirstRunnerDesc != "first base"))
+					{
+						result.DestinationDetails = result.DestinationDetails + "Runner on first goes to " + result.DestFirstRunnerDesc + Environment.NewLine;
+					}
+
+					if ((result.DestSecondRunnerDesc != "") && (result.DestSecondRunnerDesc != "second base"))
+					{
+						result.DestinationDetails = result.DestinationDetails + "Runner on second goes to " + result.DestSecondRunnerDesc + Environment.NewLine;
+					}
+
+					if ((result.DestThirdRunnerDesc != "") && (result.DestThirdRunnerDesc != "third base"))
+					{
+						result.DestinationDetails = result.DestinationDetails + "Runner on third goes to " + result.DestThirdRunnerDesc + Environment.NewLine;
+					}
+
+                    //result.HitLocationDiagram = RetrieveReferenceDataDesc("hit_location", result.HitLocation);
+                    if (result.HitLocation != null)
+                    {
+                        result.HitLocationDiagram = RetrieveReferenceDataDesc("hit_diagram", "diagram_path") + RetrieveReferenceDataDesc("hit_diagram", result.HitLocation);
+                    }
+                    else
+                    {
+                        result.HitLocationDiagram = RetrieveReferenceDataDesc("hit_diagram", "diagram_path") + "blank.jpg";
+                    }
+
+                    PlayBeventInformation.Add(result);
+				}
+
+				return PlayBeventInformation;
+			}
 		}
 
 		public Collection<DataModels.PlayerInformation>RetrievePlayers(string seasonYear, string seasonGameType, string homeTeamID, string visitTeamID)
@@ -952,7 +1363,7 @@ where Player.team_id in ('x_home_team_id', 'x_visit_team_id')
 			}
 			catch
 			{
-				return null;
+				return "";
 			}
 		}
 
@@ -1853,7 +2264,7 @@ where Batter_Adjustment.game_id = 'x_game_id'
 					}
 					else
 					{
-						result.ReversedDesc = "ruling on play stands";
+						result.ReversedDesc = "ruling on play upheld";
 					}
 
 					ReplayInformation.Add(result);
@@ -2040,7 +2451,7 @@ where Batter_Adjustment.game_id = 'x_game_id'
 			else
 			{
 				league.LeagueIcon = result._iconPath + result._leagueIcon;
-				league.LeagueName = result._displayUnderLeagueName;
+				league.LeagueName = result._displayUnderLeagueName + " League";
 			}
 			return league;
 		}

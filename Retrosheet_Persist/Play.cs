@@ -31,5 +31,6 @@ namespace Retrosheet_Persist
         public string event_play_on_runner { get; set; }
         public string event_type { get; set; }
         public string event_columnSix { get; set; }
+        public Nullable<int> event_num { get; set; }
     }
 }
