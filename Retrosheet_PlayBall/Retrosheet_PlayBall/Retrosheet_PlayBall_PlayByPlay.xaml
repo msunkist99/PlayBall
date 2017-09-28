@@ -80,11 +80,11 @@
             <Image Name="imgEventHitLocationDiagram" Source="{Binding HitLocationDiagram}" VerticalAlignment="Center" HorizontalAlignment="Center" Height="250" Width="250" />
         </StackPanel>
 
-        <DataGrid Grid.Column="1" 
-                  Grid.Row="2" 
-                  Name="dgPlayEvents" 
+        <DataGrid Grid.Column="0" 
+                  Grid.Row="3" 
+                  Name="dgPlayBevents" 
                   RowHeaderWidth="0" 
-                  Grid.ColumnSpan="3" 
+                  Grid.ColumnSpan="4" 
                   ColumnHeaderHeight="22" 
                   FontSize="10" 
                   AutoGenerateColumns="False" 
@@ -99,11 +99,12 @@
                   CanUserResizeColumns="False"
                   CanUserResizeRows="False"
                   IsReadOnly="True"
-                  SelectedCellsChanged="dbPlayEvents_SelectedCellsChanged">
+                  SelectedCellsChanged="dbPlayEvents_SelectedCellsChanged"
+                  SelectedIndex="0">
 
             <DataGrid.Columns>
                 <DataGridTextColumn Header="Inning"  Binding="{Binding Inning}" />
-                <DataGridTextColumn Header="Team Name"  Binding="{Binding TeamName}"  Width="100"/>
+                <DataGridTextColumn Header="Team Name"  Binding="{Binding TeamName}"  Width="75"/>
                 <DataGridTextColumn Header="At Bat" Binding="{Binding BatterName}"  Width="100" />
                 <DataGridTextColumn Header="Count" Binding="{Binding CountDesc}" />
                 <DataGridTextColumn Header="Pitches" Binding="{Binding PitchDesc}" Width="200">
@@ -115,7 +116,7 @@
                     </DataGridTextColumn.ElementStyle>
                 </DataGridTextColumn>
 
-                <DataGridTextColumn Header="Details" Binding="{Binding PlayDetails}" Width="125">
+                <DataGridTextColumn Header="Details" Binding="{Binding PlayDetails}" Width="200">
                     <DataGridTextColumn.ElementStyle>
                         <Style>
                             <Setter Property="TextBlock.TextWrapping" Value="Wrap"/>
@@ -125,7 +126,7 @@
                 </DataGridTextColumn>
 
 
-                <DataGridTextColumn Header="Runners" Binding="{Binding DestinationDetails}" Width="200">
+                <DataGridTextColumn Header="Runner Advances" Binding="{Binding DestinationDetails}" Width="200">
                     <DataGridTextColumn.ElementStyle>
                         <Style>
                             <Setter Property="TextBlock.TextWrapping" Value="Wrap"/>
@@ -133,7 +134,8 @@
                         </Style>
                     </DataGridTextColumn.ElementStyle>
                 </DataGridTextColumn>                
-                <DataGridTextColumn Header="Runner Advances" Binding="{Binding EventRunnerAdvance}" Width="125">
+                
+                <DataGridTextColumn Header="Play on Runners" Binding="{Binding PlayOnRunnerDetails}" Width="200">
                     <DataGridTextColumn.ElementStyle>
                         <Style>
                             <Setter Property="TextBlock.TextWrapping" Value="Wrap"/>
@@ -142,8 +144,7 @@
                     </DataGridTextColumn.ElementStyle>
                 </DataGridTextColumn>
 
-
-                <DataGridTextColumn Header="remove this" Binding="{Binding EventColumnSix}" Width="125">
+                <DataGridTextColumn Header="Errors" Binding="{Binding ErrorDetails}" Width="200">
                     <DataGridTextColumn.ElementStyle>
                         <Style>
                             <Setter Property="TextBlock.TextWrapping" Value="Wrap"/>
@@ -151,11 +152,15 @@
                         </Style>
                     </DataGridTextColumn.ElementStyle>
                 </DataGridTextColumn>
+
             </DataGrid.Columns>
-
         </DataGrid>
 
-        <StackPanel Grid.Column="1" Grid.ColumnSpan="3" Grid.Row="3" Orientation="Vertical" >
+        <StackPanel Grid.Column="0" Grid.ColumnSpan="3" Grid.Row="4" Orientation="Vertical" Margin="10,0,0,10">
+            <TextBlock Name="tblkPitcherAdjustments" Text="{Binding PitcherAdjustment}" TextWrapping="Wrap"/>
+            <TextBlock Name="tblkBatterAdjustments" Text="{Binding BatterAdjustment}" TextWrapping="Wrap"/>
+            <TextBlock Name="tblkSubstitutePlayers" Text="{Binding SubstitutePlayer}" TextWrapping="Wrap"/>
+            <TextBlock Name="tblkSubstituteUmpires" Text="{Binding SubstituteUmpire}" TextWrapping="Wrap"/>
             <TextBlock Name="tblkComments" Text="{Binding GameComment}" TextWrapping="Wrap"/>
             <TextBlock Name="tblkReplayComment" Text="{Binding ReplayComment}" TextWrapping="Wrap"/>
             <TextBlock Name="tblkReplayRuling" Text="{Binding ReplayRuling}" TextWrapping="Wrap"/>

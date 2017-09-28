@@ -13,7 +13,13 @@ namespace Retrosheet_RetrieveData
 		private Dictionary<string, DataModels.PlayerInformation> playerDictionary = new Dictionary<string, DataModels.PlayerInformation>();
 		//private Dictionary<string, DataModels.TeamInformation> teamDictionary = new Dictionary<string, DataModels.TeamInformation>();
 
-		private string outputDelimiter = "|";
+		public string GameId { get; private set; }
+		public string SeasonYear { get; private set; }
+		public string SeasonGameType { get; private set; }
+		public string HomeTeamID { get; private set; }
+		public string VisitingTeamID { get; private set; }
+		public string PageTitle { get; set; }
+	  
 
 		//constructor
 		public RetrieveData()
@@ -194,7 +200,7 @@ namespace Retrosheet_RetrieveData
 
 		}
 
-		public Collection<DataModels.GameInformation> RetrieveGameInformation(string gameID)
+		public Collection<DataModels.GameInformationItem> RetrieveGameInformation(string gameID)
 		{
 			string sqlQuery = @"SELECT  
 		gameInfo.record_id RecordID
@@ -282,26 +288,89 @@ namespace Retrosheet_RetrieveData
 
 				Collection<DataModels.GameInformation> GameInformation = new Collection<DataModels.GameInformation>();
 
-				foreach (DataModels.GameInformation result in results)
+				// only one GameInformation record will return from the database
+				DataModels.GameInformation result = results.First<DataModels.GameInformation>();
+
+				GameId = result.GameID;
+				SeasonYear = result.SeasonYear;
+				SeasonGameType = result.SeasonGameType;
+				HomeTeamID = result.HomeTeamID;
+				VisitingTeamID = result.VisitingTeamID;
+
+				if (result.GameNumber > 0)
 				{
-					if (result.GameNumber > 0)
-					{
-						result.GameNumberDesc = "game " + result.GameNumber + " of doubleheader";
-					}
-					else
-					{
-						result.GameNumberDesc = null;
-					}
-
-					result.VisitTeamLeagueName = RetrieveReferenceDataDesc("team_league", result.VisitTeamLeague);
-					result.HomeTeamLeagueName = RetrieveReferenceDataDesc("team_league", result.HomeTeamLeague);
-					result.SeasonGameTypeDesc = RetrieveReferenceDataDesc("season_game_type", result.SeasonGameType);
-					result.WindDirectionDesc = RetrieveReferenceDataDesc("wind_direction", result.WindDirection);
-
-					GameInformation.Add(result);
+					PageTitle = result.HomeTeamName + " vs " + result.VisitTeamName + " @ " + result.HomeTeamCity + " on "
+								+ result.GameDate.ToShortDateString()
+								+ " game " + result.GameNumber.ToString() + " of 2";
+				}
+				else
+				{
+					PageTitle = result.HomeTeamName + " vs " + result.VisitTeamName + " @ " + result.HomeTeamCity + " on "
+								+ result.GameDate.ToShortDateString();
 				}
 
-				return GameInformation;
+				if (result.GameNumber > 0)
+				{
+					result.GameNumberDesc = "game " + result.GameNumber + " of doubleheader";
+				}
+				else
+				{
+					result.GameNumberDesc = null;
+				}
+
+				result.VisitTeamLeagueName = RetrieveReferenceDataDesc("team_league", result.VisitTeamLeague);
+				result.HomeTeamLeagueName = RetrieveReferenceDataDesc("team_league", result.HomeTeamLeague);
+				result.SeasonGameTypeDesc = RetrieveReferenceDataDesc("season_game_type", result.SeasonGameType);
+				result.WindDirectionDesc = RetrieveReferenceDataDesc("wind_direction", result.WindDirection);
+
+				//build the collection of formatted individual game information items
+				Collection<DataModels.GameInformationItem> gameInformationItems = new Collection<DataModels.GameInformationItem>();
+
+				gameInformationItems.Add(new DataModels.GameInformationItem() { GameItemDesc = "", GameItemValue = result.SeasonYear + " " + result.SeasonGameTypeDesc + " game" });
+				gameInformationItems.Add(new DataModels.GameInformationItem() { GameItemDesc = "Visiting Team", GameItemValue = result.VisitTeamLeagueName + " League " + result.VisitTeamCity + " " + result.VisitTeamName });
+				gameInformationItems.Add(new DataModels.GameInformationItem() { GameItemDesc = "Home Team", GameItemValue = result.HomeTeamLeagueName + " League " + result.HomeTeamCity + " " + result.HomeTeamName });
+				gameInformationItems.Add(new DataModels.GameInformationItem() { GameItemDesc = "Game Date/Time", GameItemValue = result.GameDate.ToShortDateString() + "  " + result.StartTime + " " + result.DayNight + " game" });
+
+				if (result.GameNumberDesc != null)
+				{
+					gameInformationItems.Add(new DataModels.GameInformationItem() { GameItemDesc = "", GameItemValue = result.GameNumberDesc });
+
+				}
+
+
+				if (result.UsedDH == "Y")
+				{
+					gameInformationItems.Add(new DataModels.GameInformationItem() { GameItemDesc = "", GameItemValue = "Designated hitter for pitcher" });
+				}
+
+				gameInformationItems.Add(new DataModels.GameInformationItem() { GameItemDesc = "Field Condition", GameItemValue = result.FieldCondition });
+				gameInformationItems.Add(new DataModels.GameInformationItem() { GameItemDesc = "Precipitation", GameItemValue = result.Precipitation });
+				gameInformationItems.Add(new DataModels.GameInformationItem() { GameItemDesc = "Sky", GameItemValue = result.Sky });
+				gameInformationItems.Add(new DataModels.GameInformationItem() { GameItemDesc = "Tempurature", GameItemValue = result.Temperature.ToString() + " degrees fahrenheit" });
+				gameInformationItems.Add(new DataModels.GameInformationItem() { GameItemDesc = "Wind Direction", GameItemValue = result.WindDirectionDesc });
+				gameInformationItems.Add(new DataModels.GameInformationItem() { GameItemDesc = "Wind Speed", GameItemValue = result.WindSpeed.ToString() + " mph" });
+				gameInformationItems.Add(new DataModels.GameInformationItem() { GameItemDesc = "Game Length", GameItemValue = result.GameTimeLengthMinutes.ToString("N0") + " minutes" });
+				gameInformationItems.Add(new DataModels.GameInformationItem() { GameItemDesc = "Attendance", GameItemValue = result.Attendance.ToString("N0") });
+				if (result.BallparkAKA != "")
+				{
+					gameInformationItems.Add(new DataModels.GameInformationItem() { GameItemDesc = "Ballpark", GameItemValue = result.BallparkName + " aka " + result.BallparkAKA });
+				}
+				else
+				{
+					gameInformationItems.Add(new DataModels.GameInformationItem() { GameItemDesc = "Ballpark", GameItemValue = result.BallparkName });
+
+				}
+				if (result.BallparkNotes != "")
+				{
+					gameInformationItems.Add(new DataModels.GameInformationItem() { GameItemDesc = "", GameItemValue = result.BallparkNotes });
+				}
+
+				gameInformationItems.Add(new DataModels.GameInformationItem() { GameItemDesc = "Umpire Home Plate", GameItemValue = string.Concat(result.UmpireHomeLastName, ", ", result.UmpireHomeFirstName) });
+				gameInformationItems.Add(new DataModels.GameInformationItem() { GameItemDesc = "Umpire First Base", GameItemValue = string.Concat(result.UmpireFirstBaseLastName, ", ", result.UmpireFirstBaseFirstName) });
+				gameInformationItems.Add(new DataModels.GameInformationItem() { GameItemDesc = "Umpire Second Base", GameItemValue = string.Concat(result.UmpireSecondBaseLastName, ", ", result.UmpireSecondBaseFirstName) });
+				gameInformationItems.Add(new DataModels.GameInformationItem() { GameItemDesc = "Umpire Third Base", GameItemValue = string.Concat(result.UmpireThirdBaseLastName, ", ", result.UmpireThirdBaseFirstName) });
+
+				return gameInformationItems;
 			}
 		}
 
@@ -864,6 +933,7 @@ where play.game_id = 'x_game_id'
 , play_bevent.batter_defensive_position BatterDefPosition
 , player.last_name BatterLastName 
 , player.first_name BatterFirstName 
+, play_bevent.batter_lineup_position BatterLineUpPosition
 , Play_Bevent.outs CountOuts
 , play_bevent.count_balls CountBalls 
 , play_bevent.count_strikes CountStrikes 
@@ -927,6 +997,12 @@ where play.game_id = 'x_game_id'
 , pitcher.first_name pitcherFirstName
 , pitcher.bats pitcherBats
 , pitcher.throws pitcherThrows
+, play_bevent.first_error_position	FirstErrorPosition
+, play_bevent.first_error_type		FirstErrorType
+, play_bevent.second_error_position	SecondErrorPosition
+, play_bevent.second_error_type		SecondErrorType
+, play_bevent.third_error_position	ThirdErrorPosition
+, play_bevent.third_error_type		ThirdErrorType
 from play_bevent  
 join team on team.season_year = 'x_season_year'  
 		and team.season_game_type = 'x_season_game_type'              
@@ -1101,10 +1177,10 @@ where play_bevent.game_id = 'x_game_id'
 					result.PitcherBatsDesc = RetrieveReferenceDataDesc("bats", result.PitcherBats);
 					result.PitcherThrowsDesc = RetrieveReferenceDataDesc("throws", result.PitcherThrows);
 
-					result.DestBatterDesc = RetrieveReferenceDataDesc("runner_destination", result.DestBatter.ToString());
-					result.DestFirstRunnerDesc = RetrieveReferenceDataDesc("runner_destination", result.DestFirstRunner.ToString());
-					result.DestSecondRunnerDesc = RetrieveReferenceDataDesc("runner_destination", result.DestSecondRunner.ToString());
-					result.DestThirdRunnerDesc = RetrieveReferenceDataDesc("runner_destination", result.DestThirdRunner.ToString());
+					//result.DestBatterDesc = RetrieveReferenceDataDesc("runner_destination", result.DestBatter.ToString());
+					//result.DestFirstRunnerDesc = RetrieveReferenceDataDesc("runner_destination", result.DestFirstRunner.ToString());
+					//result.DestSecondRunnerDesc = RetrieveReferenceDataDesc("runner_destination", result.DestSecondRunner.ToString());
+					//result.DestThirdRunnerDesc = RetrieveReferenceDataDesc("runner_destination", result.DestThirdRunner.ToString());
 					
 					if (result.PlayOnBatter != null)
 						{
@@ -1182,6 +1258,26 @@ where play_bevent.game_id = 'x_game_id'
 						}
 					}
 
+					if (result.PlayOnBatterDesc != null)
+					{
+						result.PlayOnRunnerDetails = "Batter out - fielded by " + result.PlayOnBatterDesc + Environment.NewLine;
+					}
+
+					if (result.PlayOnFirstRunnerDesc != null)
+					{
+						result.PlayOnRunnerDetails = "First base runner out - fielded by " + result.PlayOnFirstRunnerDesc + Environment.NewLine;
+					}
+
+					if (result.PlayOnSecondRunnerDesc != null)
+					{
+						result.PlayOnRunnerDetails = "Second base runner out - fielded by " + result.PlayOnSecondRunnerDesc + Environment.NewLine;
+					}
+
+					if (result.PlayOnThirdRunnerDesc != null)
+					{
+						result.PlayOnRunnerDetails = "Third base runner out - fielded by " + result.PlayOnThirdRunnerDesc + Environment.NewLine;
+					}
+
 					result.FieldedByDesc = RetrieveReferenceDataDesc("field_position", result.FieldedBy.ToString());
 					result.CountDesc = string.Concat(result.CountBalls, " / ", result.CountStrikes);
 
@@ -1192,12 +1288,21 @@ where play_bevent.game_id = 'x_game_id'
 
 					if (result.BattedBallTypeDesc != "")
 					{
-						result.PlayDetails = result.PlayDetails + result.BattedBallTypeDesc + Environment.NewLine;
+						result.PlayDetails = result.PlayDetails + result.BattedBallTypeDesc;
+						if (result.HitLocation != null)
+						{
+							result.PlayDetails = result.PlayDetails + " to " + RetrieveReferenceDataDesc("hit_location", result.HitLocation) + Environment.NewLine;
+						}
+						else
+						{
+							result.PlayDetails = result.PlayDetails + Environment.NewLine;
+						}
 					}
+
 
 					if (result.FieldedByDesc != "")
 					{
-						result.PlayDetails = result.PlayDetails + "Fielded by - " + result.FieldedByDesc;
+						result.PlayDetails = result.PlayDetails + "Fielded by " + result.FieldedByDesc;
 					}
 
 					if (result.DestBatterDesc !="")
@@ -1220,17 +1325,41 @@ where play_bevent.game_id = 'x_game_id'
 						result.DestinationDetails = result.DestinationDetails + "Runner on third goes to " + result.DestThirdRunnerDesc + Environment.NewLine;
 					}
 
-                    //result.HitLocationDiagram = RetrieveReferenceDataDesc("hit_location", result.HitLocation);
-                    if (result.HitLocation != null)
-                    {
-                        result.HitLocationDiagram = RetrieveReferenceDataDesc("hit_diagram", "diagram_path") + RetrieveReferenceDataDesc("hit_diagram", result.HitLocation);
-                    }
-                    else
-                    {
-                        result.HitLocationDiagram = RetrieveReferenceDataDesc("hit_diagram", "diagram_path") + "blank.jpg";
-                    }
+					//result.HitLocationDiagram = RetrieveReferenceDataDesc("hit_location", result.HitLocation);
+					if (result.HitLocation != null)
+					{
+						result.HitLocationDiagram = RetrieveReferenceDataDesc("hit_diagram", "diagram_path") + RetrieveReferenceDataDesc("hit_diagram", result.HitLocation);
+					}
+					else
+					{
+						result.HitLocationDiagram = RetrieveReferenceDataDesc("hit_diagram", "diagram_path") + "blank.jpg";
+					}
 
-                    PlayBeventInformation.Add(result);
+					result.FirstErrorPositionDesc = RetrieveReferenceDataDesc("field_position", result.FirstErrorPosition.ToString());
+					result.FirstErrorTypeDesc = RetrieveReferenceDataDesc("error_type", result.FirstErrorType);
+
+					result.SecondErrorPositionDesc = RetrieveReferenceDataDesc("field_position", result.SecondErrorPosition.ToString());
+					result.SecondErrorTypeDesc = RetrieveReferenceDataDesc("error_type", result.SecondErrorType);
+
+					result.ThirdErrorPositionDesc = RetrieveReferenceDataDesc("field_position", result.ThirdErrorPosition.ToString());
+					result.ThirdErrorTypeDesc = RetrieveReferenceDataDesc("error_type", result.ThirdErrorType);
+
+					if ((result.FirstErrorTypeDesc != null) && (result.FirstErrorTypeDesc !="no error"))
+					{
+						result.ErrorDetails = "Error on - " + result.FirstErrorPositionDesc + " - " + result.FirstErrorTypeDesc + Environment.NewLine;
+					}
+
+					if ((result.SecondErrorTypeDesc != null) && (result.SecondErrorTypeDesc != "no error"))
+					{
+						result.ErrorDetails = result.ErrorDetails + "Error on - " + result.SecondErrorPositionDesc + " - " + result.SecondErrorTypeDesc + Environment.NewLine;
+					}
+
+					if ((result.ThirdErrorTypeDesc != null) && (result.ThirdErrorTypeDesc != "no error"))
+					{
+						result.ErrorDetails = result.ErrorDetails + "Error on - " + result.ThirdErrorPositionDesc + " - " + result.ThirdErrorTypeDesc + Environment.NewLine;
+					}
+
+					PlayBeventInformation.Add(result);
 				}
 
 				return PlayBeventInformation;
@@ -1506,6 +1635,7 @@ select distinct(games.season_year) _seasonYear,
 	'' _displayUnderLeagueID,
 	'' _displayUnderLeagueName,
 	'' _displayUnderTeamID,
+    '' _displayUnderTeamCity, 
 	'' _displayUnderTeamName,
 	 
 	refIconPath.ref_data_desc _iconPath,
@@ -1567,6 +1697,7 @@ select distinct(games.season_year) _seasonYear,
 	homeTeam.league  _displayUnderLeagueID,
 	refHomeTeamLeague.ref_data_desc _displayUnderLeagueName,
 	'' _displayUnderTeamID,
+    '' _displayUnderTeamCity, 
 	'' _displayUnderTeamName,
 	 
 	refIconPath.ref_data_desc _iconPath,
@@ -1627,6 +1758,7 @@ select distinct(games.season_year) _seasonYear,
 	homeTeam.league _displayUnderLeagueID,   --- list under this league id 
 	refHomeTeamLeague.ref_data_desc _displayUnderLeagueName,
 	games.home_team_id _displayUnderTeamID,  --- list under this team id
+    homeTeam.city _displayUnderTeamCity, 
 	homeTeam.name _displayUnderTeamName,
 	 
 	refIconPath.ref_data_desc _iconPath,
@@ -1687,6 +1819,7 @@ select distinct(games.season_year) _seasonYear,
 	visitTeam.league _displayUnderLeagueID,      --- list under this league id   
 	refVisitTeamLeague.ref_data_desc _displayUnderLeagueName,
 	games.visiting_team_id _displayUnderTeamID,  --- list under this team id
+    visitTeam.city _displayUnderTeamCity,
 	visitTeam.name _displayUnderTeamName,
 
 	refIconPath.ref_data_desc _iconPath,
@@ -1733,7 +1866,7 @@ order by _seasonYear, _sortKey, _displayUnderLeagueID, _displayUnderTeamID, _gam
 			// add System.Data.Linq assembly to the References
 			using (RetrosheetDataContext dbCtx = new RetrosheetDataContext())
 			{
-				dbCtx.CommandTimeout = 120;  //2 minutes
+				//dbCtx.CommandTimeout = 120;  //2 minutes
 				IEnumerable<_GameSelectionListItem> results = dbCtx.ExecuteQuery<_GameSelectionListItem>(sqlQuery).ToList();
 				Console.WriteLine("_GameSelectionListItem record count " + results.Count());
 
@@ -1876,6 +2009,7 @@ order by _seasonYear, _sortKey, _displayUnderLeagueID, _displayUnderTeamID, _gam
 																						   string visitingTeamID,
 																						   string gameID)
 		{
+			/*
 			string sqlQuery = @"select 
   batter_adjustment.record_id RecordID
 , batter_adjustment.game_id GameID
@@ -1904,13 +2038,43 @@ from batter_adjustment
 				when 0 then 'x_visiting_team_id'
 				else 'x_home_team_id'
 			end)
-where Batter_Adjustment.game_id = 'x_game_id'
-";
+where Batter_Adjustment.game_id = 'x_game_id'";
+*/
+
+			string sqlQuery = @"select 
+  batter_adjustment.record_id RecordID
+, batter_adjustment.game_id GameID
+, batter_adjustment.inning  Inning
+, batter_adjustment.game_team_code GameTeamCode
+, batter_adjustment.sequence Sequence
+, batter_adjustment.player_id PlayerID
+, player.last_name PlayerLastName
+, player.first_name PlayerFirstName
+, batter_adjustment.bats PlayerBats
+, team.team_id TeamID
+, team.name TeamName
+from batter_adjustment
+left join starting_player on batter_adjustment.player_id = starting_player.player_id
+						 and starting_player.game_id = 'x_game_id' 
+left join substitute_player on batter_adjustment.player_id = substitute_player.player_id
+						   and substitute_player.game_id = 'x_game_id'
+left join team on team.team_id = (
+						case 
+							when starting_player.team_id != 'NULL' then starting_player.team_id
+							else substitute_player.team_id
+						end)
+left join player on player.player_id = (
+						case  
+							when starting_player.player_id != 'NULL' then starting_player.player_id
+							else substitute_player.player_id
+						end)
+				 and player.team_id = team.team_id
+where batter_adjustment.game_id =  'x_game_id'";
 
 			sqlQuery = sqlQuery.Replace("x_season_year", seasonYear);
 			sqlQuery = sqlQuery.Replace("x_season_game_type", seasonGameType);
-			sqlQuery = sqlQuery.Replace("x_visiting_team_id", visitingTeamID);
-			sqlQuery = sqlQuery.Replace("x_home_team_id", homeTeamID);
+			//sqlQuery = sqlQuery.Replace("x_visiting_team_id", visitingTeamID);
+			//sqlQuery = sqlQuery.Replace("x_home_team_id", homeTeamID);
 			sqlQuery = sqlQuery.Replace("x_game_id", gameID);
 
 			Collection<DataModels.BatterAdjustmentInformation> BatterAdjustmentInformation = new Collection<DataModels.BatterAdjustmentInformation>();
@@ -2182,12 +2346,6 @@ where Batter_Adjustment.game_id = 'x_game_id'
 		}
 
 
-
-
-
-
-
-
 		public Collection<DataModels.ReplayInformation> RetrieveReplay(string seasonYear,
 																	   string seasonGameType,
 																	   string gameID)
@@ -2321,7 +2479,8 @@ where Batter_Adjustment.game_id = 'x_game_id'
 																								string seasonGameType,
 																								string gameID)
 		{
-			string sqlQuery = @"SELECT 
+			/*
+			string sqlQuery = @"select 
 	   pitcher_adjustment.record_id RecordID
 	  ,pitcher_adjustment.game_id GameID
 	  ,pitcher_adjustment.inning Inning
@@ -2336,9 +2495,39 @@ where Batter_Adjustment.game_id = 'x_game_id'
 		   and team.season_year = 'x_season_year'
 		   and team.season_game_type = 'x_season_game_type'
   WHERE pitcher_adjustment.game_id = 'x_game_id'";
+  */
 
-			sqlQuery = sqlQuery.Replace("x_season_year", seasonYear);
-			sqlQuery = sqlQuery.Replace("x_season_game_type", seasonGameType);
+			string sqlQuery = @"select 
+	   pitcher_adjustment.record_id RecordID
+	  ,pitcher_adjustment.game_id GameID
+	  ,pitcher_adjustment.inning Inning
+	  ,pitcher_adjustment.game_team_code GameTeamCode
+	  ,pitcher_adjustment.sequence Sequence
+	  ,pitcher_adjustment.player_id PlayerID
+	  ,player.last_name PlayerLastName
+	  ,player.first_name PlayerFirstName
+	  ,pitcher_adjustment.pitcher_hand PlayerHand
+	  ,team.team_id TeamID
+	  ,team.name TeamName
+  FROM pitcher_adjustment
+  left join starting_player on pitcher_adjustment.player_id = starting_player.player_id
+						 and starting_player.game_id = 'x_game_id' 
+  left join substitute_player on pitcher_adjustment.player_id = substitute_player.player_id
+						   and substitute_player.game_id = 'x_game_id'
+  left join team on team.team_id = (
+						case 
+							when starting_player.team_id != 'NULL' then starting_player.team_id
+							else substitute_player.team_id
+						end)
+  left join player on player.player_id = (
+						case  
+							when starting_player.player_id != 'NULL' then starting_player.player_id
+							else substitute_player.player_id
+						end)
+				 and player.team_id = team.team_id  WHERE pitcher_adjustment.game_id = 'x_game_id'";
+
+			//sqlQuery = sqlQuery.Replace("x_season_year", seasonYear);
+			//sqlQuery = sqlQuery.Replace("x_season_game_type", seasonGameType);
 			sqlQuery = sqlQuery.Replace("x_game_id", gameID);
 
 			Collection<DataModels.PitcherAdjustmentInformation> PitcherAdjustmentInformation = new Collection<DataModels.PitcherAdjustmentInformation>();
@@ -2434,7 +2623,7 @@ where Batter_Adjustment.game_id = 'x_game_id'
 			else
 			{
 				team.TeamIcon = result._iconPath + result._teamIcon;
-				team.TeamName = result._displayUnderTeamName;
+				team.TeamName = result._displayUnderTeamCity + " " + result._displayUnderTeamName;
 			}
 			return team;
 		}
@@ -2471,6 +2660,7 @@ where Batter_Adjustment.game_id = 'x_game_id'
 			season.SeasonIcon = result._iconPath + result._MLBIcon;
 			return season;
 		}
+
 
 
 		public Collection<TreeViewModels.Season> xRetrieveTreeViewData_GameSelectionList()
@@ -2803,6 +2993,7 @@ order by _seasonYear, _sortKey, _displayUnderLeagueID, _displayUnderTeamID, _gam
 			public string _displayUnderLeagueID { get; set; }
 			public string _displayUnderLeagueName { get; set; }
 			public string _displayUnderTeamID { get; set; }
+            public string _displayUnderTeamCity { get; set; }
 			public string _displayUnderTeamName { get; set; }
 
 			public string _iconPath { get; set; }
@@ -2871,6 +3062,8 @@ order by _seasonYear, _sortKey, _displayUnderLeagueID, _displayUnderTeamID, _gam
 			public string _umpireHomeLastName { get; set; }
 			public string _umpireHomeFirstName { get; set; }
 		}
+
+
 	}
 
 

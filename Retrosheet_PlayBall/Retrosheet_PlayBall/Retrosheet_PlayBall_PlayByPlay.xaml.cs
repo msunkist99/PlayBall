@@ -22,36 +22,54 @@ namespace Retrosheet_PlayBall
     /// </summary>
     public partial class Retrosheet_PlayBall_PlayByPlay : Page
     {
-        private Collection<DataModels.PlayInformation> PlayInformation;
         private Collection<DataModels.PlayBeventInformation> PlayBeventInformation;
         private Collection<DataModels.ReplayInformation> ReplayInformation;
         private Collection<DataModels.GameCommentInformation> GameCommentInformation;
+        private Collection<DataModels.BatterAdjustmentInformation> BatterAdjustmentInformation;
+        private Collection<DataModels.PlayerEjectionInformation> PlayerEjectionInformation;
+        private Collection<DataModels.GameDataInformation> GameDataInformation;
+        private Collection<DataModels.PitcherAdjustmentInformation> PitcherAdjustmentInformation;
+        private Collection<DataModels.SubstitutePlayerInformation> SubstitutePlayerInformation;
+        private Collection<DataModels.SubstituteUmpireInformation> SubstituteUmpireInformation;
 
         public Retrosheet_PlayBall_PlayByPlay(string gameID)
         {
             InitializeComponent();
             ShowsNavigationUI = true;
 
+            string SeasonYear;
+            string SeasonGameType;
+            string HomeTeamID;
+            String VisitingTeamID;
+
             RetrieveData retrieveData = new RetrieveData();
 
             retrieveData.RetrieveReferenceData();
 
-            Collection<DataModels.GameInformation> GameInformation = retrieveData.RetrieveGameInformation(gameID);
+            Collection<DataModels.GameInformationItem> GameInformationItems = retrieveData.RetrieveGameInformation(gameID);
 
-            DataModels.GameInformation gameInformation = GameInformation.First<DataModels.GameInformation>();
+            PageTitle.Text = retrieveData.PageTitle;
 
-            Collection<DataModels.PlayerInformation> PlayerInformation = retrieveData.RetrievePlayers(gameInformation.SeasonYear,
-                                                                                                       gameInformation.SeasonGameType,
-                                                                                                       gameInformation.HomeTeamID,
-                                                                                                       gameInformation.VisitingTeamID);
+            SeasonYear = retrieveData.SeasonYear;
+            SeasonGameType = retrieveData.SeasonGameType;
+            HomeTeamID = retrieveData.HomeTeamID;
+            VisitingTeamID = retrieveData.VisitingTeamID;
 
-            Collection<DataModels.StartingPlayerInformation> StartingPlayerInformation = retrieveData.RetrieveStartingPlayers(gameInformation.SeasonYear,
-                                                                                                                              gameInformation.SeasonGameType,
-                                                                                                                              gameInformation.GameID);
+            dgGameInfoItems.ItemsSource = GameInformationItems;
 
-            Collection<DataModels.SubstitutePlayerInformation> SubstitutePlayerInformation = retrieveData.RetrieveSubstitutePlayer(gameInformation.SeasonYear,
-                                                                                                                                   gameInformation.SeasonGameType,
-                                                                                                                                   gameInformation.GameID);
+
+            Collection<DataModels.PlayerInformation> PlayerInformation = retrieveData.RetrievePlayers(SeasonYear,
+                                                                                                      SeasonGameType,
+                                                                                                      HomeTeamID,
+                                                                                                      VisitingTeamID);
+
+            Collection<DataModels.StartingPlayerInformation> StartingPlayerInformation = retrieveData.RetrieveStartingPlayers(SeasonYear,
+                                                                                                                              SeasonGameType,
+                                                                                                                              gameID);
+
+            SubstitutePlayerInformation = retrieveData.RetrieveSubstitutePlayer(SeasonYear,
+                                          SeasonGameType,
+                                          gameID);
             /*                                                                                                                     
             PlayInformation = retrieveData.RetrievePlay(gameInformation.SeasonYear,
                                                         gameInformation.SeasonGameType,
@@ -60,45 +78,33 @@ namespace Retrosheet_PlayBall
                                                         gameInformation.GameID);
             */
 
-            PlayBeventInformation = retrieveData.RetrievePlayBevent(gameInformation.SeasonYear,
-                                                                    gameInformation.SeasonGameType,
-                                                                    gameInformation.HomeTeamID,
-                                                                    gameInformation.VisitingTeamID,
-                                                                    gameInformation.GameID);
+            PlayBeventInformation = retrieveData.RetrievePlayBevent(SeasonYear,
+                                                                    SeasonGameType,
+                                                                    HomeTeamID,
+                                                                    VisitingTeamID,
+                                                                    gameID);
 
-            ReplayInformation = retrieveData.RetrieveReplay(gameInformation.SeasonYear,
-                                                                                                     gameInformation.SeasonGameType,
-                                                                                                     gameInformation.GameID);
+            ReplayInformation = retrieveData.RetrieveReplay(SeasonYear,
+                                                            SeasonGameType,
+                                                            gameID);
 
-            Collection<DataModels.BatterAdjustmentInformation> BatterAdjustmentInformation = retrieveData.RetrieveBatterAdjustment(gameInformation.SeasonYear,
-                                                                                                                                   gameInformation.SeasonGameType,
-                                                                                                                                   gameInformation.HomeTeamID,
-                                                                                                                                   gameInformation.VisitingTeamID,
-                                                                                                                                   gameInformation.GameID);
+            BatterAdjustmentInformation = retrieveData.RetrieveBatterAdjustment(SeasonYear,
+                                                                                SeasonGameType,
+                                                                                HomeTeamID,
+                                                                                VisitingTeamID,
+                                                                                gameID);
 
-            Collection<DataModels.PlayerEjectionInformation> PlayerEjectionInformation = retrieveData.RetrievePlayerEjection(gameInformation.GameID);
+            PlayerEjectionInformation = retrieveData.RetrievePlayerEjection(gameID);
 
-            GameCommentInformation = retrieveData.RetrieveGameComment(gameInformation.GameID);
+            GameCommentInformation = retrieveData.RetrieveGameComment(gameID);
 
-            Collection<DataModels.GameDataInformation> GameDataInformation = retrieveData.RetrieveGameData(gameInformation.GameID);
+            GameDataInformation = retrieveData.RetrieveGameData(gameID);
 
-            Collection<DataModels.PitcherAdjustmentInformation> PitcherAdjustmentInformation = retrieveData.RetrievePitcherAdjustmentInformation(gameInformation.SeasonYear,
-                                                                                                                                                 gameInformation.SeasonGameType,
-                                                                                                                                                 gameInformation.GameID);
+            PitcherAdjustmentInformation = retrieveData.RetrievePitcherAdjustmentInformation(SeasonYear,
+                                                                                             SeasonGameType,
+                                                                                             gameID);
 
-            Collection<DataModels.SubstituteUmpireInformation> SubstituteUmpireInformation = retrieveData.RetrieveSubstituteUmpireInformation(gameInformation.GameID);
-
-            if (gameInformation.GameNumber > 0)
-            {
-                PageTitle.Text = gameInformation.HomeTeamName + " vs " + gameInformation.VisitTeamName + " @ " + gameInformation.HomeTeamCity + " on "
-                    + gameInformation.GameDate.ToShortDateString()
-                    + " game " + gameInformation.GameNumber.ToString() + " of 2";
-            }
-            else
-            {
-                PageTitle.Text = gameInformation.HomeTeamName + " vs " + gameInformation.VisitTeamName + " @ " + gameInformation.HomeTeamCity + " on "
-                    + gameInformation.GameDate.ToShortDateString();
-            }
+            SubstituteUmpireInformation = retrieveData.RetrieveSubstituteUmpireInformation(gameID);
 
 
             var startingVisitingPlayers = from startingPlayer in StartingPlayerInformation
@@ -120,133 +126,17 @@ namespace Retrosheet_PlayBall
                                           //Batting = startingPlayer.BattingOrder,
                                           Name = string.Format("{0}, {1}", startingPlayer.PlayerLastName, startingPlayer.PlayerFirstName),
                                           Position = startingPlayer.FieldPositionDesc,
-                                              BatsThrows = string.Format("{0} / {1}", startingPlayer.BatsDesc, startingPlayer.ThrowsDesc),
+                                          BatsThrows = string.Format("{0} / {1}", startingPlayer.BatsDesc, startingPlayer.ThrowsDesc),
                                       };
 
             dgVisitingPlayers.ItemsSource = startingVisitingPlayers;
             dgHomePlayers.ItemsSource = startingHomePlayers;
 
-            /*var playEvents = from playEvent in PlayInformation
-                             where playEvent.GameID == gameInformation.GameID
-                             orderby playEvent.Inning,
-                                     playEvent.GameTeamCode,
-                                     playEvent.Sequence
-                             select new
-                             {
-                                 Inning = playEvent.Inning,
-                                 TeamName = playEvent.TeamName,
-                                 VisitHome = playEvent.GameTeamCodeDesc,
-                                 Name = string.Concat(playEvent.PlayerLastName, ", ", playEvent.PlayerFirstName),
-                                 Count = string.Concat(playEvent.CountBalls, " / ", playEvent.CountStrikes),
-                                 Pitches = playEvent.PitchDesc,
-                                 EventSequenceDesc = playEvent.EventSequenceDesc,
-                                 EventModifierDesc = playEvent.EventModifierDesc,
-                                 RunnersAdvance = playEvent.EventRunnerAdvance,
-                                 HitLocation = playEvent.EventHitLocationDesc,
-                             };
-
-            dgPlayEvents.ItemsSource = playEvents;
-            */
-
-            dgPlayEvents.ItemsSource = PlayBeventInformation;
+            // set the dgPlayBevents data source after retrieving all data.
+            dgPlayBevents.ItemsSource = PlayBeventInformation;
             imgEventHitLocationDiagram.DataContext = PlayBeventInformation[0];
-
-
-            /*
-            List<Umpire> umpires = new List<Umpire>();
-            umpires.Add(new Umpire() { UmpirePosition = "Umpire Home Plate", UmpireName = string.Concat(gameInformation.UmpireHomeLastName, ", ", gameInformation.UmpireHomeFirstName) });
-            umpires.Add(new Umpire() { UmpirePosition = "Umpire First Base", UmpireName = string.Concat(gameInformation.UmpireFirstBaseLastName, ", ", gameInformation.UmpireFirstBaseFirstName) });
-            umpires.Add(new Umpire() { UmpirePosition = "Umpire Second Base", UmpireName = string.Concat(gameInformation.UmpireSecondBaseLastName, ", ", gameInformation.UmpireSecondBaseFirstName) });
-            umpires.Add(new Umpire() { UmpirePosition = "Umpire Third Base", UmpireName = string.Concat(gameInformation.UmpireThirdBaseLastName, ", ", gameInformation.UmpireThirdBaseFirstName) });
-
-            dgUmpires.ItemsSource = umpires;
-            */
-
-            List<GameInfoItem> gameInfoItems = new List<GameInfoItem>();
-            gameInfoItems.Add(new GameInfoItem() { GameItemDesc = "", GameItemValue = gameInformation.SeasonYear + " " + gameInformation.SeasonGameTypeDesc + " game" });
-            gameInfoItems.Add(new GameInfoItem() { GameItemDesc = "Visiting Team", GameItemValue = gameInformation.VisitTeamLeagueName + " League " + gameInformation.VisitTeamCity + " " + gameInformation.VisitTeamName });
-            //gameInfoItems.Add(new GameInfoItem() { GameItemDesc = "Visiting Team League", GameItemValue = gameInformation.VisitTeamLeagueName });
-            //gameInfoItems.Add(new GameInfoItem() { GameItemDesc = "Visiting Team Name", GameItemValue = gameInformation.VisitTeamName });
-            //gameInfoItems.Add(new GameInfoItem() { GameItemDesc = "Visiting Team City", GameItemValue = gameInformation.VisitTeamCity });
-            gameInfoItems.Add(new GameInfoItem() { GameItemDesc = "Home Team", GameItemValue = gameInformation.HomeTeamLeagueName + " League " + gameInformation.HomeTeamCity + " " + gameInformation.HomeTeamName });
-
-            // gameInfoItems.Add(new GameInfoItem() { GameItemDesc = "Home Team League", GameItemValue = gameInformation.HomeTeamLeagueName });
-            //gameInfoItems.Add(new GameInfoItem() { GameItemDesc = "Home Team Name", GameItemValue = gameInformation.HomeTeamName });
-            //gameInfoItems.Add(new GameInfoItem() { GameItemDesc = "Home Team City", GameItemValue = gameInformation.HomeTeamCity });
-            gameInfoItems.Add(new GameInfoItem() { GameItemDesc = "Game Date/Time", GameItemValue = gameInformation.GameDate.ToShortDateString() + "  " + gameInformation.StartTime + " " + gameInformation.DayNight + " game" });
-
-            /*
-            if (gameInformation.GameNumber > 1)
-            {
-                gameInfoItems.Add(new GameInfoItem() { GameItemDesc = "Double Header", GameItemValue = "Game 2" });
-            }
-            else if (gameInformation.GameNumber > 0)
-            {
-                gameInfoItems.Add(new GameInfoItem() { GameItemDesc = "Double Header", GameItemValue = "Game 1" });
-            }
-            else
-            {
-                gameInfoItems.Add(new GameInfoItem() { GameItemDesc = "Single Game", GameItemValue = "" });
-            }
-            */
-
-            if (gameInformation.GameNumberDesc != null)
-            {
-                gameInfoItems.Add(new GameInfoItem() { GameItemDesc = "", GameItemValue = gameInformation.GameNumberDesc });
-
-            }
-
-            //gameInfoItems.Add(new GameInfoItem() { GameItemDesc = "Game Time", GameItemValue = gameInformation.StartTime + " " + gameInformation.DayNight });
-
-
-            if (gameInformation.UsedDH == "Y")
-            {
-                gameInfoItems.Add(new GameInfoItem() { GameItemDesc = "", GameItemValue = "Designated hitter for pitcher" });
-            }
-
-            gameInfoItems.Add(new GameInfoItem() { GameItemDesc = "Field Condition", GameItemValue = gameInformation.FieldCondition });
-            gameInfoItems.Add(new GameInfoItem() { GameItemDesc = "Precipitation", GameItemValue = gameInformation.Precipitation });
-            gameInfoItems.Add(new GameInfoItem() { GameItemDesc = "Sky", GameItemValue = gameInformation.Sky });
-            gameInfoItems.Add(new GameInfoItem() { GameItemDesc = "Tempurature", GameItemValue = gameInformation.Temperature.ToString() + " degrees fahrenheit" });
-            gameInfoItems.Add(new GameInfoItem() { GameItemDesc = "Wind Direction", GameItemValue = gameInformation.WindDirectionDesc });
-            gameInfoItems.Add(new GameInfoItem() { GameItemDesc = "Wind Speed", GameItemValue = gameInformation.WindSpeed.ToString() + " mph" });
-            gameInfoItems.Add(new GameInfoItem() { GameItemDesc = "Game Length", GameItemValue = gameInformation.GameTimeLengthMinutes.ToString("N0") + " minutes" });
-            gameInfoItems.Add(new GameInfoItem() { GameItemDesc = "Attendance", GameItemValue = gameInformation.Attendance.ToString("N0") });
-            if (gameInformation.BallparkAKA != "")
-            {
-                gameInfoItems.Add(new GameInfoItem() { GameItemDesc = "Ballpark", GameItemValue = gameInformation.BallparkName + " aka " + gameInformation.BallparkAKA });
-            }
-            else
-            {
-                gameInfoItems.Add(new GameInfoItem() { GameItemDesc = "Ballpark", GameItemValue = gameInformation.BallparkName });
-
-            }
-            if (gameInformation.BallparkNotes != "")
-            {
-                gameInfoItems.Add(new GameInfoItem() { GameItemDesc = "", GameItemValue = gameInformation.BallparkNotes });
-            }
-
-            gameInfoItems.Add(new GameInfoItem() { GameItemDesc = "Umpire Home Plate", GameItemValue = string.Concat(gameInformation.UmpireHomeLastName, ", ", gameInformation.UmpireHomeFirstName) });
-            gameInfoItems.Add(new GameInfoItem() { GameItemDesc = "Umpire First Base", GameItemValue = string.Concat(gameInformation.UmpireFirstBaseLastName, ", ", gameInformation.UmpireFirstBaseFirstName) });
-            gameInfoItems.Add(new GameInfoItem() { GameItemDesc = "Umpire Second Base", GameItemValue = string.Concat(gameInformation.UmpireSecondBaseLastName, ", ", gameInformation.UmpireSecondBaseFirstName) });
-            gameInfoItems.Add(new GameInfoItem() { GameItemDesc = "Umpire Third Base", GameItemValue = string.Concat(gameInformation.UmpireThirdBaseLastName, ", ", gameInformation.UmpireThirdBaseFirstName) });
-
-            dgGameInfoItems.ItemsSource = gameInfoItems;
         }
 
-        /*
-        private class Umpire
-        {
-            public string UmpirePosition { get; set; }
-            public string UmpireName { get; set; }
-        }
-        */
-
-        private class GameInfoItem
-        {
-            public string GameItemDesc { get; set; }
-            public string GameItemValue { get; set; }
-        }
 
         private void dbPlayEvents_SelectedCellsChanged(object sender, SelectedCellsChangedEventArgs e)
         {
@@ -262,10 +152,79 @@ namespace Retrosheet_PlayBall
                                select new
                                {
                                    //GameComment = "Comments - " + gameComment.Comment.ToString()
-                                   GameComment = "Comments - " + gameComment.Comment
+                                   GameComment = "Comments - " 
+                                                 + gameComment.Comment 
                                };
 
             tblkComments.DataContext = gameComments;
+
+            var batterAdjustments = from batterAdjustment in BatterAdjustmentInformation
+                                    where batterAdjustment.GameID == PlayBeventInformation[index].GameID
+                                       && batterAdjustment.Sequence == PlayBeventInformation[index].EventNum
+                                    orderby batterAdjustment.Sequence
+                                    select new
+                                    {
+                                        //BatterAdjustment = batterAdjustment.PlayerLastName
+                                        //                   + ", " + batterAdjustment.PlayerFirstName
+                                        //                   + " switches to batting "
+                                        //                   + batterAdjustment.BatsDesc + " handed " 
+
+                                        BatterAdjustment = batterAdjustment.PlayerID != PlayBeventInformation[index].BatterPlayerID?
+
+                                                           "coming up to bat is " + batterAdjustment.PlayerLastName
+                                                           + ", " + batterAdjustment.PlayerFirstName
+                                                           + " - switches to batting "
+                                                           + batterAdjustment.BatsDesc + " handed " :
+
+                                                           batterAdjustment.PlayerLastName
+                                                           + ", " + batterAdjustment.PlayerFirstName
+                                                           + " switches to batting "
+                                                           + batterAdjustment.BatsDesc + " handed "
+                                    };
+
+            tblkBatterAdjustments.DataContext = batterAdjustments;
+
+            var pitcherAdjustments = from pitcherAdjustment in PitcherAdjustmentInformation
+                                     where pitcherAdjustment.GameID == PlayBeventInformation[index].GameID
+                                        && pitcherAdjustment.Sequence == PlayBeventInformation[index].EventNum
+                                     orderby pitcherAdjustment.Sequence
+                                     select new
+                                     {
+                                         PitcherAdjustment = pitcherAdjustment.PlayerLastName
+                                                             + ", " + pitcherAdjustment.PlayerFirstName
+                                                             + " switches to pitching "
+                                                             + pitcherAdjustment.PlayerHandDesc + " handed "
+                                     };
+
+            tblkPitcherAdjustments.DataContext = pitcherAdjustments;
+
+            var substitutePlayers = from substitutePlayer in SubstitutePlayerInformation
+                                    where substitutePlayer.GameID == PlayBeventInformation[index].GameID
+                                       && substitutePlayer.Sequence == PlayBeventInformation[index].EventNum
+                                    orderby substitutePlayer.Sequence
+                                    select new
+                                    {
+                                        SubstitutePlayer = substitutePlayer.FieldPositionDesc + " - "
+                                                           + substitutePlayer.PlayerLastName + ", " + substitutePlayer.PlayerFirstName
+                                                           + " comes into the game for " + substitutePlayer.TeamName
+                                                           + " batting " + substitutePlayer.BattingOrder + " in the line up" + Environment.NewLine
+                                                           + "Bats " + substitutePlayer.PlayerBatsDesc
+                                                           + " / Throws " + substitutePlayer.PlayerThrowsDesc
+                                    };
+
+            tblkSubstitutePlayers.DataContext = substitutePlayers;
+
+            var substituteUmpires = from substituteUmpire in SubstituteUmpireInformation
+                                    where substituteUmpire.GameID == PlayBeventInformation[index].GameID
+                                       && substituteUmpire.Sequence == PlayBeventInformation[index].EventNum
+                                    orderby substituteUmpire.Sequence
+                                    select new
+                                    {
+                                        SubstituteUmpire = "Umpire " + substituteUmpire.UmpireLastName + ", " + substituteUmpire.UmpireFirstName
+                                                           + " comes into the game at " + substituteUmpire.FieldPositionDesc
+                                    };
+
+            tblkSubstituteUmpires.DataContext = substituteUmpires;
 
             var replayComments = from replayComment in ReplayInformation
                                  where replayComment.GameID == PlayBeventInformation[index].GameID

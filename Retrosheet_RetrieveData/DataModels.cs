@@ -25,6 +25,12 @@ namespace Retrosheet_RetrieveData
             public string referenceDataDesc { get; set; }
         }
 
+        public class GameInformationItem
+        {
+            public string GameItemDesc { get; set; }
+            public string GameItemValue { get; set; }
+        }
+
         public class PlayerInformation
         {
             //public PlayerDTO Player = new PlayerDTO();
@@ -155,6 +161,7 @@ namespace Retrosheet_RetrieveData
             //public string BatterThrowsDesc { get; set; }
             public int BatterDefPosition { get; set; }
             public string BatterDefPositionDesc { get; set; }
+            public int BatterLineUpPosition { get; set; }
 
             public string PitcherPlayerID { get; set; }
             public string PitcherLastName { get; set; }
@@ -259,6 +266,7 @@ namespace Retrosheet_RetrieveData
             public string DestThirdRunnerDesc { get; set; }
 
             public string HitLocation { get; set; }
+            public string HitLocationDesc { get; set; }
 
             public string TeamID { get; set; }
             public string TeamName { get; set; }
@@ -281,6 +289,23 @@ namespace Retrosheet_RetrieveData
             public string PlayDetails { get; set; }
             public string DestinationDetails { get; set; }
             public string HitLocationDiagram { get; set; }
+            public string PlayOnRunnerDetails { get; set; }
+
+            public int FirstErrorPosition { get; set; }
+            public string FirstErrorPositionDesc { get; set; }
+            public string FirstErrorType { get; set; }
+            public string FirstErrorTypeDesc { get; set; }
+
+            public int SecondErrorPosition { get; set; }
+            public string SecondErrorPositionDesc { get; set; }
+            public string SecondErrorType { get; set; }
+            public string SecondErrorTypeDesc { get; set; }
+
+            public int ThirdErrorPosition { get; set; }
+            public string ThirdErrorPositionDesc { get; set; }
+            public string ThirdErrorType { get; set; }
+            public string ThirdErrorTypeDesc { get; set; }
+            public string ErrorDetails { get; set; }
         }
 
         public class GameInformation
