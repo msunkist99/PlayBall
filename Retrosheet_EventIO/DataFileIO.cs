@@ -379,27 +379,73 @@ namespace Retrosheet_DataFileIO
 
                     textLine = textLine.Replace(inputDelimiter, outputDelimiter);
 
-                    if (columnValue[3] == "0")
+                    // many time there is a substitute DEFENSIVE player record in the input Event file that is before the 
+                    // first play record when the inning changes.
+                    // in this case - add 1 to the eventNum value so that the substitute player record is assigned
+                    // to the correct team in the correct half of the inning
+                    // 11 pinch hitter, 12 pinch runner - both are OFFENSIVE players
+                    if ((columnValue[5] != "11") && (columnValue[5] != "12"))
                     {
-                        WriteEventFile(outputPath,
-                                  outputFile + "_" + columnValue[0],
-                                  gameID + outputDelimiter
-                                  + inning + outputDelimiter
-                                  + gameTeamCode + outputDelimiter
-                                  + eventNum + outputDelimiter
-                                  + textLine + outputDelimiter + visitingTeamID,
-                                  true);
+                        // visiting team defensive player / home team batting
+                        if ((columnValue[3] == "0") && (gameTeamCode == 1))
+                        {
+                            WriteEventFile(outputPath,
+                                      outputFile + "_" + columnValue[0],
+                                      gameID + outputDelimiter
+                                      + inning + outputDelimiter
+                                      + gameTeamCode + outputDelimiter
+                                      + eventNum + outputDelimiter
+                                      + textLine + outputDelimiter + visitingTeamID,
+                                      true);
+                        }
+                        // visiting team defensive player / visiting team batting - bump up the eventNum
+                        else if ((columnValue[3] == "0") && (gameTeamCode == 0))
+                        {
+                            WriteEventFile(outputPath,
+                                      outputFile + "_" + columnValue[0],
+                                      gameID + outputDelimiter
+                                      + inning + outputDelimiter
+                                      + gameTeamCode + outputDelimiter
+                                      + (eventNum + 1) + outputDelimiter
+                                      + textLine + outputDelimiter + visitingTeamID,
+                                      true);
+                        }
+                        // home team defensive player / visiting team batting 
+                        else if ((columnValue[3] == "1") && (gameTeamCode == 0))
+                        {
+                            WriteEventFile(outputPath,
+                                      outputFile + "_" + columnValue[0],
+                                      gameID + outputDelimiter
+                                      + inning + outputDelimiter
+                                      + gameTeamCode + outputDelimiter
+                                      + eventNum + outputDelimiter
+                                      + textLine + outputDelimiter + homeTeamID,
+                                      true);
+                        }
+                        // home teame defensive play / home team batting - bump up the eventNum
+                        else // if ((columnValue[3] == "1") && (gameTeamCode == 1))
+                        {
+                            WriteEventFile(outputPath,
+                                      outputFile + "_" + columnValue[0],
+                                      gameID + outputDelimiter
+                                      + inning + outputDelimiter
+                                      + gameTeamCode + outputDelimiter
+                                      + (eventNum + 1) + outputDelimiter
+                                      + textLine + outputDelimiter + homeTeamID,
+                                      true);
+                        }
                     }
+                    // 11 pinch hitter, 12 pinch runner - both are OFFENSIVE players
                     else
                     {
                         WriteEventFile(outputPath,
-                                  outputFile + "_" + columnValue[0],
-                                  gameID + outputDelimiter
-                                  + inning + outputDelimiter
-                                  + gameTeamCode + outputDelimiter
-                                  + eventNum + outputDelimiter
-                                  + textLine + outputDelimiter + homeTeamID,
-                                  true);
+                            outputFile + "_" + columnValue[0],
+                            gameID + outputDelimiter
+                            + inning + outputDelimiter
+                            + gameTeamCode + outputDelimiter
+                            + eventNum + outputDelimiter
+                            + textLine + outputDelimiter + homeTeamID,
+                            true);
                     }
                     break;
 

@@ -7,7 +7,7 @@
       mc:Ignorable="d" 
       d:DesignHeight="1200" d:DesignWidth="1200"
       Title="Retrosheet Play Ball">
-
+    
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="25*"/>
@@ -35,16 +35,16 @@
                   Grid.RowSpan="2"
                   CanUserAddRows="False"
                   HeadersVisibility="None">
-            
+
             <DataGrid.Columns>
                 <DataGridTextColumn Header=""  Binding="{Binding GameItemDesc}" />
                 <DataGridTextColumn Header=""  Binding="{Binding GameItemValue}" Width="200" >
-                        <DataGridTextColumn.ElementStyle>
-                            <Style>
-                                <Setter Property="TextBlock.TextWrapping" Value="Wrap"/>
-                                <Setter Property="TextBlock.TextAlignment" Value="Left"/>
-                            </Style>
-                        </DataGridTextColumn.ElementStyle>
+                    <DataGridTextColumn.ElementStyle>
+                        <Style>
+                            <Setter Property="TextBlock.TextWrapping" Value="Wrap"/>
+                            <Setter Property="TextBlock.TextAlignment" Value="Left"/>
+                        </Style>
+                    </DataGridTextColumn.ElementStyle>
                 </DataGridTextColumn>
             </DataGrid.Columns>
 
@@ -52,32 +52,110 @@
 
         <StackPanel Grid.Column="1" Grid.ColumnSpan="3" Grid.Row="1" Orientation="Horizontal" >
 
+
             <DataGrid Name="dgVisitingPlayers"  GridLinesVisibility="None" BorderThickness="0,0,1,0"  RowHeight="15" ColumnHeaderHeight="22" FontSize="10" RowHeaderWidth="0" 
                       AutoGenerateColumns="False" 
                       CanUserAddRows="False"
                       IsReadOnly="True">
+                <DataGrid.Resources>
+                    <Style TargetType="{x:Type DataGridColumnHeader}">
+                        <Setter Property="Background" Value="#047700" />
+                        <Setter Property="BorderBrush" Value="Black" />
+                        <Setter Property="BorderThickness" Value="0,0,1,0"/>
+                        <Setter Property="Foreground" Value="White" />
+                        <Setter Property="FontWeight" Value="Bold" />
+                    </Style>
+                </DataGrid.Resources>
+
                 <DataGrid.Columns>
-                    <DataGridTextColumn Header="Batting Order" Binding="{Binding Batting}"/>
-                    <DataGridTextColumn Header="Visiting Team" Binding="{Binding Name}"/>
-                    <DataGridTextColumn Header="Field Position" Binding="{Binding Position}"/>
-                    <DataGridTextColumn Header="Bats / Throws"  Binding="{Binding BatsThrows}"/>
+                    <DataGridTextColumn Header="Batting Order  " Binding="{Binding Batting}"  />
+                    <DataGridTextColumn Header="Visiting Team" Binding="{Binding Name}"  />
+                    <DataGridTextColumn Header="Field Position " Binding="{Binding Position}"  />
+                    <DataGridTextColumn Header="Bats / Throws"  Binding="{Binding BatsThrows}" />
                 </DataGrid.Columns>
 
             </DataGrid>
 
-            <DataGrid Name="dgHomePlayers" GridLinesVisibility="None" BorderThickness="1,0,0,0" RowHeight="15" ColumnHeaderHeight="22" FontSize="10" RowHeaderWidth="0"
+            <DataGrid Name="dgHomePlayers" GridLinesVisibility="None" BorderThickness="1,0,1,0" RowHeight="15" ColumnHeaderHeight="22" FontSize="10" RowHeaderWidth="0"
                       AutoGenerateColumns="False" 
                       CanUserAddRows="False"
                       IsReadOnly="True">
+                <DataGrid.Resources>
+                    <Style TargetType="{x:Type DataGridColumnHeader}">
+                        <Setter Property="Background" Value="#047700" />
+                        <Setter Property="BorderBrush" Value="Black" />
+                        <Setter Property="BorderThickness" Value="0,0,1,0"/>
+                        <Setter Property="Foreground" Value="White" />
+                        <Setter Property="FontWeight" Value="Bold" />
+                    </Style>
+                </DataGrid.Resources>
                 <DataGrid.Columns>
-                    <DataGridTextColumn Header="Home Team" Binding="{Binding Name}"/>
-                    <DataGridTextColumn Header="Field Position" Binding="{Binding Position}"/>
-                    <DataGridTextColumn Header="Bats / Throws"  Binding="{Binding BatsThrows}"/>
+                    <DataGridTextColumn Header="Home Team    " Binding="{Binding Name}" />
+                    <DataGridTextColumn Header="Field Position " Binding="{Binding Position}"  />
+                    <DataGridTextColumn Header="Bats / Throws"  Binding="{Binding BatsThrows}" />
                 </DataGrid.Columns>
 
             </DataGrid>
 
-            <Image Name="imgEventHitLocationDiagram" Source="{Binding HitLocationDiagram}" VerticalAlignment="Center" HorizontalAlignment="Center" Height="250" Width="250" />
+             <StackPanel Orientation="Vertical">
+                <Label x:Name="lblRunnerDiagram" 
+                   HorizontalAlignment="Center" 
+                   VerticalAlignment="Bottom"
+                   FontSize="10" FontWeight="Bold"
+                   HorizontalContentAlignment="Center"
+                   BorderBrush="Black" BorderThickness="1,0,1,0"
+                   Background="#047700" Height="22" Width="200"  Foreground="White"/>
+                <Image x:Name="imgRunnersOnBaseDiagram" Source="{Binding DestinationRunnersOnBaseDiagram}" VerticalAlignment="Top" HorizontalAlignment="Center" Height="240" Width="200" />
+            </StackPanel>
+
+            <StackPanel Orientation="Vertical">
+                <DataGrid Name="dgVisitingRunsHitsErrors" GridLinesVisibility="None" BorderThickness="1,0,1,0" RowHeight="15" ColumnHeaderHeight="22" FontSize="10" RowHeaderWidth="0"
+                      AutoGenerateColumns="False" 
+                      CanUserAddRows="False"
+                      IsReadOnly="True">
+                <DataGrid.Resources>
+                    <Style TargetType="{x:Type DataGridColumnHeader}">
+                        <Setter Property="Background" Value="#047700" />
+                        <Setter Property="BorderBrush" Value="Black" />
+                        <Setter Property="BorderThickness" Value="0,0,1,0"/>
+                        <Setter Property="Foreground" Value="White" />
+                        <Setter Property="FontWeight" Value="Bold" />
+                    </Style>
+                </DataGrid.Resources>
+                <DataGrid.Columns>
+                    <DataGridTextColumn Header="Inning " Binding="{Binding CountInning}" />
+                    <DataGridTextColumn Header="Team      " Binding="{Binding CountTeam}" />
+                    <DataGridTextColumn Header="Runs    " Binding="{Binding CountRuns}" />
+                    <DataGridTextColumn Header="Hits    " Binding="{Binding CountHits}" />
+                    <DataGridTextColumn Header="Errors  " Binding="{Binding CountErrors}" />
+                </DataGrid.Columns>
+                
+                </DataGrid>
+
+                <DataGrid Name="dgHomeRunsHitsErrors" GridLinesVisibility="None" BorderThickness="1,0,1,0" RowHeight="15" ColumnHeaderHeight="1" FontSize="10" RowHeaderWidth="0"
+                      AutoGenerateColumns="False" 
+                      CanUserAddRows="False"
+                      IsReadOnly="True">
+                    <DataGrid.Resources>
+                        <Style TargetType="{x:Type DataGridColumnHeader}">
+                            <Setter Property="Background" Value="#047700" />
+                            <Setter Property="BorderBrush" Value="Black" />
+                            <Setter Property="BorderThickness" Value="0,0,1,0"/>
+                            <Setter Property="Foreground" Value="White" />
+                            <Setter Property="FontWeight" Value="Bold" />
+                        </Style>
+                    </DataGrid.Resources>
+                    <DataGrid.Columns>
+                        <DataGridTextColumn Header="Inning " Binding="{Binding CountInning}" />
+                        <DataGridTextColumn Header="Team      " Binding="{Binding CountTeam}" />
+                        <DataGridTextColumn Header="Runs    " Binding="{Binding CountRuns}" />
+                        <DataGridTextColumn Header="Hits    " Binding="{Binding CountHits}" />
+                        <DataGridTextColumn Header="Errors  "  Binding="{Binding CountErrors}" />
+                    </DataGrid.Columns>
+
+                </DataGrid>
+            </StackPanel>
+
         </StackPanel>
 
         <DataGrid Grid.Column="0" 
@@ -104,10 +182,12 @@
 
             <DataGrid.Columns>
                 <DataGridTextColumn Header="Inning"  Binding="{Binding Inning}" />
+                <DataGridTextColumn Header="   " Binding="{Binding TopBottom}" FontWeight="ExtraBold" />
+                <DataGridTextColumn Header="Outs" Binding="{Binding CountOuts}"/>
                 <DataGridTextColumn Header="Team Name"  Binding="{Binding TeamName}"  Width="75"/>
                 <DataGridTextColumn Header="At Bat" Binding="{Binding BatterName}"  Width="100" />
                 <DataGridTextColumn Header="Count" Binding="{Binding CountDesc}" />
-                <DataGridTextColumn Header="Pitches" Binding="{Binding PitchDesc}" Width="200">
+                <DataGridTextColumn Header="Pitches" Binding="{Binding PitchDesc}" Width="250">
                     <DataGridTextColumn.ElementStyle>
                         <Style>
                             <Setter Property="TextBlock.TextWrapping" Value="Wrap"/>
@@ -133,9 +213,9 @@
                             <Setter Property="TextBlock.TextAlignment" Value="Left"/>
                         </Style>
                     </DataGridTextColumn.ElementStyle>
-                </DataGridTextColumn>                
-                
-                <DataGridTextColumn Header="Play on Runners" Binding="{Binding PlayOnRunnerDetails}" Width="200">
+                </DataGridTextColumn>
+
+                <DataGridTextColumn Header="Play on Runners" Binding="{Binding PlayOnRunnerDetails}" Width="225">
                     <DataGridTextColumn.ElementStyle>
                         <Style>
                             <Setter Property="TextBlock.TextWrapping" Value="Wrap"/>
@@ -156,15 +236,43 @@
             </DataGrid.Columns>
         </DataGrid>
 
-        <StackPanel Grid.Column="0" Grid.ColumnSpan="3" Grid.Row="4" Orientation="Vertical" Margin="10,0,0,10">
-            <TextBlock Name="tblkPitcherAdjustments" Text="{Binding PitcherAdjustment}" TextWrapping="Wrap"/>
-            <TextBlock Name="tblkBatterAdjustments" Text="{Binding BatterAdjustment}" TextWrapping="Wrap"/>
-            <TextBlock Name="tblkSubstitutePlayers" Text="{Binding SubstitutePlayer}" TextWrapping="Wrap"/>
-            <TextBlock Name="tblkSubstituteUmpires" Text="{Binding SubstituteUmpire}" TextWrapping="Wrap"/>
-            <TextBlock Name="tblkComments" Text="{Binding GameComment}" TextWrapping="Wrap"/>
-            <TextBlock Name="tblkReplayComment" Text="{Binding ReplayComment}" TextWrapping="Wrap"/>
-            <TextBlock Name="tblkReplayRuling" Text="{Binding ReplayRuling}" TextWrapping="Wrap"/>
+
+
+        <StackPanel Grid.Column="0"  Grid.ColumnSpan="4" Grid.Row="4" Orientation="Horizontal">
+            <StackPanel Orientation="Vertical" >
+                <Label  
+                   HorizontalAlignment="Center" 
+                   VerticalAlignment="Bottom"
+                   FontSize="10" FontWeight="Bold"
+                   HorizontalContentAlignment="Center"
+                   BorderBrush="Black" BorderThickness="0,0,1,0"
+                   Background="#047700" Height="22" Width="700"  Foreground="White">
+                    Player Adjustments
+                </Label>
+                <TextBlock Name="tblkPitcherAdjustments" Text="{Binding PitcherAdjustment}" TextWrapping="Wrap" Margin="10,0,0,0"/>
+                <TextBlock Name="tblkBatterAdjustments" Text="{Binding BatterAdjustment}" TextWrapping="Wrap" Margin="10,0,0,0"/>
+                <TextBlock Name="tblkSubstitutePlayers" Text="{Binding SubstitutePlayer}" TextWrapping="Wrap" Margin="10,0,0,0"/>
+                <TextBlock Name="tblkBattersRemoved" Text="{Binding BatterRemoved}" TextWrapping="Wrap" Margin="10,0,0,0"/>
+                <TextBlock Name="tblkRunnerFirstRemoved" Text="{Binding RunnerRemoved}" TextWrapping="Wrap" Margin="10,0,0,0"/>
+                <TextBlock Name="tblkRunnerSecondRemoved" Text="{Binding RunnerRemoved}" TextWrapping="Wrap" Margin="10,0,0,0"/>
+                <TextBlock Name="tblkRunnerThirdRemoved" Text="{Binding RunnerRemoved}" TextWrapping="Wrap" Margin="10,0,0,0"/>
+            </StackPanel>
+
+            <StackPanel Orientation="Vertical" >
+                <Label  
+                   HorizontalAlignment="Center" 
+                   VerticalAlignment="Bottom"
+                   FontSize="10" FontWeight="Bold"
+                   HorizontalContentAlignment="Center"
+                   BorderBrush="Black" BorderThickness="0,0,1,0"
+                   Background="#047700" Height="22" Width="700"  Foreground="White">
+                    Notes / Comments
+                </Label>
+                <TextBlock Name="tblkSubstituteUmpires" Text="{Binding SubstituteUmpire}" TextWrapping="Wrap" Margin="10,0,0,0"/>
+                <TextBlock Name="tblkComments" Text="{Binding GameComment}" TextWrapping="Wrap" Margin="10,0,0,0"/>
+                <TextBlock Name="tblkReplayComment" Text="{Binding ReplayComment}" TextWrapping="Wrap" Margin="10,0,0,0"/>
+                <TextBlock Name="tblkReplayRuling" Text="{Binding ReplayRuling}" TextWrapping="Wrap" Margin="10,0,0,0"/>
+            </StackPanel>
         </StackPanel>
- 
     </Grid>
 </Page>

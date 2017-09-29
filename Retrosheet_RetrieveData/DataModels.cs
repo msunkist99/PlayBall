@@ -151,6 +151,8 @@ namespace Retrosheet_RetrieveData
             public string GameTeamCodeDesc { get; set; }
             public int EventNum { get; set; }
 
+            public string TopBottom { get; set; }
+
             public string BatterPlayerID { get; set; }
             public string BatterLastName { get; set; }
             public string BatterFirstName { get; set; }
@@ -288,6 +290,7 @@ namespace Retrosheet_RetrieveData
 
             public string PlayDetails { get; set; }
             public string DestinationDetails { get; set; }
+            public string DestinationRunnersOnBaseDiagram { get; set; }
             public string HitLocationDiagram { get; set; }
             public string PlayOnRunnerDetails { get; set; }
 
@@ -306,6 +309,45 @@ namespace Retrosheet_RetrieveData
             public string ThirdErrorType { get; set; }
             public string ThirdErrorTypeDesc { get; set; }
             public string ErrorDetails { get; set; }
+
+            public string RunnerFirstRemovedForPinchPlayerID { get; set; }
+            public string RunnerFirstRemovedForPinchLastName { get; set; }
+            public string RunnerFirstRemovedForPinchFirstName { get; set; }
+            public string RunnerFirstRemovedForPinchBats { get; set; }
+            public string RunnerFirstRemovedForPinchThrows { get; set; }
+
+            public string RunnerSecondRemovedForPinchPlayerID { get; set; }
+            public string RunnerSecondRemovedForPinchLastName { get; set; }
+            public string RunnerSecondRemovedForPinchFirstName { get; set; }
+            public string RunnerSecondRemovedForPinchBats { get; set; }
+            public string RunnerSecondRemovedForPinchThrows { get; set; }
+
+            public string RunnerThirdRemovedForPinchPlayerID { get; set; }
+            public string RunnerThirdRemovedForPinchLastName { get; set; }
+            public string RunnerThirdRemovedForPinchFirstName { get; set; }
+            public string RunnerThirdRemovedForPinchBats { get; set; }
+            public string RunnerThirdRemovedForPinchThrows { get; set; }
+
+            public string BatterRemovedForPinchPlayerID { get; set; }
+            public string BatterRemovedForPinchLastName { get; set; }
+            public string BatterRemovedForPinchFirstName { get; set; }
+            public string BatterRemovedForPinchBats { get; set; }
+            public string BatterRemovedForPinchThrows { get; set; }
+
+            public int BatterRemovedForPinchFieldPosition { get; set; }
+            public string BatterRemovedForPinchFieldPositionDesc { get; set; }
+
+            public int VisitingTeamScore { get; set; }
+            public int HomeTeamScore { get; set; }
+
+            public int HitValue { get; set; }
+            public int NumErrors { get; set; }
+
+            public int VistingTeamHitCount { get; set; }
+            public int VisitingTeamErrorCount { get; set; }
+
+            public int HomeTeamHitCount { get; set; }
+            public int HomeTeamErrorCount { get; set; }
         }
 
         public class GameInformation

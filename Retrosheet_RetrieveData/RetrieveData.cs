@@ -17,7 +17,9 @@ namespace Retrosheet_RetrieveData
 		public string SeasonYear { get; private set; }
 		public string SeasonGameType { get; private set; }
 		public string HomeTeamID { get; private set; }
+        public string HomeTeamName { get; private set; }
 		public string VisitingTeamID { get; private set; }
+        public string VisitingTeamName { get; private set; }
 		public string PageTitle { get; set; }
 	  
 
@@ -297,6 +299,10 @@ namespace Retrosheet_RetrieveData
 				HomeTeamID = result.HomeTeamID;
 				VisitingTeamID = result.VisitingTeamID;
 
+                HomeTeamName = result.HomeTeamName;
+                VisitingTeamName = result.VisitTeamName;
+
+
 				if (result.GameNumber > 0)
 				{
 					PageTitle = result.HomeTeamName + " vs " + result.VisitTeamName + " @ " + result.HomeTeamCity + " on "
@@ -318,6 +324,7 @@ namespace Retrosheet_RetrieveData
 					result.GameNumberDesc = null;
 				}
 
+                
 				result.VisitTeamLeagueName = RetrieveReferenceDataDesc("team_league", result.VisitTeamLeague);
 				result.HomeTeamLeagueName = RetrieveReferenceDataDesc("team_league", result.HomeTeamLeague);
 				result.SeasonGameTypeDesc = RetrieveReferenceDataDesc("season_game_type", result.SeasonGameType);
@@ -923,6 +930,12 @@ where play.game_id = 'x_game_id'
 																			   string visitingTeamID,
 																			   string gameID)
 		{
+			int visitingTeamHitCount = 0;
+			int visitingTeamErrorCount = 0;
+
+			int homeTeamHitCount = 0;
+			int homeTeamErrorCount = 0;
+
 			string sqlQuery = @"select   
   play_bevent.record_id RecordID 
 , play_bevent.game_id GameID 
@@ -952,57 +965,85 @@ where play.game_id = 'x_game_id'
 , Play_Bevent.play_on_second_runner PlayOnSecondRunner
 , Play_Bevent.play_on_third_runner PlayOnThirdRunner
 , play_bevent.event_type EventType
-, catcher.player_id catcherPlayerID 
+, catcher.player_id CatcherPlayerID 
 , catcher.last_name CatcherLastName
 , catcher.first_name CatcherFirstName
 , catcher.bats CatcherBats
 , catcher.throws CatcherThrows
 , firstBase.player_id FirstBasePlayerID
-, firstBase.last_name firstBaseLastName
-, firstBase.first_name firstBaseFirstName
-, firstBase.bats firstBaseBats
-, firstBase.throws firstBaseThrows
+, firstBase.last_name FirstBaseLastName
+, firstBase.first_name FirstBaseFirstName
+, firstBase.bats FirstBaseBats
+, firstBase.throws FirstBaseThrows
 , secondBase.player_id SecondBasePlayerID
-, secondBase.last_name secondBaseLastName
-, secondBase.first_name secondBaseFirstName
-, secondBase.bats secondBaseBats
-, secondBase.throws secondBaseThrows
-, thirdbase.player_id thridBasePlayerID
-, thirdBase.last_name thirdBaseLastName
-, thirdBase.first_name thirdBaseFirstName
-, thirdBase.bats thirdBaseBats
-, thirdBase.throws thirdBaseThrows
+, secondBase.last_name SecondBaseLastName
+, secondBase.first_name SecondBaseFirstName
+, secondBase.bats SecondBaseBats
+, secondBase.throws SecondBaseThrows
+, thirdbase.player_id ThirdBasePlayerID
+, thirdBase.last_name ThirdBaseLastName
+, thirdBase.first_name ThirdBaseFirstName
+, thirdBase.bats ThirdBaseBats
+, thirdBase.throws ThirdBaseThrows
 , shortstop.player_id ShortStopPlayerID
-, shortStop.last_name shortStopLastName
-, shortStop.first_name shortStopFirstName
-, shortStop.bats shortStopBats
-, shortStop.throws shortStopThrows
-, leftField.player_id leftFieldPlayerID
-, leftField.last_name leftFieldLastName
-, leftField.first_name leftFieldFirstName
-, leftField.bats leftFieldBats
-, leftField.throws leftFieldThrows
-, centerField.player_id centerFieldPlayerID
-, centerField.last_name centerFieldLastName
-, centerField.first_name centerFieldFirstName
-, centerField.bats centerFieldBats
-, centerField.throws centerFieldThrows
-, rightField.player_id rightFieldPlayerID
-, rightField.last_name rightFieldLastName
-, rightField.first_name rightFieldFirstName
-, rightField.bats rightFieldBats
-, rightField.throws rightFieldThrows
-, pitcher.player_id pitcherPlayerID
-, pitcher.last_name pitcherLastName
-, pitcher.first_name pitcherFirstName
-, pitcher.bats pitcherBats
-, pitcher.throws pitcherThrows
+, shortStop.last_name ShortStopLastName
+, shortStop.first_name ShortStopFirstName
+, shortStop.bats ShortStopBats
+, shortStop.throws ShortStopThrows
+, leftField.player_id LeftFieldPlayerID
+, leftField.last_name LeftFieldLastName
+, leftField.first_name LeftFieldFirstName
+, leftField.throws LeftFieldThrows
+, centerField.player_id CenterFieldPlayerID
+, centerField.last_name CenterFieldLastName
+, centerField.first_name CenterFieldFirstName
+, centerField.bats CenterFieldBats
+, centerField.throws CenterFieldThrows
+, rightField.player_id RightFieldPlayerID
+, rightField.last_name RightFieldLastName
+, rightField.first_name RightFieldFirstName
+, rightField.bats RightFieldBats
+, rightField.throws RightFieldThrows
+, pitcher.player_id PitcherPlayerID
+, pitcher.last_name PitcherLastName
+, pitcher.bats PitcherBats
 , play_bevent.first_error_position	FirstErrorPosition
 , play_bevent.first_error_type		FirstErrorType
 , play_bevent.second_error_position	SecondErrorPosition
 , play_bevent.second_error_type		SecondErrorType
 , play_bevent.third_error_position	ThirdErrorPosition
 , play_bevent.third_error_type		ThirdErrorType
+
+, play_bevent.runner_first_removed_pinch_player_id  RunnerFirstRemovedForPinchPlayerID
+, runnerFirstRemovedPinch.last_name                 RunnerFirstRemovedForPinchLastName
+, runnerFirstRemovedPinch.first_name                RunnerFirstRemovedForPinchFirstName
+, runnerFirstRemovedPinch.bats                      RunnerFirstRemovedForPinchBats
+, runnerFirstRemovedPinch.throws                    RunnerFirstRemovedForPinchThrows
+
+, play_bevent.runner_second_removed_pinch_player_id RunnerSecondRemovedForPinchPlayerID
+, runnerSecondRemovedPinch.last_name                RunnerSecondRemovedForPinchLastName
+, runnerSecondRemovedPinch.first_name               RunnerSecondRemovedForPinchFirstName
+, runnerSecondRemovedPinch.bats                     RunnerSecondRemovedForPinchBats
+, runnerSecondRemovedPinch.throws                   RunnerSecondRemovedForPinchThrows
+
+, play_bevent.runner_third_removed_pinch_player_id  RunnerThirdRemovedForPinchPlayerID
+, runnerThirdRemovedPinch.last_name                 RunnerThirdRemovedForPinchLastName
+, runnerThirdRemovedPinch.first_name                RunnerThirdRemovedForPinchFirstName
+, runnerThirdRemovedPinch.bats                      RunnerThirdRemovedForPinchBats
+, runnerThirdRemovedPinch.throws                    RunnerThirdRemovedForPinchThrows
+
+, play_bevent.batter_removed_pinch_player_id        BatterRemovedforPinchPlayerID
+, batterRemovedPinch.last_name                      BatterRemovedforPinchLastName
+, batterRemovedPinch.first_name                     BatterRemovedforPinchFirstName
+, batterRemovedPinch.bats                           BatterRemovedforPinchBaseBats
+, batterRemovedPinch.throws                         BatterRemovedforPinchBaseThrows
+
+, play_bevent.batter_removed_position_pinch         BatterRemovedForPinchFieldPosition
+
+, play_bevent.visiting_score                        VisitingTeamScore
+, play_bevent.home_score                            HomeTeamScore
+, play_bevent.hit_value                             HitValue
+, play_bevent.num_errors                            NumErrors
 from play_bevent  
 join team on team.season_year = 'x_season_year'  
 		and team.season_game_type = 'x_season_game_type'              
@@ -1090,7 +1131,44 @@ join player pitcher on pitcher.player_id = play_bevent.pitcher_player_id
 		case play_bevent.game_team_code         
 			when 1 then 'x_visiting_team_id'        
 			else 'x_home_team_id'       
-		end)           
+		end)
+
+left join player runnerFirstRemovedPinch on runnerFirstRemovedPinch.player_id = play_bevent.runner_first_removed_pinch_player_id
+		and runnerFirstRemovedPinch.season_year = 'x_season_year'
+		and runnerFirstRemovedPinch.season_game_type = 'x_season_game_type'
+		and runnerFirstRemovedPinch.team_id = (
+		case play_bevent.game_team_code
+			when 1 then 'x_home_team_id'
+			else 'x_visiting_team_id'
+		end)
+
+left join player runnerSecondRemovedPinch on runnerSecondRemovedPinch.player_id = play_bevent.runner_second_removed_pinch_player_id
+		and runnerSecondRemovedPinch.season_year = 'x_season_year'
+		and runnerSecondRemovedPinch.season_game_type = 'x_season_game_type'
+		and runnerSecondRemovedPinch.team_id = (
+		case play_bevent.game_team_code
+			when 1 then 'x_home_team_id'
+			else 'x_visiting_team_id'
+		end)
+	 
+left join player runnerThirdRemovedPinch on runnerThirdRemovedPinch.player_id = play_bevent.runner_third_removed_pinch_player_id
+		and runnerThirdRemovedPinch.season_year = 'x_season_year'
+		and runnerThirdRemovedPinch.season_game_type = 'x_season_game_type'
+		and runnerThirdRemovedPinch.team_id = (
+		case play_bevent.game_team_code
+			when 1 then 'x_home_team_id'
+			else 'x_visiting_team_id'
+		end)
+
+left join player batterRemovedPinch on batterRemovedPinch.player_id = play_bevent.batter_removed_pinch_player_id
+		and batterRemovedPinch.season_year = 'x_season_year'
+		and batterRemovedPinch.season_game_type = 'x_season_game_type'
+		and batterRemovedPinch.team_id = (
+		case play_bevent.game_team_code
+			when 1 then 'x_home_team_id'
+			else 'x_visiting_team_id'
+		end)
+	 
 where play_bevent.game_id = 'x_game_id'
 	order by play_bevent.inning,
 	play_bevent.event_num";
@@ -1129,6 +1207,16 @@ where play_bevent.game_id = 'x_game_id'
 					}
 
 					result.GameTeamCodeDesc = RetrieveReferenceDataDesc("game_team", result.GameTeamCode.ToString());
+                    if (result.GameTeamCode == 0)
+                    {
+                        result.TopBottom = "⌃";
+                    }
+                    else
+                    {
+                        result.TopBottom = "⌄";
+                    }
+
+                    //result.TopBottom = RetrieveReferenceDataDesc("top_bottom", result.GameTeamCode.ToString());
 					result.EventTypeDesc = RetrieveReferenceDataDesc("event_type", result.EventType);
 
 					result.BatterName = string.Concat(result.BatterLastName, ", ", result.BatterFirstName);
@@ -1305,9 +1393,26 @@ where play_bevent.game_id = 'x_game_id'
 						result.PlayDetails = result.PlayDetails + "Fielded by " + result.FieldedByDesc;
 					}
 
+					string _runnerOnFirst = "0";
+					string _runnerOnSecond = "0";
+					string _runnerOnThird = "0";
+
 					if (result.DestBatterDesc !="")
 					{
 						result.DestinationDetails = "Batter goes to " + result.DestBatterDesc + Environment.NewLine;
+					}
+
+					if (result.DestBatter == 1)
+					{
+						_runnerOnFirst = "1";
+					}
+					else if (result.DestBatter == 2)
+					{
+						_runnerOnSecond = "2";
+					}
+					else if (result.DestBatter == 3)
+					{
+						_runnerOnThird = "3";
 					}
 
 					if ((result.DestFirstRunnerDesc != "") && (result.DestFirstRunnerDesc != "first base"))
@@ -1315,15 +1420,57 @@ where play_bevent.game_id = 'x_game_id'
 						result.DestinationDetails = result.DestinationDetails + "Runner on first goes to " + result.DestFirstRunnerDesc + Environment.NewLine;
 					}
 
+					if (result.DestFirstRunner == 1)
+					{
+						_runnerOnFirst = "1";
+					}
+					else if (result.DestFirstRunner == 2)
+					{
+						_runnerOnSecond = "2";
+					}
+					else if (result.DestFirstRunner == 3)
+					{
+						_runnerOnThird = "3";
+					}
+					
 					if ((result.DestSecondRunnerDesc != "") && (result.DestSecondRunnerDesc != "second base"))
 					{
 						result.DestinationDetails = result.DestinationDetails + "Runner on second goes to " + result.DestSecondRunnerDesc + Environment.NewLine;
+					}
+
+					if (result.DestSecondRunner == 1)
+					{
+						_runnerOnFirst = "1";
+					}
+					else if (result.DestSecondRunner == 2)
+					{
+						_runnerOnSecond = "2";
+					}
+					else if (result.DestSecondRunner == 3)
+					{
+						_runnerOnThird = "3";
 					}
 
 					if ((result.DestThirdRunnerDesc != "") && (result.DestThirdRunnerDesc != "third base"))
 					{
 						result.DestinationDetails = result.DestinationDetails + "Runner on third goes to " + result.DestThirdRunnerDesc + Environment.NewLine;
 					}
+
+					if (result.DestThirdRunner == 1)
+					{
+						_runnerOnFirst = "1";
+					}
+					else if (result.DestThirdRunner == 2)
+					{
+						_runnerOnSecond = "2";
+					}
+					else if (result.DestThirdRunner == 3)
+					{
+						_runnerOnThird = "3";
+					}
+
+					result.DestinationRunnersOnBaseDiagram = RetrieveReferenceDataDesc("runners_diagram", "diagram_path") + _runnerOnFirst + _runnerOnSecond + _runnerOnThird + ".jpg";
+					//result.DestinationRunnersOnBaseDiagram = "c:/users/mmr/documents/retrosheet/RunnersOnBase/" + _runnerOnFirst + _runnerOnSecond + _runnerOnThird + ".jpg";
 
 					//result.HitLocationDiagram = RetrieveReferenceDataDesc("hit_location", result.HitLocation);
 					if (result.HitLocation != null)
@@ -1359,8 +1506,36 @@ where play_bevent.game_id = 'x_game_id'
 						result.ErrorDetails = result.ErrorDetails + "Error on - " + result.ThirdErrorPositionDesc + " - " + result.ThirdErrorTypeDesc + Environment.NewLine;
 					}
 
+					result.BatterRemovedForPinchFieldPositionDesc = RetrieveReferenceDataDesc("field_position", result.BatterRemovedForPinchFieldPosition.ToString());
 					PlayBeventInformation.Add(result);
+
+					if (result.GameTeamCode == 0)  //visiting team
+					{
+						if (result.HitValue > 0)
+						{
+							visitingTeamHitCount = visitingTeamHitCount + 1;
+						}
+
+						visitingTeamErrorCount = visitingTeamErrorCount + result.NumErrors;
+					}
+					else                         // home team  
+					{
+						if (result.HitValue > 0)
+						{
+							homeTeamHitCount = homeTeamHitCount + 1;
+						}
+
+						homeTeamErrorCount = homeTeamErrorCount + result.NumErrors;
+					}
+
+					result.VistingTeamHitCount = visitingTeamHitCount;
+					result.VisitingTeamErrorCount = visitingTeamErrorCount;
+
+					result.HomeTeamHitCount = homeTeamHitCount;
+					result.HomeTeamErrorCount = homeTeamErrorCount;
 				}
+
+
 
 				return PlayBeventInformation;
 			}
@@ -1635,7 +1810,7 @@ select distinct(games.season_year) _seasonYear,
 	'' _displayUnderLeagueID,
 	'' _displayUnderLeagueName,
 	'' _displayUnderTeamID,
-    '' _displayUnderTeamCity, 
+	'' _displayUnderTeamCity, 
 	'' _displayUnderTeamName,
 	 
 	refIconPath.ref_data_desc _iconPath,
@@ -1697,7 +1872,7 @@ select distinct(games.season_year) _seasonYear,
 	homeTeam.league  _displayUnderLeagueID,
 	refHomeTeamLeague.ref_data_desc _displayUnderLeagueName,
 	'' _displayUnderTeamID,
-    '' _displayUnderTeamCity, 
+	'' _displayUnderTeamCity, 
 	'' _displayUnderTeamName,
 	 
 	refIconPath.ref_data_desc _iconPath,
@@ -1758,7 +1933,7 @@ select distinct(games.season_year) _seasonYear,
 	homeTeam.league _displayUnderLeagueID,   --- list under this league id 
 	refHomeTeamLeague.ref_data_desc _displayUnderLeagueName,
 	games.home_team_id _displayUnderTeamID,  --- list under this team id
-    homeTeam.city _displayUnderTeamCity, 
+	homeTeam.city _displayUnderTeamCity, 
 	homeTeam.name _displayUnderTeamName,
 	 
 	refIconPath.ref_data_desc _iconPath,
@@ -1819,7 +1994,7 @@ select distinct(games.season_year) _seasonYear,
 	visitTeam.league _displayUnderLeagueID,      --- list under this league id   
 	refVisitTeamLeague.ref_data_desc _displayUnderLeagueName,
 	games.visiting_team_id _displayUnderTeamID,  --- list under this team id
-    visitTeam.city _displayUnderTeamCity,
+	visitTeam.city _displayUnderTeamCity,
 	visitTeam.name _displayUnderTeamName,
 
 	refIconPath.ref_data_desc _iconPath,
@@ -2418,7 +2593,7 @@ where batter_adjustment.game_id =  'x_game_id'";
 
 					if(result.Reversed == "Y")
 					{
-						result.ReversedDesc = "ruling on play is reversed";
+						result.ReversedDesc = "ruling on play is overturned0";
 					}
 					else
 					{
@@ -2993,7 +3168,7 @@ order by _seasonYear, _sortKey, _displayUnderLeagueID, _displayUnderTeamID, _gam
 			public string _displayUnderLeagueID { get; set; }
 			public string _displayUnderLeagueName { get; set; }
 			public string _displayUnderTeamID { get; set; }
-            public string _displayUnderTeamCity { get; set; }
+			public string _displayUnderTeamCity { get; set; }
 			public string _displayUnderTeamName { get; set; }
 
 			public string _iconPath { get; set; }

@@ -32,6 +32,9 @@ namespace Retrosheet_PlayBall
         private Collection<DataModels.SubstitutePlayerInformation> SubstitutePlayerInformation;
         private Collection<DataModels.SubstituteUmpireInformation> SubstituteUmpireInformation;
 
+        private string HomeTeamName;
+        private string VisitingTeamName;
+
         public Retrosheet_PlayBall_PlayByPlay(string gameID)
         {
             InitializeComponent();
@@ -40,7 +43,7 @@ namespace Retrosheet_PlayBall
             string SeasonYear;
             string SeasonGameType;
             string HomeTeamID;
-            String VisitingTeamID;
+            string VisitingTeamID;
 
             RetrieveData retrieveData = new RetrieveData();
 
@@ -54,6 +57,8 @@ namespace Retrosheet_PlayBall
             SeasonGameType = retrieveData.SeasonGameType;
             HomeTeamID = retrieveData.HomeTeamID;
             VisitingTeamID = retrieveData.VisitingTeamID;
+            HomeTeamName = retrieveData.HomeTeamName;
+            VisitingTeamName = retrieveData.VisitingTeamName;
 
             dgGameInfoItems.ItemsSource = GameInformationItems;
 
@@ -134,7 +139,7 @@ namespace Retrosheet_PlayBall
 
             // set the dgPlayBevents data source after retrieving all data.
             dgPlayBevents.ItemsSource = PlayBeventInformation;
-            imgEventHitLocationDiagram.DataContext = PlayBeventInformation[0];
+            imgRunnersOnBaseDiagram.DataContext = PlayBeventInformation[0];
         }
 
 
@@ -142,6 +147,35 @@ namespace Retrosheet_PlayBall
         {
             var dg = sender as DataGrid;
             var index = dg.SelectedIndex;
+
+            var countsVisiting = from countVisiting in PlayBeventInformation
+                                 where countVisiting.GameID == PlayBeventInformation[index].GameID
+                                    && countVisiting.EventNum == PlayBeventInformation[index].EventNum
+                                 select new
+                                 {
+                                        CountTeam = VisitingTeamName,
+                                        CountInning = countVisiting.Inning + " ⌃",
+                                        CountRuns = countVisiting.VisitingTeamScore,
+                                        CountHits = countVisiting.VistingTeamHitCount,
+                                        CountErrors = countVisiting.VisitingTeamErrorCount
+                                 };
+
+            dgVisitingRunsHitsErrors.ItemsSource = countsVisiting;
+
+            var countsHome = from countHome in PlayBeventInformation
+                                 where countHome.GameID == PlayBeventInformation[index].GameID
+                                    && countHome.EventNum == PlayBeventInformation[index].EventNum
+                             select new
+                             {
+                                 CountTeam = HomeTeamName,
+                                 CountInning ="   ⌄",
+                                 CountRuns = countHome.HomeTeamScore,
+                                 CountHits = countHome.HomeTeamHitCount,
+                                 CountErrors = countHome.HomeTeamErrorCount
+                             };
+
+
+            dgHomeRunsHitsErrors.ItemsSource = countsHome;
 
             var gameComments = from gameComment in GameCommentInformation
                                where gameComment.GameID == PlayBeventInformation[index].GameID
@@ -164,11 +198,6 @@ namespace Retrosheet_PlayBall
                                     orderby batterAdjustment.Sequence
                                     select new
                                     {
-                                        //BatterAdjustment = batterAdjustment.PlayerLastName
-                                        //                   + ", " + batterAdjustment.PlayerFirstName
-                                        //                   + " switches to batting "
-                                        //                   + batterAdjustment.BatsDesc + " handed " 
-
                                         BatterAdjustment = batterAdjustment.PlayerID != PlayBeventInformation[index].BatterPlayerID?
 
                                                            "coming up to bat is " + batterAdjustment.PlayerLastName
@@ -204,15 +233,97 @@ namespace Retrosheet_PlayBall
                                     orderby substitutePlayer.Sequence
                                     select new
                                     {
-                                        SubstitutePlayer = substitutePlayer.FieldPositionDesc + " - "
+                                        SubstitutePlayer = substitutePlayer.FieldPosition != 11 && substitutePlayer.FieldPosition != 12 ?    // pinch hitter and pinch runner
+                                                           substitutePlayer.FieldPositionDesc + " - "
                                                            + substitutePlayer.PlayerLastName + ", " + substitutePlayer.PlayerFirstName
                                                            + " comes into the game for " + substitutePlayer.TeamName
-                                                           + " batting " + substitutePlayer.BattingOrder + " in the line up" + Environment.NewLine
-                                                           + "Bats " + substitutePlayer.PlayerBatsDesc
-                                                           + " / Throws " + substitutePlayer.PlayerThrowsDesc
+                                                           + " throws " + substitutePlayer.PlayerThrowsDesc :
+
+                                                           ""
                                     };
 
+
             tblkSubstitutePlayers.DataContext = substitutePlayers;
+
+            if (PlayBeventInformation[index].BatterRemovedForPinchPlayerID != null)
+            {
+                var battersRemoved = from batterRemoved in PlayBeventInformation
+                                     where batterRemoved.GameID == PlayBeventInformation[index].GameID
+                                        && batterRemoved.EventNum == PlayBeventInformation[index].EventNum
+                                     select new
+                                     {
+                                         BatterRemoved = PlayBeventInformation[index].TeamName + " batter " + PlayBeventInformation[index].BatterRemovedForPinchLastName
+                                              + ", " + PlayBeventInformation[index].BatterRemovedForPinchFirstName
+                                              + " (" + PlayBeventInformation[index].BatterRemovedForPinchFieldPositionDesc
+                                              + ") replaced by pinch hitter "
+                                              + PlayBeventInformation[index].BatterLastName
+                                              + ", " + PlayBeventInformation[index].BatterFirstName
+                                     };
+
+                tblkBattersRemoved.DataContext = battersRemoved;
+            }
+            else
+            {
+                tblkBattersRemoved.DataContext = null;
+            }
+
+            if (PlayBeventInformation[index].RunnerFirstRemovedForPinchPlayerID!= null)
+            {
+                var runnersRemoved = from runnerRemoved in PlayBeventInformation
+                                     where runnerRemoved.GameID == PlayBeventInformation[index].GameID
+                                        && runnerRemoved.EventNum == PlayBeventInformation[index].EventNum
+                                     select new
+                                     {
+                                         RunnerRemoved = PlayBeventInformation[index].TeamName + " runner on first base " + PlayBeventInformation[index].RunnerFirstRemovedForPinchLastName
+                                              + ", " + PlayBeventInformation[index].RunnerFirstRemovedForPinchFirstName
+                                              + " replaced by pinch runner"
+                                     };
+
+                tblkRunnerFirstRemoved.DataContext = runnersRemoved;
+            }
+            else
+            {
+                tblkRunnerFirstRemoved.DataContext = null;
+            }
+
+            if (PlayBeventInformation[index].RunnerSecondRemovedForPinchPlayerID != null)
+            {
+                var runnersRemoved = from runnerRemoved in PlayBeventInformation
+                                     where runnerRemoved.GameID == PlayBeventInformation[index].GameID
+                                        && runnerRemoved.EventNum == PlayBeventInformation[index].EventNum
+                                     select new
+                                     {
+                                         RunnerRemoved = PlayBeventInformation[index].TeamName + " runner on second base " + PlayBeventInformation[index].RunnerSecondRemovedForPinchLastName
+                                              + ", " + PlayBeventInformation[index].RunnerSecondRemovedForPinchFirstName
+                                              + " replaced by pinch runner"
+                                     };
+
+                tblkRunnerSecondRemoved.DataContext = runnersRemoved;
+            }
+            else
+            {
+                tblkRunnerSecondRemoved.DataContext = null;
+            }
+
+            if (PlayBeventInformation[index].RunnerThirdRemovedForPinchPlayerID != null)
+            {
+                var runnersRemoved = from runnerRemoved in PlayBeventInformation
+                                     where runnerRemoved.GameID == PlayBeventInformation[index].GameID
+                                        && runnerRemoved.EventNum == PlayBeventInformation[index].EventNum
+                                     select new
+                                     {
+                                         RunnerRemoved = PlayBeventInformation[index].TeamName + " runner on Third base " + PlayBeventInformation[index].RunnerThirdRemovedForPinchLastName
+                                              + ", " + PlayBeventInformation[index].RunnerThirdRemovedForPinchFirstName
+                                              + " replaced by pinch runner"
+                                     };
+
+                tblkRunnerThirdRemoved.DataContext = runnersRemoved;
+            }
+            else
+            {
+                tblkRunnerThirdRemoved.DataContext = null;
+            }
+
 
             var substituteUmpires = from substituteUmpire in SubstituteUmpireInformation
                                     where substituteUmpire.GameID == PlayBeventInformation[index].GameID
@@ -240,7 +351,8 @@ namespace Retrosheet_PlayBall
 
             tblkReplayComment.DataContext = replayComments;
             tblkReplayRuling.DataContext = replayComments;
-            imgEventHitLocationDiagram.DataContext = PlayBeventInformation[index];
+            imgRunnersOnBaseDiagram.DataContext = PlayBeventInformation[index];
+            lblRunnerDiagram.Content = "At Bat - " + PlayBeventInformation[index].TeamName;
         }
     }
 }
