@@ -123,11 +123,11 @@
                     </Style>
                 </DataGrid.Resources>
                 <DataGrid.Columns>
-                    <DataGridTextColumn Header="Inning " Binding="{Binding CountInning}" />
-                    <DataGridTextColumn Header="Team      " Binding="{Binding CountTeam}" />
-                    <DataGridTextColumn Header="Runs    " Binding="{Binding CountRuns}" />
-                    <DataGridTextColumn Header="Hits    " Binding="{Binding CountHits}" />
-                    <DataGridTextColumn Header="Errors  " Binding="{Binding CountErrors}" />
+                    <DataGridTextColumn Header="Inning" Binding="{Binding CountInning}" Width="40"/>
+                    <DataGridTextColumn Header="Team" Binding="{Binding CountTeam}" Width="80" />
+                    <DataGridTextColumn Header="Runs" Binding="{Binding CountRuns}" Width="40"/>
+                    <DataGridTextColumn Header="Hits" Binding="{Binding CountHits}" Width="40" />
+                    <DataGridTextColumn Header="Errors" Binding="{Binding CountErrors}" Width="40"/>
                 </DataGrid.Columns>
                 
                 </DataGrid>
@@ -146,11 +146,11 @@
                         </Style>
                     </DataGrid.Resources>
                     <DataGrid.Columns>
-                        <DataGridTextColumn Header="Inning " Binding="{Binding CountInning}" />
-                        <DataGridTextColumn Header="Team      " Binding="{Binding CountTeam}" />
-                        <DataGridTextColumn Header="Runs    " Binding="{Binding CountRuns}" />
-                        <DataGridTextColumn Header="Hits    " Binding="{Binding CountHits}" />
-                        <DataGridTextColumn Header="Errors  "  Binding="{Binding CountErrors}" />
+                        <DataGridTextColumn Binding="{Binding CountInning}" Width="40"/>
+                        <DataGridTextColumn Binding="{Binding CountTeam}" Width="80"/>
+                        <DataGridTextColumn Binding="{Binding CountRuns}" Width="40"/>
+                        <DataGridTextColumn Binding="{Binding CountHits}" Width="40"/>
+                        <DataGridTextColumn Binding="{Binding CountErrors}" Width="40"/>
                     </DataGrid.Columns>
 
                 </DataGrid>
@@ -246,16 +246,10 @@
                    FontSize="10" FontWeight="Bold"
                    HorizontalContentAlignment="Center"
                    BorderBrush="Black" BorderThickness="0,0,1,0"
-                   Background="#047700" Height="22" Width="700"  Foreground="White">
+                   Background="#047700" Height="22" Width="680"  Foreground="White">
                     Player Adjustments
                 </Label>
-                <TextBlock Name="tblkPitcherAdjustments" Text="{Binding PitcherAdjustment}" TextWrapping="Wrap" Margin="10,0,0,0"/>
-                <TextBlock Name="tblkBatterAdjustments" Text="{Binding BatterAdjustment}" TextWrapping="Wrap" Margin="10,0,0,0"/>
-                <TextBlock Name="tblkSubstitutePlayers" Text="{Binding SubstitutePlayer}" TextWrapping="Wrap" Margin="10,0,0,0"/>
-                <TextBlock Name="tblkBattersRemoved" Text="{Binding BatterRemoved}" TextWrapping="Wrap" Margin="10,0,0,0"/>
-                <TextBlock Name="tblkRunnerFirstRemoved" Text="{Binding RunnerRemoved}" TextWrapping="Wrap" Margin="10,0,0,0"/>
-                <TextBlock Name="tblkRunnerSecondRemoved" Text="{Binding RunnerRemoved}" TextWrapping="Wrap" Margin="10,0,0,0"/>
-                <TextBlock Name="tblkRunnerThirdRemoved" Text="{Binding RunnerRemoved}" TextWrapping="Wrap" Margin="10,0,0,0"/>
+                <TextBlock Name="tblkPlayerAdjustments" Width="680" TextWrapping="Wrap" Padding="10,0"/>
             </StackPanel>
 
             <StackPanel Orientation="Vertical" >
@@ -265,13 +259,10 @@
                    FontSize="10" FontWeight="Bold"
                    HorizontalContentAlignment="Center"
                    BorderBrush="Black" BorderThickness="0,0,1,0"
-                   Background="#047700" Height="22" Width="700"  Foreground="White">
+                   Background="#047700" Height="22" Width="680"  Foreground="White">
                     Notes / Comments
                 </Label>
-                <TextBlock Name="tblkSubstituteUmpires" Text="{Binding SubstituteUmpire}" TextWrapping="Wrap" Margin="10,0,0,0"/>
-                <TextBlock Name="tblkComments" Text="{Binding GameComment}" TextWrapping="Wrap" Margin="10,0,0,0"/>
-                <TextBlock Name="tblkReplayComment" Text="{Binding ReplayComment}" TextWrapping="Wrap" Margin="10,0,0,0"/>
-                <TextBlock Name="tblkReplayRuling" Text="{Binding ReplayRuling}" TextWrapping="Wrap" Margin="10,0,0,0"/>
+                <TextBlock Name="tblkGameComments" Width="680" TextWrapping="Wrap" Padding="10,0" />
             </StackPanel>
         </StackPanel>
     </Grid>
