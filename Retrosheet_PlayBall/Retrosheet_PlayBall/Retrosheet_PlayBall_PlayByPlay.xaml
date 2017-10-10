@@ -68,9 +68,9 @@
                 </DataGrid.Resources>
 
                 <DataGrid.Columns>
-                    <DataGridTextColumn Header="Batting Order  " Binding="{Binding Batting}"  />
+                    <DataGridTextColumn Header="Batting Order  " Binding="{Binding BattingOrder}"  />
                     <DataGridTextColumn Header="Visiting Team" Binding="{Binding Name}"  />
-                    <DataGridTextColumn Header="Field Position " Binding="{Binding Position}"  />
+                    <DataGridTextColumn Header="Field Position " Binding="{Binding FieldPositionDesc}"  />
                     <DataGridTextColumn Header="Bats / Throws"  Binding="{Binding BatsThrows}" />
                 </DataGrid.Columns>
 
@@ -91,7 +91,7 @@
                 </DataGrid.Resources>
                 <DataGrid.Columns>
                     <DataGridTextColumn Header="Home Team    " Binding="{Binding Name}" />
-                    <DataGridTextColumn Header="Field Position " Binding="{Binding Position}"  />
+                    <DataGridTextColumn Header="Field Position " Binding="{Binding FieldPositionDesc}"  />
                     <DataGridTextColumn Header="Bats / Throws"  Binding="{Binding BatsThrows}" />
                 </DataGrid.Columns>
 
@@ -123,11 +123,11 @@
                     </Style>
                 </DataGrid.Resources>
                 <DataGrid.Columns>
-                    <DataGridTextColumn Header="Inning" Binding="{Binding CountInning}" Width="40"/>
-                    <DataGridTextColumn Header="Team" Binding="{Binding CountTeam}" Width="80" />
-                    <DataGridTextColumn Header="Runs" Binding="{Binding CountRuns}" Width="40"/>
-                    <DataGridTextColumn Header="Hits" Binding="{Binding CountHits}" Width="40" />
-                    <DataGridTextColumn Header="Errors" Binding="{Binding CountErrors}" Width="40"/>
+                    <DataGridTextColumn Header="Inning" Binding="{Binding Inning}" Width="40"/>
+                    <DataGridTextColumn Header="Team" Binding="{Binding TeamName}" Width="80" />
+                    <DataGridTextColumn Header="Runs" Binding="{Binding Score}" Width="40"/>
+                    <DataGridTextColumn Header="Hits" Binding="{Binding Hits}" Width="40" />
+                    <DataGridTextColumn Header="Errors" Binding="{Binding Errors}" Width="40"/>
                 </DataGrid.Columns>
                 
                 </DataGrid>
@@ -146,11 +146,11 @@
                         </Style>
                     </DataGrid.Resources>
                     <DataGrid.Columns>
-                        <DataGridTextColumn Binding="{Binding CountInning}" Width="40"/>
-                        <DataGridTextColumn Binding="{Binding CountTeam}" Width="80"/>
-                        <DataGridTextColumn Binding="{Binding CountRuns}" Width="40"/>
-                        <DataGridTextColumn Binding="{Binding CountHits}" Width="40"/>
-                        <DataGridTextColumn Binding="{Binding CountErrors}" Width="40"/>
+                        <DataGridTextColumn Binding="{Binding Inning}" Width="40"/>
+                        <DataGridTextColumn Binding="{Binding TeamName}" Width="80"/>
+                        <DataGridTextColumn Binding="{Binding Score}" Width="40"/>
+                        <DataGridTextColumn Binding="{Binding Hits}" Width="40"/>
+                        <DataGridTextColumn Binding="{Binding Errors}" Width="40"/>
                     </DataGrid.Columns>
 
                 </DataGrid>

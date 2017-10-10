@@ -36,7 +36,13 @@ namespace Retrosheet_Console
             //-settingsArray[3] = @"event_data|TRUE|C:\users\mmr\documents\retrosheet\2015 Post Season\Division 2||C:\users\mmr\documents\retrosheet\2015 Post Season\Division 2\Output\||2015 Post Season|2015|2";
             //-settingsArray[3] = @"event_data|TRUE|C:\users\mmr\documents\retrosheet\2015 Post Season\Wild Card||C:\users\mmr\documents\retrosheet\2015 Post Season\Wild Card\Output\||2015 Post Season|2015|C";
             //-settingsArray[3] = @"event_data|TRUE|C:\users\mmr\documents\retrosheet\2015 Post Season\League Championship||C:\users\mmr\documents\retrosheet\2015 Post Season\League Championship\Output\||2015 Post Season|2015|L";
-            settingsArray[3] = @"event_data|TRUE|C:\users\mmr\documents\retrosheet\2015 Post Season\World Series||C:\users\mmr\documents\retrosheet\2015 Post Season\World Series\Output\||2015 Post Season|2015|W";
+            //-settingsArray[3] = @"event_data|TRUE|C:\users\mmr\documents\retrosheet\2015 Post Season\World Series||C:\users\mmr\documents\retrosheet\2015 Post Season\World Series\Output\||2015 Post Season|2015|W";
+            //-settingsArray[3] = @"event_data|TRUE|C:\users\mmr\documents\retrosheet\1982 Regular Season\||C:\users\mmr\documents\retrosheet\1982 Regular Season\Output\||1982 Regular Season|1982|R";
+            //-settingsArray[3] = @"event_data|TRUE|C:\users\mmr\documents\retrosheet\1982 All Star\||C:\users\mmr\documents\retrosheet\1982 All Star\Output\||1982 All Star|1982|A";
+            settingsArray[3] = @"event_data|TRUE|C:\users\mmr\documents\retrosheet\1982 Post Season\League Championship||C:\users\mmr\documents\retrosheet\1982 Post Season\League Championship\Output\||1982 Post Season|1982|L";
+            //-settingsArray[3] = @"event_data|TRUE|C:\users\mmr\documents\retrosheet\1982 Post Season\World Series||C:\users\mmr\documents\retrosheet\1982 Post Season\World Series\Output\||1982 Post Season|1982|W";
+
+
 
             settings.WriteSettings(settingsArray);
                         settings.GetSettings();

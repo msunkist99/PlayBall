@@ -18,7 +18,6 @@ namespace Retrosheet_RetrieveData
 
         public class ReferenceData
         {
-            //public ReferenceDataDTO ReferenceItem = new ReferenceDataDTO();
             public Guid recordId { get; set; }
             public string referenceDataType { get; set; }
             public string referenceDataCode { get; set; }
@@ -33,8 +32,6 @@ namespace Retrosheet_RetrieveData
 
         public class PlayerInformation
         {
-            //public PlayerDTO Player = new PlayerDTO();
-            //public string GameID { get; set; }
 
             public System.Guid RecordID { get; set; }
             public string PlayerID { get; set; }
@@ -55,12 +52,10 @@ namespace Retrosheet_RetrieveData
 
             public string SeasonYear { get; set; }
             public string SeasonGameType { get; set; }
-
         }
 
         public class StartingPlayerInformation
         {
-            //public StartingPlayerDTO StartingPlayer = new StartingPlayerDTO();
             public System.Guid RecordID { get; set; }
             public string GameID { get; set; }
             // key player.ID
@@ -92,6 +87,19 @@ namespace Retrosheet_RetrieveData
             public string TeamLeagueDesc { get; set; }
         }
 
+        public class PlayerRosterInformationByEvent
+        {
+            public int EventNum { get; set; }
+            public PlayerRosterInformation playerRosterInformation { get; set; }
+        }
+
+        public class PlayerRosterInformation
+        {
+            public string PlayerID { get; set; }
+            public int GameTeamCode { get; set; }
+            public int BattingOrder { get; set; }
+        }
+
         public class BallparkInformation
         {
             public BallparkDTO Ballpark = new BallparkDTO();
@@ -100,8 +108,6 @@ namespace Retrosheet_RetrieveData
 
         public class PlayInformation
         {
-            //public PlayDTO Play = new PlayDTO();
-
             public System.Guid RecordID { get; set; }
 
             public string GameID { get; set; }
@@ -157,95 +163,9 @@ namespace Retrosheet_RetrieveData
             public string BatterLastName { get; set; }
             public string BatterFirstName { get; set; }
             public string BatterName { get; set; }
-            //public string BatterBats { get; set; }
-            //public string BatterBatsDesc { get; set; }
-            //public string BatterThrows { get; set; }
-            //public string BatterThrowsDesc { get; set; }
             public int BatterDefPosition { get; set; }
             public string BatterDefPositionDesc { get; set; }
             public int BatterLineUpPosition { get; set; }
-
-            public string PitcherPlayerID { get; set; }
-            public string PitcherLastName { get; set; }
-            public string PitcherFirstName { get; set; }
-            public string PitcherName { get; set; }
-            public string PitcherBats { get; set; }
-            public string PitcherBatsDesc { get; set; }
-            public string PitcherThrows { get; set; }
-            public string PitcherThrowsDesc { get; set; }
-
-            public string CatcherPlayerID { get; set; }
-            public string CatcherLastName { get; set; }
-            public string CatcherFirstName { get; set; }
-            public string CatcherName { get; set; }
-            public string CatcherBats { get; set; }
-            public string CatcherBatsDesc { get; set; }
-            public string CatcherThrows { get; set; }
-            public string CatcherThrowsDesc { get; set; }
-
-            public string FirstBasePlayerID { get; set; }
-            public string FirstBaseLastName { get; set; }
-            public string FirstBaseFirstName { get; set; }
-            public string FirstBaseName { get; set; }
-            public string FirstBaseBats { get; set; }
-            public string FirstBaseBatsDesc { get; set; }
-            public string FirstBaseThrows { get; set; }
-            public string FirstBaseThrowsDesc { get; set; }
-
-            public string SecondBasePlayerID { get; set; }
-            public string SecondBaseLastName { get; set; }
-            public string SecondBaseFirstName { get; set; }
-            public string SecondBaseName { get; set; }
-            public string SecondBaseBats { get; set; }
-            public string SecondBaseBatsDesc { get; set; }
-            public string SecondBaseThrows { get; set; }
-            public string SecondBaseThrowsDesc { get; set; }
-
-            public string ThirdBasePlayerID { get; set; }
-            public string ThirdBaseLastName { get; set; }
-            public string ThirdBaseFirstName { get; set; }
-            public string ThirdBaseName { get; set; }
-            public string ThirdBaseBats { get; set; }
-            public string ThirdBaseBatsDesc { get; set; }
-            public string ThirdBaseThrows { get; set; }
-            public string ThirdBaseThrowsDesc { get; set; }
-
-            public string ShortStopPlayerID { get; set; }
-            public string ShortStopLastName { get; set; }
-            public string ShortStopFirstName { get; set; }
-            public string ShortStopName { get; set; }
-            public string ShortStopBats { get; set; }
-            public string ShortStopBatsDesc { get; set; }
-            public string ShortStopThrows { get; set; }
-            public string ShortStopThrowsDesc { get; set; }
-
-            public string LeftFieldPlayerID { get; set; }
-            public string LeftFieldLastName { get; set; }
-            public string LeftFieldFirstName { get; set; }
-            public string LeftFieldName { get; set; }
-            public string LeftFieldBats { get; set; }
-            public string LeftFieldBatsDesc { get; set; }
-            public string LeftFieldThrows { get; set; }
-            public string LeftFieldThrowsDesc { get; set; }
-
-            public string CenterFieldPlayerID { get; set; }
-            public string CenterFieldLastName { get; set; }
-            public string CenterFieldFirstName { get; set; }
-            public string CenterFieldName { get; set; }
-            public string CenterFieldBats { get; set; }
-            public string CenterFieldBatsDesc { get; set; }
-            public string CenterFieldThrows { get; set; }
-            public string CenterFieldThrowsDesc { get; set; }
-
-            public string RightFieldPlayerID { get; set; }
-            public string RightFieldLastName { get; set; }
-            public string RightFieldFirstName { get; set; }
-            public string RightFieldName { get; set; }
-            public string RightFieldBats { get; set; }
-            public string RightFieldBatsDesc { get; set; }
-            public string RightFieldThrows { get; set; }
-            public string RightFieldThrowsDesc { get; set; }
-
 
             public int CountBalls { get; set; }
             public int CountStrikes { get; set; }
@@ -468,7 +388,7 @@ namespace Retrosheet_RetrieveData
         {
             public Guid RecordID { get; set; }
             public string GameID { get; set; }
-            public int Inning { get;  set;}
+            public int Inning { get; set; }
             public int GameTeamCode { get; set; }
             public string GameTeamCodeDesc { get; set; }
             public int Sequence { get; set; }
@@ -574,8 +494,56 @@ namespace Retrosheet_RetrieveData
             public string UmpireFirstName { get; set; }
 
         }
-    }
 
+        public class PlayerLineUpInformation
+        {
+            public string GameID { get; set; }
+            public string PlayerID { get; set; }
+
+            public int GameTeamCode { get; set; }
+            public string GameTeamCodeDesc { get; set; }
+            public int BattingOrder { get; set; }
+
+            public int FieldPosition { get; set; }
+            public string FieldPositionDesc { get; set; }
+            public string TeamID { get; set; }
+            public string TeamName { get; set; }
+
+            public string PlayerLastName { get; set; }
+            public string PlayerFirstName { get; set; }
+            public string Throws { get; set; }
+            public string ThrowsDesc { get; set; }
+            public string Bats { get; set; }
+            public string BatsDesc { get; set; }
+
+            public int EventNum { get; set; }
+
+        }
+
+        public class PlayerGameLineupInformation
+        {
+            public int EventNum { get; set; }
+            public List<PlayerLineUpInformation> VisitingPlayerLineupInformation { get; set; }
+            public List<PlayerLineUpInformation> HomePlayerLineupInformation { get; set; }
+        }
+
+        public class BeventPlayer
+        {
+            public int BattingOrder { get; set; }
+            public string Name { get; set; }
+            public string FieldPositionDesc { get; set; }
+            public string BatsThrows { get; set; }
+        }
+
+        public class BeventCounts
+        {
+            public string TeamName { get; set; }
+            public string Inning { get; set; }
+            public int Score { get; set; }
+            public int Hits { get; set; }
+            public int Errors { get; set; }
+        }
+    }
 }
 
 
